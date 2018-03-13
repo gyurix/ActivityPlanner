@@ -3,7 +3,7 @@ package gyurix.activityplanner.gui.scenes.main;
 import gyurix.activityplanner.core.DataStorage;
 import gyurix.activityplanner.core.data.user.User;
 import gyurix.activityplanner.gui.ActivityPlannerLauncher;
-import gyurix.activityplanner.gui.scenes.SceneCreator;
+import gyurix.activityplanner.gui.scenes.InfoScreen;
 import gyurix.activityplanner.gui.scenes.SceneUtils;
 import javafx.event.ActionEvent;
 import javafx.geometry.HPos;
@@ -21,16 +21,19 @@ import javafx.scene.layout.RowConstraints;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
-public class LoginScene implements SceneCreator {
+public class LoginScene extends InfoScreen<Void> {
     private Background background = SceneUtils.bgColorGradient(Color.web("#b08045"));
     private GridPane grid = new GridPane();
     private Button loginButton = new Button("Login");
     private Label loginResult = new Label("");
     private PasswordField passwordField = new PasswordField();
     private Label passwordLabel = new Label("Password");
-    private Stage stage;
     private TextField usernameField = new TextField("l1");
     private Label usernameLabel = new Label("Username");
+
+    public LoginScene(Stage stage) {
+        super(null, stage);
+    }
 
     public void addNodesToGrid() {
         grid.add(loginResult, 0, 0, 3, 1);
@@ -92,8 +95,7 @@ public class LoginScene implements SceneCreator {
         grid.getRowConstraints().addAll(row0, row1, row2, row3);
     }
 
-    public void prepareScene(Stage stage) {
-        this.stage = stage;
+    public void prepareScene() {
         Scene scene = new Scene(grid, 320, 240);
         stage.setResizable(false);
         stage.getIcons().add(new Image(ActivityPlannerLauncher.class.getResourceAsStream("/icons/icon.png")));

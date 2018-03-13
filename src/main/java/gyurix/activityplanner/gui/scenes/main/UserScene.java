@@ -61,7 +61,7 @@ public class UserScene extends InfoScreen<User> {
         info.visitCreatedContents(new ContentRenderer(this));
         Observable<String> un = info.getUsername();
         usernameLabel = new Label(un.getData());
-        logoutButton.setOnAction((e) -> new LoginScene().apply(stage));
+        logoutButton.setOnAction((e) -> new LoginScene(stage).start());
         un.attach(() -> usernameLabel.setText(un.getData()));
 
     }
@@ -121,7 +121,7 @@ public class UserScene extends InfoScreen<User> {
     }
 
     @Override
-    public void prepareScene(Stage stage) {
+    public void prepareScene() {
         Scene scene = new Scene(grid, 800, 520);
         stage.setScene(scene);
     }

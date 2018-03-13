@@ -9,6 +9,13 @@ public abstract class InfoScreen<T> implements SceneCreator {
     public InfoScreen(T info, Stage stage) {
         this.info = info;
         this.stage = stage;
-        apply(stage);
+    }
+
+    @Override
+    public void start() {
+        createNodes();
+        makeGrid();
+        addNodesToGrid();
+        prepareScene();
     }
 }

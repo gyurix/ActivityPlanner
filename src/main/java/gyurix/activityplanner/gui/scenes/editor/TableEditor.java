@@ -35,7 +35,7 @@ public class TableEditor extends InfoScreen<Table> {
     }
 
     @Override
-    public void prepareScene(Stage stage) {
+    public void prepareScene() {
 
     }
 }

@@ -35,7 +35,7 @@ public class AlertViewer extends InfoScreen<Alert> {
     }
 
     @Override
-    public void prepareScene(Stage stage) {
+    public void prepareScene() {
 
     }
 }

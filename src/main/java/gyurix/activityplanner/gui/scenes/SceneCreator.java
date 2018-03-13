@@ -1,16 +1,9 @@
 package gyurix.activityplanner.gui.scenes;
 
-import javafx.stage.Stage;
-
 public interface SceneCreator {
     void addNodesToGrid();
 
-    default void apply(Stage stage) {
-        createNodes();
-        makeGrid();
-        addNodesToGrid();
-        prepareScene(stage);
-    }
+    void prepareScene();
 
     void createNodes();
 
@@ -20,5 +13,5 @@ public interface SceneCreator {
 
     void makeGridRows();
 
-    void prepareScene(Stage stage);
+    void start();
 }
