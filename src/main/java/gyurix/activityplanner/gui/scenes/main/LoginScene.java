@@ -3,7 +3,7 @@ package gyurix.activityplanner.gui.scenes.main;
 import gyurix.activityplanner.core.DataStorage;
 import gyurix.activityplanner.core.data.user.User;
 import gyurix.activityplanner.gui.ActivityPlannerLauncher;
-import gyurix.activityplanner.gui.scenes.InfoScreen;
+import gyurix.activityplanner.gui.scenes.AbstractScreen;
 import gyurix.activityplanner.gui.scenes.SceneUtils;
 import javafx.event.ActionEvent;
 import javafx.geometry.HPos;
@@ -21,7 +21,7 @@ import javafx.scene.layout.RowConstraints;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
-public class LoginScene extends InfoScreen<Void> {
+public class LoginScene extends AbstractScreen {
     private Background background = SceneUtils.bgColorGradient(Color.web("#b08045"));
     private GridPane grid = new GridPane();
     private Button loginButton = new Button("Login");
@@ -32,7 +32,7 @@ public class LoginScene extends InfoScreen<Void> {
     private Label usernameLabel = new Label("Username");
 
     public LoginScene(Stage stage) {
-        super(null, stage);
+        super(stage);
     }
 
     public void addNodesToGrid() {
@@ -63,7 +63,7 @@ public class LoginScene extends InfoScreen<Void> {
             loginResult.setText("Incorrect password");
             return;
         }
-        new UserScene(user, stage);
+        new UserScene(user, stage).start();
     }
 
     public void makeGrid() {
