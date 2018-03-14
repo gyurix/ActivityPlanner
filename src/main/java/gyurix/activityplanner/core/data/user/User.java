@@ -2,10 +2,10 @@ package gyurix.activityplanner.core.data.user;
 
 import gyurix.activityplanner.core.DataStorage;
 import gyurix.activityplanner.core.data.StorableData;
-import gyurix.activityplanner.core.data.observation.Observable;
-import gyurix.activityplanner.core.data.observation.ObservableList;
 import gyurix.activityplanner.core.data.visitors.ContentVisitor;
 import gyurix.activityplanner.core.data.visitors.UserVisitor;
+import gyurix.activityplanner.core.observation.Observable;
+import gyurix.activityplanner.core.observation.ObservableList;
 import lombok.Getter;
 
 @Getter

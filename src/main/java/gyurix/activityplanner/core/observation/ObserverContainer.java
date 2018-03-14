@@ -1,6 +1,4 @@
-package gyurix.activityplanner.core.data.observation;
-
-import gyurix.activityplanner.core.Destroyable;
+package gyurix.activityplanner.core.observation;
 
 import java.util.HashMap;
 

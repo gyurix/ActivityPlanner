@@ -2,8 +2,8 @@ package gyurix.activityplanner.gui.scenes.viewer;
 
 import gyurix.activityplanner.core.data.content.Alert;
 import gyurix.activityplanner.core.data.element.Element;
-import gyurix.activityplanner.core.data.observation.ListObserver;
-import gyurix.activityplanner.core.data.observation.Observable;
+import gyurix.activityplanner.core.observation.ListObserver;
+import gyurix.activityplanner.core.observation.Observable;
 import gyurix.activityplanner.gui.renderers.ElementRenderer;
 import gyurix.activityplanner.gui.scenes.InfoScreen;
 import javafx.scene.control.ScrollPane;

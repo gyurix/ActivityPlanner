@@ -1,27 +1,46 @@
 package gyurix.activityplanner.core;
 
-import com.google.gson.ExclusionStrategy;
-import com.google.gson.FieldAttributes;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.TypeAdapter;
+import com.google.gson.TypeAdapterFactory;
+import com.google.gson.reflect.TypeToken;
+import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonWriter;
 import gyurix.activityplanner.core.data.content.Content;
 import gyurix.activityplanner.core.data.user.User;
+import gyurix.activityplanner.core.observation.Observable;
 import lombok.Getter;
 
+import java.lang.reflect.ParameterizedType;
 import java.util.TreeMap;
 
 public class DataStorage {
     private static TreeMap<Integer, Content> contents = new TreeMap<>();
     @Getter
-    private static Gson gson = new GsonBuilder().addSerializationExclusionStrategy(new ExclusionStrategy() {
+    private static Gson gson = new GsonBuilder().registerTypeAdapterFactory(new TypeAdapterFactory() {
+        @SuppressWarnings("unchecked")
         @Override
-        public boolean shouldSkipClass(Class<?> aClass) {
-            return false;
-        }
+        public <T> TypeAdapter<T> create(Gson gson, TypeToken<T> typeToken) {
+            if (typeToken.getType() instanceof ParameterizedType) {
+                ParameterizedType type = (ParameterizedType) typeToken.getType();
+                if (type.getRawType() == Observable.class) {
+                    return new TypeAdapter() {
+                        @Override
+                        public Object read(JsonReader jsonReader) {
+                            Observable out = new Observable();
+                            out.setData(gson.fromJson(jsonReader, type.getActualTypeArguments()[0]));
+                            return out;
+                        }
 
-        @Override
-        public boolean shouldSkipField(FieldAttributes fieldAttributes) {
-            return fieldAttributes.getName().equals("observers");
+                        @Override
+                        public void write(JsonWriter jsonWriter, Object t) {
+                            gson.toJson(((Observable) t).getData(), type.getActualTypeArguments()[0], jsonWriter);
+                        }
+                    };
+                }
+            }
+            return gson.getDelegateAdapter(this, typeToken);
         }
     }).create();
     private static TreeMap<String, User> users = new TreeMap<>();

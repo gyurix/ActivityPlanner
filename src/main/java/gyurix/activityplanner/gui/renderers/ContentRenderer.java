@@ -2,9 +2,9 @@ package gyurix.activityplanner.gui.renderers;
 
 import gyurix.activityplanner.core.data.content.Alert;
 import gyurix.activityplanner.core.data.content.Table;
-import gyurix.activityplanner.core.data.observation.Observable;
-import gyurix.activityplanner.core.data.observation.ObserverContainer;
 import gyurix.activityplanner.core.data.visitors.ContentVisitor;
+import gyurix.activityplanner.core.observation.Observable;
+import gyurix.activityplanner.core.observation.ObserverContainer;
 import gyurix.activityplanner.gui.scenes.main.UserScene;
 import gyurix.activityplanner.gui.scenes.viewer.AlertViewer;
 import javafx.geometry.Pos;

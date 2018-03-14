@@ -1,6 +1,6 @@
 package gyurix.activityplanner.gui.scenes;
 
-import gyurix.activityplanner.core.data.observation.ObserverContainer;
+import gyurix.activityplanner.core.observation.ObserverContainer;
 import javafx.stage.Stage;
 
 public abstract class AbstractScreen extends ObserverContainer {

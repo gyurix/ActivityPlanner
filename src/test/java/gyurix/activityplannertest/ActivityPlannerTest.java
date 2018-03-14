@@ -4,7 +4,6 @@ import gyurix.activityplanner.core.data.content.Alert;
 import gyurix.activityplanner.core.data.content.Table;
 import gyurix.activityplanner.core.data.user.Lecture;
 import gyurix.activityplanner.core.data.user.Student;
-import gyurix.activityplanner.gui.ActivityPlannerLauncher;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
@@ -15,7 +14,7 @@ import static java.lang.System.currentTimeMillis;
 public class ActivityPlannerTest extends Application {
     public static void main(String[] args) {
         prepareTestingData();
-        ActivityPlannerLauncher.main(args);
+        //ActivityPlannerLauncher.main(args);
     }
 
     public static void prepareTestingData() {
@@ -37,6 +36,7 @@ public class ActivityPlannerTest extends Application {
         l1.getCreatedContents().add(addContent(t2));
         l1.getCreatedContents().add(addContent(a1));
         l1.getCreatedContents().add(addContent(a2));
+        System.out.println(l1);
     }
 
     @Override

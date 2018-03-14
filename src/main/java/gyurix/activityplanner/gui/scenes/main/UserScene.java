@@ -1,7 +1,7 @@
 package gyurix.activityplanner.gui.scenes.main;
 
-import gyurix.activityplanner.core.data.observation.Observable;
 import gyurix.activityplanner.core.data.user.User;
+import gyurix.activityplanner.core.observation.Observable;
 import gyurix.activityplanner.gui.renderers.ContentRenderer;
 import gyurix.activityplanner.gui.scenes.InfoScreen;
 import javafx.geometry.HPos;

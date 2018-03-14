@@ -2,9 +2,9 @@ package gyurix.activityplanner.core.data.content;
 
 import gyurix.activityplanner.core.data.StorableData;
 import gyurix.activityplanner.core.data.element.Element;
-import gyurix.activityplanner.core.data.observation.Observable;
-import gyurix.activityplanner.core.data.observation.ObservableList;
 import gyurix.activityplanner.core.data.visitors.ContentVisitor;
+import gyurix.activityplanner.core.observation.Observable;
+import gyurix.activityplanner.core.observation.ObservableList;
 import lombok.Getter;
 
 @Getter

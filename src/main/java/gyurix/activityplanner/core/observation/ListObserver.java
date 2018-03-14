@@ -1,4 +1,4 @@
-package gyurix.activityplanner.core.data.observation;
+package gyurix.activityplanner.core.observation;
 
 
 public interface ListObserver<T> {

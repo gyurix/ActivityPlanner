@@ -1,7 +1,7 @@
 package gyurix.activityplanner.core.data.content;
 
-import gyurix.activityplanner.core.data.observation.Observable;
 import gyurix.activityplanner.core.data.visitors.ContentVisitor;
+import gyurix.activityplanner.core.observation.Observable;
 import lombok.Getter;
 
 
