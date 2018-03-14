@@ -1,6 +1,6 @@
 package gyurix.activityplanner.core.data;
 
-import gyurix.activityplanner.core.DataStorage;
+import gyurix.activityplanner.core.storage.DataStorage;
 
 public abstract class StorableData {
     @Override

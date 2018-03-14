@@ -1,7 +1,7 @@
 package gyurix.activityplanner.gui.scenes.main;
 
-import gyurix.activityplanner.core.DataStorage;
 import gyurix.activityplanner.core.data.user.User;
+import gyurix.activityplanner.core.storage.DataStorage;
 import gyurix.activityplanner.gui.ActivityPlannerLauncher;
 import gyurix.activityplanner.gui.scenes.AbstractScreen;
 import gyurix.activityplanner.gui.scenes.SceneUtils;
@@ -54,7 +54,7 @@ public class LoginScene extends AbstractScreen {
     }
 
     private void login(ActionEvent e) {
-        User user = DataStorage.getUser(usernameField.getText());
+        User user = DataStorage.getInstance().getUser(usernameField.getText());
         if (user == null) {
             loginResult.setText("Incorrect username");
             return;

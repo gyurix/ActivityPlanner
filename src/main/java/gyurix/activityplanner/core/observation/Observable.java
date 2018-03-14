@@ -1,20 +1,19 @@
 package gyurix.activityplanner.core.observation;
 
-import lombok.Getter;
+import gyurix.activityplanner.core.WrappedData;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class Observable<T> {
+public class Observable<T> extends WrappedData<T> {
     private final List<Observer<T>> observers = new ArrayList<>();
-    @Getter
-    private T data;
 
     public Observable() {
+        super(null);
     }
 
     public Observable(T data) {
-        this.data = data;
+        super(data);
     }
 
     void attach(Observer<T> observer) {
@@ -25,13 +24,17 @@ public class Observable<T> {
         observers.remove(observer);
     }
 
+    public T getData() {
+        return wrappedData;
+    }
+
     public void setData(T data) {
-        this.data = data;
+        wrappedData = data;
         observers.forEach(Observer::update);
     }
 
     @Override
     public String toString() {
-        return data.toString();
+        return wrappedData.toString();
     }
 }
