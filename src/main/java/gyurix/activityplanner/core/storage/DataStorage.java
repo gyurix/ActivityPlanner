@@ -8,13 +8,17 @@ import gyurix.activityplanner.core.data.user.User;
 import gyurix.activityplanner.core.storage.gson.TypeSelectorAdapter;
 import gyurix.activityplanner.core.storage.gson.UnwrapperAdapter;
 import lombok.Getter;
+import lombok.SneakyThrows;
 
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.nio.charset.Charset;
 import java.util.TreeMap;
 
 public class DataStorage extends StorableData {
     @Getter
-    private static final DataStorage instance = new DataStorage();
+    private static DataStorage instance;
     private static final Charset utf8 = Charset.forName("UTF-8");
     @Getter
     private static Gson gson = new GsonBuilder()
@@ -46,5 +50,19 @@ public class DataStorage extends StorableData {
 
     public boolean removeUser(String userName) {
         return users.remove(userName) != null;
+    }
+
+    @SneakyThrows
+    public static void load(File f) {
+        FileReader fr = new FileReader(f);
+        instance = gson.fromJson(fr, DataStorage.class);
+        fr.close();
+    }
+
+    @SneakyThrows
+    public void save(File f) {
+        FileWriter fw = new FileWriter(f);
+        fw.write(gson.toJson(this));
+        fw.close();
     }
 }
