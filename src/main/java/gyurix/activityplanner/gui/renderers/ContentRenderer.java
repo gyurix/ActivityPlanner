@@ -3,6 +3,7 @@ package gyurix.activityplanner.gui.renderers;
 import gyurix.activityplanner.core.data.content.Alert;
 import gyurix.activityplanner.core.data.content.Table;
 import gyurix.activityplanner.core.data.observation.Observable;
+import gyurix.activityplanner.core.data.observation.ObserverContainer;
 import gyurix.activityplanner.core.data.visitors.ContentVisitor;
 import gyurix.activityplanner.gui.scenes.main.UserScene;
 import gyurix.activityplanner.gui.scenes.viewer.AlertViewer;
@@ -20,7 +21,7 @@ import java.text.SimpleDateFormat;
 import static gyurix.activityplanner.gui.scenes.SceneUtils.bgColorGradientTop;
 import static java.lang.Double.MAX_VALUE;
 
-public class ContentRenderer implements ContentVisitor {
+public class ContentRenderer extends ObserverContainer implements ContentVisitor {
     private static final SimpleDateFormat sdf = new SimpleDateFormat("[yyyy.MM.dd] HH:mm:ss");
     private int alertIndex, tableIndex;
     private UserScene scene;
@@ -31,7 +32,7 @@ public class ContentRenderer implements ContentVisitor {
 
     public GridPane makeAlertGrid(Alert alert) {
         GridPane grid = new GridPane();
-        grid.setBackground(bgColorGradientTop(Color.web("#" + alert.getColor().getData())));
+        makeDynamicBackground(grid, alert.getColor());
         grid.setHgap(10);
         grid.setVgap(10);
         makeAlertGridColumns(grid);
@@ -49,6 +50,10 @@ public class ContentRenderer implements ContentVisitor {
         column3.setPercentWidth(15);
 
         grid.getColumnConstraints().addAll(column1, column2, column3);
+    }
+
+    public void makeDynamicBackground(GridPane grid, Observable<String> obs) {
+        attach(obs, () -> grid.setBackground(bgColorGradientTop(Color.web("#" + obs.getData()))));
     }
 
     private GridPane renderAlert(Alert a) {
@@ -79,9 +84,9 @@ public class ContentRenderer implements ContentVisitor {
     }
 
     private Label renderDate(Observable<Long> obs) {
-        Label label = new Label(sdf.format(obs.getData()));
+        Label label = new Label();
         label.setPrefWidth(MAX_VALUE);
-        obs.attach(() -> label.setText(sdf.format(obs.getData())));
+        attach(obs, () -> label.setText(sdf.format(obs.getData())));
         return label;
     }
 
@@ -90,10 +95,10 @@ public class ContentRenderer implements ContentVisitor {
     }
 
     private Label renderText(int fontSize, Observable<String> obs) {
-        Label label = new Label(obs.getData());
+        Label label = new Label();
         label.setPrefWidth(MAX_VALUE);
         label.setFont(Font.font(fontSize));
-        obs.attach(() -> label.setText(obs.getData()));
+        attach(obs, () -> label.setText(obs.getData()));
         return label;
     }
 

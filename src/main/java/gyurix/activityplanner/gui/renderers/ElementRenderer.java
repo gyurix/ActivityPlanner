@@ -4,6 +4,7 @@ import com.sun.deploy.uitoolkit.impl.fx.HostServicesFactory;
 import com.sun.javafx.application.HostServicesDelegate;
 import gyurix.activityplanner.core.data.element.*;
 import gyurix.activityplanner.core.data.observation.Observable;
+import gyurix.activityplanner.core.data.observation.ObserverContainer;
 import gyurix.activityplanner.core.data.visitors.ElementVisitor;
 import gyurix.activityplanner.gui.ActivityPlannerLauncher;
 import javafx.scene.Node;
@@ -14,7 +15,7 @@ import javafx.scene.layout.GridPane;
 
 import static java.lang.Double.MAX_VALUE;
 
-public class ElementRenderer implements ElementVisitor {
+public class ElementRenderer extends ObserverContainer implements ElementVisitor {
     private final GridPane grid;
     private int row;
 
@@ -29,8 +30,8 @@ public class ElementRenderer implements ElementVisitor {
     private Node renderLink(LinkElement link) {
         Label label = renderText(link);
         Observable<String> url = link.getUrl();
-        Tooltip tooltip = new Tooltip(url.getData());
-        url.attach(() -> tooltip.setText(url.getData()));
+        Tooltip tooltip = new Tooltip();
+        attach(url, () -> tooltip.setText(url.getData()));
         label.setTooltip(tooltip);
         label.setOnMouseReleased((e) -> {
             if (e.getButton() != MouseButton.PRIMARY)
@@ -47,9 +48,9 @@ public class ElementRenderer implements ElementVisitor {
 
     private Label renderText(TextElement el) {
         Observable<String> obs = el.getText();
-        Label label = new Label(obs.getData());
+        Label label = new Label();
         label.setPrefWidth(MAX_VALUE);
-        obs.attach(() -> label.setText(obs.getData()));
+        attach(obs, () -> label.setText(obs.getData()));
         return label;
     }
 

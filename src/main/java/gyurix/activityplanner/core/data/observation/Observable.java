@@ -17,11 +17,11 @@ public class Observable<T> {
         this.data = data;
     }
 
-    public void attach(Observer<T> observer) {
+    void attach(Observer<T> observer) {
         observers.add(observer);
     }
 
-    public void detach(Observer<T> observer) {
+    void detach(Observer<T> observer) {
         observers.remove(observer);
     }
 

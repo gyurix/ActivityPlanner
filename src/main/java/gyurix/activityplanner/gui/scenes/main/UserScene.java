@@ -60,10 +60,9 @@ public class UserScene extends InfoScreen<User> {
     public void createNodes() {
         info.visitCreatedContents(new ContentRenderer(this));
         Observable<String> un = info.getUsername();
-        usernameLabel = new Label(un.getData());
+        usernameLabel = new Label();
         logoutButton.setOnAction((e) -> new LoginScene(stage).start());
-        un.attach(() -> usernameLabel.setText(un.getData()));
-
+        attach(un, () -> usernameLabel.setText(un.getData()));
     }
 
     public ColumnConstraints makeColumn(double width, HPos alignment) {
