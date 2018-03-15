@@ -5,6 +5,7 @@ import gyurix.activityplanner.core.observation.Observable;
 import gyurix.activityplanner.gui.renderers.ContentRenderer;
 import gyurix.activityplanner.gui.scenes.InfoScreen;
 import javafx.geometry.HPos;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -12,6 +13,7 @@ import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.RowConstraints;
 import javafx.scene.paint.Color;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import lombok.Getter;
 
@@ -29,6 +31,7 @@ public class UserScene extends InfoScreen<User> {
     private GridPane grid = new GridPane();
     private Button logoutButton = new Button("Logout");
     private GridPane tables = new GridPane();
+    private ContentRenderer renderer;
     private Label usernameLabel = new Label();
 
     public UserScene(User info, Stage stage) {
@@ -39,7 +42,7 @@ public class UserScene extends InfoScreen<User> {
     @Override
     public void addNodesToGrid() {
         addNodesToMainGrid();
-        info.visitCreatedContents(new ContentRenderer(this));
+        info.visitCreatedContents(renderer = new ContentRenderer(this));
         addNodesToGridChat();
     }
 
@@ -79,7 +82,11 @@ public class UserScene extends InfoScreen<User> {
         grid.setVgap(10);
 
         chat.setBackground(bgColorGradientTop(chatBackground));
+        chat.setHgap(5);
+        chat.setVgap(5);
         tables.setBackground(bgColorGradientTop(tableBackground));
+        tables.setHgap(5);
+        tables.setVgap(5);
         alerts.setBackground(bgColorGradientTop(alertBackground));
         alerts.setHgap(5);
         alerts.setVgap(5);
@@ -121,7 +128,22 @@ public class UserScene extends InfoScreen<User> {
 
     @Override
     public void prepareScene() {
-        Scene scene = new Scene(grid, 800, 520);
+        Screen screen = Screen.getPrimary();
+        Rectangle2D bounds = screen.getVisualBounds();
+        double maxx = bounds.getWidth();
+        double maxy = bounds.getHeight();
+        Scene scene = new Scene(grid, maxx * 0.8, maxy * 0.8);
+        stage.setMinWidth(320);
+        stage.setMinHeight(240);
+        stage.setResizable(true);
+        stage.setX(0.1 * maxx);
+        stage.setY(0.1 * maxy);
         stage.setScene(scene);
+    }
+
+    @Override
+    public void destroy() {
+        super.destroy();
+        renderer.destroy();
     }
 }

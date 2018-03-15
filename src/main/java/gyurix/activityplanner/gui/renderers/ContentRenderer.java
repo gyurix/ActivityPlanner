@@ -16,13 +16,11 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
-import java.text.SimpleDateFormat;
-
 import static gyurix.activityplanner.gui.scenes.SceneUtils.bgColorGradientTop;
+import static gyurix.activityplanner.gui.scenes.SceneUtils.formatTime;
 import static java.lang.Double.MAX_VALUE;
 
 public class ContentRenderer extends ObserverContainer implements ContentVisitor {
-    private static final SimpleDateFormat sdf = new SimpleDateFormat("[yyyy.MM.dd] HH:mm:ss");
     private int alertIndex, tableIndex;
     private UserScene scene;
 
@@ -77,7 +75,7 @@ public class ContentRenderer extends ObserverContainer implements ContentVisitor
         grid.setOnMouseReleased((e) -> {
             if (e.getButton() != MouseButton.PRIMARY)
                 return;
-            new AlertViewer(a, new Stage());
+            new AlertViewer(a, new Stage()).start();
         });
 
         return grid;
@@ -86,7 +84,7 @@ public class ContentRenderer extends ObserverContainer implements ContentVisitor
     private Label renderDate(Observable<Long> obs) {
         Label label = new Label();
         label.setPrefWidth(MAX_VALUE);
-        attach(obs, () -> label.setText(sdf.format(obs.getData())));
+        attach(obs, () -> label.setText(formatTime(obs.getData())));
         return label;
     }
 

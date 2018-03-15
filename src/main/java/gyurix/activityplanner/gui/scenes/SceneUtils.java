@@ -8,7 +8,14 @@ import javafx.scene.paint.CycleMethod;
 import javafx.scene.paint.LinearGradient;
 import javafx.scene.paint.Stop;
 
+import java.text.SimpleDateFormat;
+
 public class SceneUtils {
+    private static final SimpleDateFormat sdf = new SimpleDateFormat("[yyyy.MM.dd] HH:mm:ss");
+
+    public static String formatTime(long time) {
+        return sdf.format(time);
+    }
 
     public static double avg(double d1, double d2) {
         return (d1 + d2) / 2.0;

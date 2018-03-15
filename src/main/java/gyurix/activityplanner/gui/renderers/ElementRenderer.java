@@ -11,16 +11,15 @@ import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseButton;
-import javafx.scene.layout.GridPane;
+import javafx.scene.layout.VBox;
 
 import static java.lang.Double.MAX_VALUE;
 
 public class ElementRenderer extends ObserverContainer implements ElementVisitor {
-    private final GridPane grid;
-    private int row;
+    private final VBox box;
 
-    public ElementRenderer(GridPane grid) {
-        this.grid = grid;
+    public ElementRenderer(VBox box) {
+        this.box = box;
     }
 
     private Node renderAudio(AudioElement e) {
@@ -59,27 +58,27 @@ public class ElementRenderer extends ObserverContainer implements ElementVisitor
     }
 
     @Override
-    public void visit(TextElement e) {
-        grid.add(renderText(e), 0, row++);
+    public void visit(AudioElement e) {
+        box.getChildren().add(renderAudio(e));
     }
 
     @Override
-    public void visit(VideoElement e) {
-        grid.add(renderVideo(e), 0, row++);
+    public void visit(TextElement e) {
+        box.getChildren().add(renderText(e));
     }
 
     @Override
     public void visit(PictureElement e) {
-        grid.add(renderPicture(e), 0, row++);
+        box.getChildren().add(renderPicture(e));
+    }
+
+    @Override
+    public void visit(VideoElement e) {
+        box.getChildren().add(renderVideo(e));
     }
 
     @Override
     public void visit(LinkElement e) {
-        grid.add(renderLink(e), 0, row++);
-    }
-
-    @Override
-    public void visit(AudioElement e) {
-        grid.add(renderAudio(e), 0, row++);
+        box.getChildren().add(renderLink(e));
     }
 }

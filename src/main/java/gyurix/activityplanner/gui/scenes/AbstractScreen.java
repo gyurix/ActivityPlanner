@@ -27,5 +27,6 @@ public abstract class AbstractScreen extends ObserverContainer {
         makeGrid();
         addNodesToGrid();
         prepareScene();
+        stage.setOnCloseRequest(event -> destroy());
     }
 }
