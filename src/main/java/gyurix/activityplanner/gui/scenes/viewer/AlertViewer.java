@@ -1,8 +1,6 @@
 package gyurix.activityplanner.gui.scenes.viewer;
 
 import gyurix.activityplanner.core.data.content.Alert;
-import gyurix.activityplanner.core.data.element.Element;
-import gyurix.activityplanner.core.observation.ListObserver;
 import gyurix.activityplanner.core.observation.Observable;
 import gyurix.activityplanner.gui.renderers.ElementRenderer;
 import gyurix.activityplanner.gui.scenes.InfoScreen;
@@ -15,20 +13,19 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.RowConstraints;
-import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 
-import static gyurix.activityplanner.gui.scenes.SceneUtils.bgColorGradient;
+import static gyurix.activityplanner.gui.scenes.SceneUtils.bgColorGradientInv;
 import static gyurix.activityplanner.gui.scenes.SceneUtils.formatTime;
 import static java.lang.Double.MAX_VALUE;
 
 public class AlertViewer extends InfoScreen<Alert> {
-    private VBox elements;
-    private ElementRenderer er;
+    private GridPane elements;
     private ScrollPane elementsWrapper;
+    private ElementRenderer er;
     private GridPane grid = new GridPane();
     private Label title, subtitle, date;
 
@@ -42,6 +39,24 @@ public class AlertViewer extends InfoScreen<Alert> {
         grid.add(subtitle, 1, 2);
         grid.add(date, 1, 3);
         grid.add(elementsWrapper, 1, 4);
+    }
+
+    public void createElementsGrid() {
+        elements = new GridPane();
+        ColumnConstraints full = new ColumnConstraints();
+        full.setPercentWidth(100);
+        elements.getColumnConstraints().add(full);
+        if (er != null)
+            er.destroy();
+        er = new ElementRenderer(info, elements);
+        info.getElements().forEach((e) -> e.getData().accept(er));
+        elements.setOnScroll(e -> {
+            double deltaY = e.getDeltaY() * 3;
+            double width = elements.getBoundsInLocal().getHeight();
+            double vvalue = elementsWrapper.getVvalue();
+            elementsWrapper.setVvalue(vvalue - deltaY / width);
+        });
+        elementsWrapper.setContent(elements);
     }
 
     @Override
@@ -58,32 +73,9 @@ public class AlertViewer extends InfoScreen<Alert> {
         date.setPrefWidth(MAX_VALUE);
         date.setAlignment(Pos.BOTTOM_RIGHT);
 
-        elements = createElementsGrid();
-        elementsWrapper = new ScrollPane(elements);
-        elementsWrapper.setStyle("-fx-background: #" + info.getColor() + "ff");
-        elementsWrapper.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-        info.getElements().attach(new ListObserver<Observable<Element>>() {
-            @Override
-            public void onAdd(Observable<Element> observable) {
-                elements = createElementsGrid();
-                elementsWrapper.setContent(elements);
-            }
-
-            @Override
-            public void onRemove(Observable<Element> observable) {
-                elements = createElementsGrid();
-                elementsWrapper.setContent(elements);
-            }
-        });
-    }
-
-    @Override
-    public void makeGridColumns() {
-        ColumnConstraints side = new ColumnConstraints();
-        ColumnConstraints center = new ColumnConstraints();
-        side.setPercentWidth(10);
-        center.setPercentWidth(80);
-        grid.getColumnConstraints().addAll(side, center, side);
+        elementsWrapper = new ScrollPane();
+        elementsWrapper.setFitToWidth(true);
+        createElementsGrid();
     }
 
     @Override
@@ -123,8 +115,13 @@ public class AlertViewer extends InfoScreen<Alert> {
         stage.show();
     }
 
-    public void makeDynamicBackground(GridPane grid, Observable<String> obs) {
-        attach(obs, () -> grid.setBackground(bgColorGradient(Color.web("#" + obs.getData()))));
+    @Override
+    public void makeGridColumns() {
+        ColumnConstraints side = new ColumnConstraints();
+        ColumnConstraints center = new ColumnConstraints();
+        side.setPercentWidth(5);
+        center.setPercentWidth(90);
+        grid.getColumnConstraints().addAll(side, center, side);
     }
 
     @Override
@@ -136,18 +133,15 @@ public class AlertViewer extends InfoScreen<Alert> {
         makeGridRows();
     }
 
-    public VBox createElementsGrid() {
-        VBox box = new VBox();
-        if (er != null)
-            er.destroy();
-        er = new ElementRenderer(box);
-        info.getElements().forEach((e) -> e.getData().accept(er));
-        return box;
+    public void makeDynamicBackground(GridPane grid, Observable<String> obs) {
+        attach(obs, () -> {
+            Color c = Color.web("#" + obs.getData());
+            grid.setBackground(bgColorGradientInv(c));
+        });
     }
 
     @Override
     public void destroy() {
-        System.out.println("Destroy alert viewer");
         super.destroy();
         er.destroy();
     }

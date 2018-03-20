@@ -41,6 +41,14 @@ public class SceneUtils {
         return new Background(new BackgroundFill(lg, radii, null));
     }
 
+    public static Background bgColorGradientInv(Color color) {
+        Color brighter = avgColor(Color.WHITE, color);
+        Color darker = avgColor(Color.BLACK, color);
+        LinearGradient lg = new LinearGradient(0, 0, 1, 1, true, CycleMethod.REPEAT,
+                new Stop(0, brighter), new Stop(0.8, color), new Stop(1, darker));
+        return new Background(new BackgroundFill(lg, null, null));
+    }
+
     public static Background bgColorGradient(Color color) {
         return bgColorGradient(color, null);
     }

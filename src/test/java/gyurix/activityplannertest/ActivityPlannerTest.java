@@ -31,8 +31,12 @@ public class ActivityPlannerTest extends Application {
         Table t1 = new Table("Table title", "Table subtitle", "ffff00");
         Table t2 = new Table("Table2 title", "Table2 subtitle", "ffffff");
         Alert a1 = new Alert(currentTimeMillis(), "Alert title", "Alert subtitle", "ff8000");
-        a1.getElements().add(new Observable<>(new TextElement("Some text goes here\nWhich can have\nMultiline support")));
-        a1.getElements().add(new Observable<>(new LinkElement("Click here", "google.com")));
+        StringBuilder longText = new StringBuilder();
+        for (int i = 0; i < 1000; ++i) {
+            longText.append("This is the ").append(i).append(". line of this super long text\n");
+        }
+        a1.getElements().add(new Observable<>(new TextElement(longText.toString())));
+        a1.getElements().add(new Observable<>(new LinkElement("Click here", "http://google.com")));
         Alert a2 = new Alert(currentTimeMillis(), "Alert2 title", "Alert2 subtitle", "ff4000");
         s1.getLectures().add("l1");
         l1.getCreatedContents().add(ds.addContent(t1));
