@@ -6,28 +6,88 @@ import gyurix.activityplanner.core.data.content.Alert;
 import gyurix.activityplanner.core.data.element.*;
 import gyurix.activityplanner.core.data.visitors.ElementVisitor;
 import gyurix.activityplanner.core.observation.Observable;
+import gyurix.activityplanner.core.observation.Observer;
 import gyurix.activityplanner.core.observation.ObserverContainer;
 import gyurix.activityplanner.gui.ActivityPlannerLauncher;
+import gyurix.activityplanner.gui.assets.Icons;
+import gyurix.activityplanner.gui.scenes.viewer.AlertViewer;
+import javafx.application.Platform;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
+import javafx.scene.web.WebView;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
-import static gyurix.activityplanner.gui.scenes.SceneUtils.avgColor;
-import static gyurix.activityplanner.gui.scenes.SceneUtils.bgColor;
+import java.util.ArrayList;
+
+import static gyurix.activityplanner.gui.scenes.SceneUtils.*;
 import static java.lang.Double.MAX_VALUE;
 
 public class ElementRenderer extends ObserverContainer implements ElementVisitor {
+    private static final double ASPECT_RATIO = 0.75;
+    private static final double VIDEO_BOX_HEIGHT_MULTIPLIER = 0.9;
+    private static final double VIDEO_BOX_WIDTH_MULTIPLIER = 0.95;
+    private static final double WIDTH_MULTIPLIER = 0.74;
+    private final AlertViewer parent;
     private final Alert alert;
     private final GridPane box;
+    private ArrayList<WebView> destroyableWebViews = new ArrayList<>();
     private int row;
 
-    public ElementRenderer(Alert alert, GridPane box) {
-        this.alert = alert;
-        this.box = box;
+    public ElementRenderer(AlertViewer viewer) {
+        this.parent = viewer;
+        this.box = viewer.getElements();
+        this.alert = viewer.getInfo();
+    }
+
+    private WebView createWebView(boolean audio) {
+        WebView webView = new WebView();
+        webView.setContextMenuEnabled(false);
+        int width = (int) (parent.getScreenWidth().getData() * WIDTH_MULTIPLIER);
+        int height = audio ? 58 : (int) (width * ASPECT_RATIO);
+        webView.setMaxSize(width, height);
+        webView.setPrefSize(width, height);
+        webView.setOnScroll((ev) -> parent.getScrollHandler().handle(ev));
+        Observer resize;
+        if (audio) {
+            resize = () -> {
+                Document d = webView.getEngine().getDocument();
+                if (d != null) {
+                    Element el = d.getElementById("d");
+                    if (el != null) {
+                        int maxx = (int) (parent.getScreenWidth().getData() * 0.75);
+                        webView.setMaxWidth(maxx);
+                        webView.setPrefWidth(maxx);
+                        el.setAttribute("style", "width: " + String.valueOf(maxx * VIDEO_BOX_WIDTH_MULTIPLIER) + "px");
+                    }
+                }
+            };
+        } else {
+            resize = () -> {
+                Document d = webView.getEngine().getDocument();
+                if (d != null) {
+                    Element el = d.getElementById("d");
+                    if (el != null) {
+                        int maxx = (int) (parent.getScreenWidth().getData() * 0.75);
+                        int maxy = (int) (maxx * ASPECT_RATIO);
+                        webView.setMaxSize(maxx, maxy);
+                        webView.setPrefSize(maxx, maxy);
+                        el.setAttribute("width", String.valueOf(maxx * VIDEO_BOX_WIDTH_MULTIPLIER));
+                        el.setAttribute("height", String.valueOf(maxy * VIDEO_BOX_HEIGHT_MULTIPLIER));
+                    }
+                }
+            };
+        }
+        attach(parent.getScreenWidth(), resize);
+        destroyableWebViews.add(webView);
+        return webView;
     }
 
     public void addToBox(Region r) {
@@ -47,16 +107,10 @@ public class ElementRenderer extends ObserverContainer implements ElementVisitor
         return grid;
     }
 
-    public void makeDynamicBackground(Region r, Observable<String> obs) {
-        boolean brighter = row % 2 == 0;
-        attach(obs, () -> {
-            Color c = Color.web("#" + obs.getData());
-            if (brighter)
-                c = avgColor(c, Color.WHITE);
-            else
-                c = avgColor(c, avgColor(c, Color.WHITE));
-            r.setBackground(bgColor(c));
-        });
+    @Override
+    public void destroy() {
+        super.destroy();
+        destroyableWebViews.forEach((wv) -> wv.getEngine().load(null));
     }
 
     public GridPane makeSeparatorGrid(Region r) {
@@ -69,8 +123,15 @@ public class ElementRenderer extends ObserverContainer implements ElementVisitor
         return grid;
     }
 
-    private Region renderAudio(AudioElement e) {
-        return renderLink(e);
+    public Color getBackgroundColor(int row) {
+        boolean brighter = row % 2 == 0;
+        Color c = Color.web("#" + alert.getColor().getData());
+        return brighter ? avgColor(c, Color.WHITE) : avgColor(c, avgColor(c, Color.WHITE));
+    }
+
+    public void makeDynamicBackground(Region r, Observable<String> obs) {
+        int row = this.row;
+        attach(obs, () -> r.setBackground(bgColor(getBackgroundColor(row))));
     }
 
     private Region renderLink(LinkElement link) {
@@ -88,8 +149,25 @@ public class ElementRenderer extends ObserverContainer implements ElementVisitor
         return label;
     }
 
-    private Region renderPicture(PictureElement e) {
-        return renderLink(e);
+    private Region renderAudio(AudioElement e) {
+        int row = this.row;
+        GridPane pane = new GridPane();
+        ColumnConstraints main = new ColumnConstraints();
+        main.setPercentWidth(100);
+        pane.getColumnConstraints().add(main);
+        WebView webView = createWebView(true);
+        Observer o = () -> {
+            int width = (int) (parent.getScreenWidth().getData() * WIDTH_MULTIPLIER);
+            webView.getEngine().loadContent(
+                    "<body style=\"background-color:" + colorToHex(getBackgroundColor(row)) + "\">" +
+                            "<audio id=\"d\" style=\"width:" + width * VIDEO_BOX_WIDTH_MULTIPLIER + "px\"controls>" +
+                            "<source src=\"" + e.getUrl().getData() + "\"></audio></body>");
+        };
+        attach(e.getUrl(), o);
+        attach(alert.getColor(), o);
+        pane.add(webView, 0, 0);
+        pane.add(renderLink(e), 0, 1);
+        return pane;
     }
 
     private Label renderText(TextElement el) {
@@ -100,8 +178,25 @@ public class ElementRenderer extends ObserverContainer implements ElementVisitor
         return label;
     }
 
-    private Region renderVideo(VideoElement e) {
-        return renderLink(e);
+    private Region renderPicture(PictureElement e) {
+        GridPane pane = new GridPane();
+        ColumnConstraints main = new ColumnConstraints();
+        main.setPercentWidth(100);
+        pane.getColumnConstraints().add(main);
+        ImageView imgView = new ImageView(Icons.LOADING.getImage());
+        imgView.setPreserveRatio(true);
+        //Image loading is an external I/O operation, so we do it asynchronously
+        attach(e.getUrl(), () -> runAsync(() -> {
+            Image img = new Image(e.getUrl().getData());
+            Platform.runLater(() -> {
+                imgView.setImage(img);
+                imgView.setFitWidth(parent.getScreenWidth().getData() * WIDTH_MULTIPLIER);
+            });
+        }));
+        attach(parent.getScreenWidth(), () -> imgView.setFitWidth(parent.getScreenWidth().getData() * WIDTH_MULTIPLIER));
+        pane.add(renderLink(e), 0, 0);
+        pane.add(imgView, 0, 1);
+        return pane;
     }
 
     @Override
@@ -127,5 +222,29 @@ public class ElementRenderer extends ObserverContainer implements ElementVisitor
     @Override
     public void visit(LinkElement e) {
         addToBox(renderLink(e));
+    }
+
+    private Region renderVideo(VideoElement e) {
+        int row = this.row;
+        GridPane pane = new GridPane();
+        ColumnConstraints main = new ColumnConstraints();
+        main.setPercentWidth(100);
+        pane.getColumnConstraints().add(main);
+        WebView webView = createWebView(false);
+        Observer contentChange = () -> {
+            int width = (int) (parent.getScreenWidth().getData() * WIDTH_MULTIPLIER);
+            int height = (int) (width * ASPECT_RATIO);
+            webView.getEngine().loadContent("<body style=\"background-color:" + colorToHex(getBackgroundColor(row)) + "\">" +
+                    "<video id=\"d\" width=\"" + width * VIDEO_BOX_WIDTH_MULTIPLIER + "\" " +
+                    "height=\"" + height * VIDEO_BOX_HEIGHT_MULTIPLIER + "\" controls>" +
+                    "<source src=\"" + e.getUrl().getData() + "\">" +
+                    "</video>" +
+                    "</body>");
+        };
+        attach(e.getUrl(), contentChange);
+        attach(alert.getColor(), contentChange);
+        pane.add(webView, 0, 1);
+        pane.add(renderLink(e), 0, 0);
+        return pane;
     }
 }

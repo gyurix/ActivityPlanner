@@ -1,7 +1,7 @@
 package gyurix.activityplanner.gui.scenes.main;
 
 import gyurix.activityplanner.core.storage.DataStorage;
-import gyurix.activityplanner.gui.ActivityPlannerLauncher;
+import gyurix.activityplanner.gui.assets.Icons;
 import gyurix.activityplanner.gui.scenes.AbstractScreen;
 import gyurix.activityplanner.gui.scenes.SceneUtils;
 import javafx.application.Platform;
@@ -9,7 +9,6 @@ import javafx.event.ActionEvent;
 import javafx.geometry.HPos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.image.Image;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
@@ -43,6 +42,7 @@ public class LoginScene extends AbstractScreen {
         usernameField.setOnAction(this::login);
         passwordField.setOnAction(this::login);
     }
+
     private void login(ActionEvent e) {
         DataStorage.getInstance().getUser(usernameField.getText(), (user) -> {
             Platform.runLater(() -> {
@@ -98,7 +98,7 @@ public class LoginScene extends AbstractScreen {
     public void prepareScene() {
         Scene scene = new Scene(grid, 320, 240);
         stage.setResizable(false);
-        stage.getIcons().add(new Image(ActivityPlannerLauncher.class.getResourceAsStream("/icons/icon.png")));
+        stage.getIcons().add(Icons.LOGO.getImage());
         stage.setTitle("• ActivityPlanner - Login •");
         stage.setScene(scene);
         stage.show();

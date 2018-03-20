@@ -5,6 +5,9 @@ import javafx.application.Application;
 import javafx.stage.Stage;
 import lombok.Getter;
 
+import java.net.CookieHandler;
+import java.net.CookieManager;
+
 public class ActivityPlannerLauncher extends Application {
     @Getter
     private static ActivityPlannerLauncher instance;
@@ -15,6 +18,7 @@ public class ActivityPlannerLauncher extends Application {
 
     public void start(Stage stage) {
         instance = this;
+        CookieHandler.setDefault(new CookieManager());
         new LoginScene(stage).start();
     }
 }

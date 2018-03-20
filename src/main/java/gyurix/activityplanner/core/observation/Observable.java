@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Observable<T> extends WrappedData<T> {
-    private final List<Observer<T>> observers = new ArrayList<>();
+    private final List<Observer> observers = new ArrayList<>();
 
     public Observable() {
         super(null);
@@ -16,11 +16,11 @@ public class Observable<T> extends WrappedData<T> {
         super(data);
     }
 
-    void attach(Observer<T> observer) {
+    void attach(Observer observer) {
         observers.add(observer);
     }
 
-    void detach(Observer<T> observer) {
+    void detach(Observer observer) {
         observers.remove(observer);
     }
 

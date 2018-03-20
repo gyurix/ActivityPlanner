@@ -1,5 +1,5 @@
 package gyurix.activityplanner.core.observation;
 
-public interface Observer<T> {
+public interface Observer {
     void update();
 }
