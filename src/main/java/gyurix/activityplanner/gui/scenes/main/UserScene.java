@@ -61,7 +61,7 @@ public class UserScene extends InfoScreen<User> {
 
     @Override
     public void createNodes() {
-        info.visitCreatedContents(new ContentRenderer(this));
+        info.visitCreatedContents(renderer = new ContentRenderer(this));
         Observable<String> un = info.getUsername();
         usernameLabel = new Label();
         logoutButton.setOnAction((e) -> new LoginScene(stage).start());

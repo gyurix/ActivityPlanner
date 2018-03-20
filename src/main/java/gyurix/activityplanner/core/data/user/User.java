@@ -22,6 +22,6 @@ public abstract class User extends StorableData {
     public abstract void accept(UserVisitor visitor);
 
     public void visitCreatedContents(ContentVisitor visitor) {
-        getCreatedContents().forEach((cid) -> DataStorage.getInstance().getContent(cid).accept(visitor));
+        getCreatedContents().forEach((cid) -> DataStorage.getInstance().getContent(cid, (c) -> c.accept(visitor)));
     }
 }

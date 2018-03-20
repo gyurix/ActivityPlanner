@@ -7,6 +7,7 @@ import gyurix.activityplanner.core.observation.Observable;
 import gyurix.activityplanner.core.observation.ObserverContainer;
 import gyurix.activityplanner.gui.scenes.main.UserScene;
 import gyurix.activityplanner.gui.scenes.viewer.AlertViewer;
+import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseButton;
@@ -102,11 +103,11 @@ public class ContentRenderer extends ObserverContainer implements ContentVisitor
 
     @Override
     public void visit(Alert a) {
-        scene.getAlerts().add(renderAlert(a), 1, alertIndex++);
+        Platform.runLater(() -> scene.getAlerts().add(renderAlert(a), 1, alertIndex++));
     }
 
     @Override
     public void visit(Table t) {
-        scene.getTables().add(renderTable(t), 1, tableIndex++);
+        Platform.runLater(() -> scene.getTables().add(renderTable(t), 1, tableIndex++));
     }
 }

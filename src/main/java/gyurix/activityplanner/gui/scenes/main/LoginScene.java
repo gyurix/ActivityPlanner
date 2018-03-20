@@ -1,10 +1,10 @@
 package gyurix.activityplanner.gui.scenes.main;
 
-import gyurix.activityplanner.core.data.user.User;
 import gyurix.activityplanner.core.storage.DataStorage;
 import gyurix.activityplanner.gui.ActivityPlannerLauncher;
 import gyurix.activityplanner.gui.scenes.AbstractScreen;
 import gyurix.activityplanner.gui.scenes.SceneUtils;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.geometry.HPos;
 import javafx.geometry.Pos;
@@ -54,16 +54,19 @@ public class LoginScene extends AbstractScreen {
     }
 
     private void login(ActionEvent e) {
-        User user = DataStorage.getInstance().getUser(usernameField.getText());
-        if (user == null) {
-            loginResult.setText("Incorrect username");
-            return;
-        }
-        if (!passwordField.getText().equals(user.getPassword().getData())) {
-            loginResult.setText("Incorrect password");
-            return;
-        }
-        new UserScene(user, stage).start();
+        DataStorage.getInstance().getUser(usernameField.getText(), (user) -> {
+            Platform.runLater(() -> {
+                if (user == null) {
+                    loginResult.setText("Incorrect username");
+                    return;
+                }
+                if (!passwordField.getText().equals(user.getPassword().getData())) {
+                    loginResult.setText("Incorrect password");
+                    return;
+                }
+                new UserScene(user, stage).start();
+            });
+        });
     }
 
     public void makeGrid() {

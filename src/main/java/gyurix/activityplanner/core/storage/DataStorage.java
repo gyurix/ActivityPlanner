@@ -15,6 +15,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.nio.charset.Charset;
 import java.util.TreeMap;
+import java.util.function.Consumer;
 
 public class DataStorage extends StorableData {
     @Getter
@@ -40,16 +41,16 @@ public class DataStorage extends StorableData {
         return users.put(user.getUsername().getData(), user) == null;
     }
 
-    public Content getContent(int contentId) {
-        return contents.get(contentId);
+    public void getContent(int contentId, Consumer<Content> consumer) {
+        consumer.accept(contents.get(contentId));
     }
 
-    public User getUser(String userName) {
-        return users.get(userName);
+    public void getUser(String userName, Consumer<User> consumer) {
+        consumer.accept(users.get(userName));
     }
 
-    public boolean removeUser(String userName) {
-        return users.remove(userName) != null;
+    public void removeUser(String userName, Consumer<Boolean> consumer) {
+        consumer.accept(users.remove(userName) != null);
     }
 
     @SneakyThrows
