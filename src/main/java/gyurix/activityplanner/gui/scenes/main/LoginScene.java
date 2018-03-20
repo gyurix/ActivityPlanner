@@ -7,12 +7,8 @@ import gyurix.activityplanner.gui.scenes.SceneUtils;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.geometry.HPos;
-import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.ColumnConstraints;
@@ -25,7 +21,6 @@ public class LoginScene extends AbstractScreen {
     private Background background = SceneUtils.bgColorGradient(Color.web("#b08045"));
     private GridPane grid = new GridPane();
     private Button loginButton = new Button("Login");
-    private Label loginResult = new Label("");
     private PasswordField passwordField = new PasswordField();
     private Label passwordLabel = new Label("Password");
     private TextField usernameField = new TextField("l1");
@@ -36,7 +31,6 @@ public class LoginScene extends AbstractScreen {
     }
 
     public void addNodesToGrid() {
-        grid.add(loginResult, 0, 0, 3, 1);
         grid.add(usernameLabel, 0, 1);
         grid.add(passwordLabel, 0, 2);
         grid.add(usernameField, 1, 1);
@@ -45,28 +39,31 @@ public class LoginScene extends AbstractScreen {
     }
 
     public void createNodes() {
-        loginResult.setTextFill(Color.RED);
-        loginResult.setAlignment(Pos.CENTER);
-        loginResult.setMaxWidth(Double.MAX_VALUE);
         loginButton.setOnAction(this::login);
         usernameField.setOnAction(this::login);
         passwordField.setOnAction(this::login);
     }
-
     private void login(ActionEvent e) {
         DataStorage.getInstance().getUser(usernameField.getText(), (user) -> {
             Platform.runLater(() -> {
                 if (user == null) {
-                    loginResult.setText("Incorrect username");
+                    makeAlert("Incorrect Username", "The entered username is incorrect").showAndWait();
                     return;
                 }
                 if (!passwordField.getText().equals(user.getPassword().getData())) {
-                    loginResult.setText("Incorrect password");
+                    makeAlert("Incorrect Password", "The entered password is incorrect").showAndWait();
                     return;
                 }
                 new UserScene(user, stage).start();
             });
         });
+    }
+
+    public Alert makeAlert(String title, String msg) {
+        Alert a = new Alert(Alert.AlertType.ERROR);
+        a.setTitle(title);
+        a.setContentText(msg);
+        return a;
     }
 
     public void makeGrid() {
