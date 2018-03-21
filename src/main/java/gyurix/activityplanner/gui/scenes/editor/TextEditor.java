@@ -3,6 +3,7 @@ package gyurix.activityplanner.gui.scenes.editor;
 import gyurix.activityplanner.core.data.element.TextElement;
 import gyurix.activityplanner.core.observation.Observable;
 import gyurix.activityplanner.gui.scenes.core.AbstractScreen;
+import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
@@ -16,6 +17,7 @@ public class TextEditor extends AbstractScreen {
     private Observable<String> text;
     private TextArea textArea = new TextArea();
     private Label textLabel = new Label("Text");
+    private boolean editLock;
 
     public TextEditor(TextElement el) {
         super(new Stage());
@@ -31,10 +33,15 @@ public class TextEditor extends AbstractScreen {
         textLabel.setAlignment(Pos.CENTER);
         textLabel.setPrefWidth(Double.MAX_VALUE);
         createResizableScene(0.3, "Text Editor");
-        attach(text, () -> textArea.setText(text.getData()));
+        attach(text, () -> {
+            if (!editLock) textArea.setText(text.getData());
+        });
         textArea.setOnKeyTyped((e) -> {
-            text.setData(textArea.getText());
-            System.out.println("Set text to " + text.getData());
+            Platform.runLater(() -> {
+                editLock = true;
+                text.setData(textArea.getText());
+                editLock = false;
+            });
         });
     }
 
@@ -55,7 +62,10 @@ public class TextEditor extends AbstractScreen {
     public void makeGridRows() {
         RowConstraints side = new RowConstraints();
         side.setPercentHeight(5);
-        RowConstraints main = new RowConstraints();
-        grid.getRowConstraints().addAll(side, main, main, side);
+        RowConstraints label = new RowConstraints();
+        label.setPercentHeight(5);
+        RowConstraints editor = new RowConstraints();
+        editor.setPercentHeight(85);
+        grid.getRowConstraints().addAll(side, label, editor, side);
     }
 }
