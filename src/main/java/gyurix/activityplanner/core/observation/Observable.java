@@ -32,9 +32,4 @@ public class Observable<T> extends WrappedData<T> {
         wrappedData = data;
         observers.forEach(Observer::update);
     }
-
-    @Override
-    public String toString() {
-        return wrappedData.toString();
-    }
 }

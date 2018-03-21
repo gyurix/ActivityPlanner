@@ -2,7 +2,7 @@ package gyurix.activityplanner.gui.renderers;
 
 import com.sun.deploy.uitoolkit.impl.fx.HostServicesFactory;
 import com.sun.javafx.application.HostServicesDelegate;
-import gyurix.activityplanner.core.data.content.Colorable;
+import gyurix.activityplanner.core.data.content.ElementHolder;
 import gyurix.activityplanner.core.data.element.*;
 import gyurix.activityplanner.core.data.visitors.ElementVisitor;
 import gyurix.activityplanner.core.observation.Observable;
@@ -10,6 +10,7 @@ import gyurix.activityplanner.core.observation.Observer;
 import gyurix.activityplanner.gui.ActivityPlannerLauncher;
 import gyurix.activityplanner.gui.assets.Icons;
 import gyurix.activityplanner.gui.scenes.core.ElementHolderScreen;
+import gyurix.activityplanner.gui.scenes.editor.TextEditor;
 import javafx.application.Platform;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
@@ -35,16 +36,16 @@ public class ElementRenderer extends DataRenderer implements ElementVisitor {
     private static final double VIDEO_BOX_WIDTH_MULTIPLIER = 0.95;
     private static final double WIDTH_MULTIPLIER = 0.74;
     private static final double ICON_SIZE_MULTIPLIER = 0.04;
-    private final Colorable colorable;
-    private final ElementHolderScreen<? extends Colorable> parent;
+    private final ElementHolder elementHolder;
+    private final ElementHolderScreen<? extends ElementHolder> parent;
     private final GridPane box;
     private ArrayList<WebView> destroyableWebViews = new ArrayList<>();
     private int row;
 
-    public ElementRenderer(ElementHolderScreen<? extends Colorable> viewer) {
+    public ElementRenderer(ElementHolderScreen<? extends ElementHolder> viewer) {
         this.parent = viewer;
         this.box = viewer.getElements();
-        this.colorable = viewer.getInfo();
+        this.elementHolder = viewer.getInfo();
     }
 
     public void addToBox(TextElement e, Region r) {
@@ -53,20 +54,24 @@ public class ElementRenderer extends DataRenderer implements ElementVisitor {
         edit.setOnMouseReleased((me) -> {
             if (me.getButton() != MouseButton.PRIMARY)
                 return;
-            System.out.println("Clicked to edit button");
+            new TextEditor(e).start();
         });
+
         ImageView remove = new ImageView(Icons.REMOVE.getImage());
         remove.setPreserveRatio(true);
-        edit.setOnMouseReleased((me) -> {
+        remove.setOnMouseReleased((me) -> {
             if (me.getButton() != MouseButton.PRIMARY)
                 return;
-            System.out.println("Clicked to remove button");
+            elementHolder.getElements().remove(new Observable<>(e));
+            parent.createElementsGrid();
         });
+
         attach(parent.getScreenWidth(), () -> {
             double maxx = parent.getScreenWidth().getData() * ICON_SIZE_MULTIPLIER;
             edit.setFitWidth(maxx);
             remove.setFitWidth(maxx);
         });
+
         box.add(makeContentGrid(r, edit, remove), 0, row++);
         box.add(makeSeparatorGrid(r), 0, row++);
     }
@@ -116,7 +121,7 @@ public class ElementRenderer extends DataRenderer implements ElementVisitor {
 
     public Color getBackgroundColor(int row) {
         boolean brighter = row % 2 == 0;
-        Color c = Color.web("#" + colorable.getColor().getData());
+        Color c = Color.web("#" + elementHolder.getColor().getData());
         return brighter ? avgColor(c, Color.WHITE) : avgColor(c, avgColor(c, Color.WHITE));
     }
 
@@ -133,7 +138,7 @@ public class ElementRenderer extends DataRenderer implements ElementVisitor {
         ColumnConstraints center = new ColumnConstraints();
         center.setPercentWidth(90);
         grid.getColumnConstraints().addAll(side, center, side);
-        makeDynamicBackground(grid, colorable.getColor());
+        makeDynamicBackground(grid, elementHolder.getColor());
         grid.add(edit, 0, 0);
         grid.add(content, 1, 0);
         grid.add(remove, 2, 0);
@@ -145,7 +150,7 @@ public class ElementRenderer extends DataRenderer implements ElementVisitor {
         ColumnConstraints main = new ColumnConstraints();
         main.setPercentWidth(100);
         grid.getColumnConstraints().add(main);
-        makeDynamicBackground(grid, colorable.getColor());
+        makeDynamicBackground(grid, elementHolder.getColor());
         grid.add(new Label(""), 0, 0);
         return grid;
     }
@@ -185,7 +190,7 @@ public class ElementRenderer extends DataRenderer implements ElementVisitor {
                             "<source src=\"" + e.getUrl().getData() + "\"></audio></body>");
         };
         attach(e.getUrl(), o);
-        attach(colorable.getColor(), o);
+        attach(elementHolder.getColor(), o);
         pane.add(webView, 0, 0);
         pane.add(renderLink(e), 0, 1);
         return pane;
@@ -238,7 +243,7 @@ public class ElementRenderer extends DataRenderer implements ElementVisitor {
                     "</body>");
         };
         attach(e.getUrl(), contentChange);
-        attach(colorable.getColor(), contentChange);
+        attach(elementHolder.getColor(), contentChange);
         pane.add(webView, 0, 1);
         pane.add(renderLink(e), 0, 0);
         return pane;

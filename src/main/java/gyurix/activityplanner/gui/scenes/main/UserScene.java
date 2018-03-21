@@ -5,15 +5,12 @@ import gyurix.activityplanner.core.observation.Observable;
 import gyurix.activityplanner.gui.renderers.ContentRenderer;
 import gyurix.activityplanner.gui.scenes.core.InfoScreen;
 import javafx.geometry.HPos;
-import javafx.geometry.Rectangle2D;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.RowConstraints;
 import javafx.scene.paint.Color;
-import javafx.stage.Screen;
 import javafx.stage.Stage;
 import lombok.Getter;
 
@@ -47,6 +44,7 @@ public class UserScene extends InfoScreen<User> {
 
     @Override
     public void createNodes() {
+        createResizableScene(0.8, "User Dashboard");
         info.visitCreatedContents(renderer = new ContentRenderer(this));
         Observable<String> un = info.getUsername();
         usernameLabel = new Label();
@@ -92,20 +90,6 @@ public class UserScene extends InfoScreen<User> {
         grid.getRowConstraints().addAll(row0, row1);
     }
 
-    @Override
-    public void prepareScene() {
-        Screen screen = Screen.getPrimary();
-        Rectangle2D bounds = screen.getVisualBounds();
-        double maxx = bounds.getWidth();
-        double maxy = bounds.getHeight();
-        Scene scene = new Scene(grid, maxx * 0.8, maxy * 0.8);
-        stage.setMinWidth(320);
-        stage.setMinHeight(240);
-        stage.setResizable(true);
-        stage.setX(0.1 * maxx);
-        stage.setY(0.1 * maxy);
-        stage.setScene(scene);
-    }
 
     private void addNodesToGridChat() {
     }

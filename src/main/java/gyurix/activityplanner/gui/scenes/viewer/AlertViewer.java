@@ -30,7 +30,7 @@ public class AlertViewer extends ElementHolderScreen<Alert> {
 
     @Override
     public void createNodes() {
-        createResizableScene(0.5);
+        createResizableScene(0.5, "Alert Viewer");
         title = renderText(24, info.getTitle());
         title.setPrefWidth(MAX_VALUE);
         title.setAlignment(Pos.BOTTOM_CENTER);
