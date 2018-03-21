@@ -1,4 +1,4 @@
-package gyurix.activityplanner.gui.scenes;
+package gyurix.activityplanner.gui.scenes.core;
 
 import javafx.stage.Stage;
 import lombok.Getter;

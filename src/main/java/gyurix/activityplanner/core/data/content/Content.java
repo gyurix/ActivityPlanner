@@ -8,7 +8,8 @@ import gyurix.activityplanner.core.observation.ObservableList;
 import lombok.Getter;
 
 @Getter
-public abstract class Content extends StorableData {
+public abstract class Content extends StorableData implements ElementHolder {
+    private Observable<String> color;
     private ObservableList<Observable<Element>> elements = new ObservableList<>();
     private Observable<Integer> id = new Observable<Integer>(0) {
         @Override
@@ -18,15 +19,9 @@ public abstract class Content extends StorableData {
             super.setData(data);
         }
     };
-    private Observable<String> title, subtitle;
 
-    private Content() {
-
-    }
-
-    public Content(String title, String subtitle) {
-        this.title = new Observable<>(title);
-        this.subtitle = new Observable<>(subtitle);
+    public Content(String color) {
+        this.color = new Observable<>(color);
     }
 
     public abstract void accept(ContentVisitor visitor);

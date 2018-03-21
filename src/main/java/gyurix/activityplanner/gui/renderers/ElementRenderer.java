@@ -2,15 +2,14 @@ package gyurix.activityplanner.gui.renderers;
 
 import com.sun.deploy.uitoolkit.impl.fx.HostServicesFactory;
 import com.sun.javafx.application.HostServicesDelegate;
-import gyurix.activityplanner.core.data.content.Alert;
+import gyurix.activityplanner.core.data.content.Colorable;
 import gyurix.activityplanner.core.data.element.*;
 import gyurix.activityplanner.core.data.visitors.ElementVisitor;
 import gyurix.activityplanner.core.observation.Observable;
 import gyurix.activityplanner.core.observation.Observer;
-import gyurix.activityplanner.core.observation.ObserverContainer;
 import gyurix.activityplanner.gui.ActivityPlannerLauncher;
 import gyurix.activityplanner.gui.assets.Icons;
-import gyurix.activityplanner.gui.scenes.viewer.AlertViewer;
+import gyurix.activityplanner.gui.scenes.core.ElementHolderScreen;
 import javafx.application.Platform;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
@@ -30,21 +29,46 @@ import java.util.ArrayList;
 import static gyurix.activityplanner.gui.scenes.SceneUtils.*;
 import static java.lang.Double.MAX_VALUE;
 
-public class ElementRenderer extends ObserverContainer implements ElementVisitor {
+public class ElementRenderer extends DataRenderer implements ElementVisitor {
     private static final double ASPECT_RATIO = 0.75;
     private static final double VIDEO_BOX_HEIGHT_MULTIPLIER = 0.9;
     private static final double VIDEO_BOX_WIDTH_MULTIPLIER = 0.95;
     private static final double WIDTH_MULTIPLIER = 0.74;
-    private final AlertViewer parent;
-    private final Alert alert;
+    private static final double ICON_SIZE_MULTIPLIER = 0.04;
+    private final Colorable colorable;
+    private final ElementHolderScreen<? extends Colorable> parent;
     private final GridPane box;
     private ArrayList<WebView> destroyableWebViews = new ArrayList<>();
     private int row;
 
-    public ElementRenderer(AlertViewer viewer) {
+    public ElementRenderer(ElementHolderScreen<? extends Colorable> viewer) {
         this.parent = viewer;
         this.box = viewer.getElements();
-        this.alert = viewer.getInfo();
+        this.colorable = viewer.getInfo();
+    }
+
+    public void addToBox(TextElement e, Region r) {
+        ImageView edit = new ImageView(Icons.EDIT.getImage());
+        edit.setPreserveRatio(true);
+        edit.setOnMouseReleased((me) -> {
+            if (me.getButton() != MouseButton.PRIMARY)
+                return;
+            System.out.println("Clicked to edit button");
+        });
+        ImageView remove = new ImageView(Icons.REMOVE.getImage());
+        remove.setPreserveRatio(true);
+        edit.setOnMouseReleased((me) -> {
+            if (me.getButton() != MouseButton.PRIMARY)
+                return;
+            System.out.println("Clicked to remove button");
+        });
+        attach(parent.getScreenWidth(), () -> {
+            double maxx = parent.getScreenWidth().getData() * ICON_SIZE_MULTIPLIER;
+            edit.setFitWidth(maxx);
+            remove.setFitWidth(maxx);
+        });
+        box.add(makeContentGrid(r, edit, remove), 0, row++);
+        box.add(makeSeparatorGrid(r), 0, row++);
     }
 
     private WebView createWebView(boolean audio) {
@@ -54,7 +78,7 @@ public class ElementRenderer extends ObserverContainer implements ElementVisitor
         int height = audio ? 58 : (int) (width * ASPECT_RATIO);
         webView.setMaxSize(width, height);
         webView.setPrefSize(width, height);
-        webView.setOnScroll((ev) -> parent.getScrollHandler().handle(ev));
+        webView.setOnScroll((ev) -> parent.getElementScroller().handle(ev));
         Observer resize;
         if (audio) {
             resize = () -> {
@@ -90,21 +114,10 @@ public class ElementRenderer extends ObserverContainer implements ElementVisitor
         return webView;
     }
 
-    public void addToBox(Region r) {
-        box.add(makeContentGrid(r), 0, row++);
-        box.add(makeSeparatorGrid(r), 0, row++);
-    }
-
-    public GridPane makeContentGrid(Region r) {
-        GridPane grid = new GridPane();
-        ColumnConstraints side = new ColumnConstraints();
-        side.setPercentWidth(5);
-        ColumnConstraints center = new ColumnConstraints();
-        center.setPercentWidth(90);
-        grid.getColumnConstraints().addAll(side, center, side);
-        makeDynamicBackground(grid, alert.getColor());
-        grid.add(r, 1, 0);
-        return grid;
+    public Color getBackgroundColor(int row) {
+        boolean brighter = row % 2 == 0;
+        Color c = Color.web("#" + colorable.getColor().getData());
+        return brighter ? avgColor(c, Color.WHITE) : avgColor(c, avgColor(c, Color.WHITE));
     }
 
     @Override
@@ -113,20 +126,28 @@ public class ElementRenderer extends ObserverContainer implements ElementVisitor
         destroyableWebViews.forEach((wv) -> wv.getEngine().load(null));
     }
 
+    public GridPane makeContentGrid(Region content, ImageView edit, ImageView remove) {
+        GridPane grid = new GridPane();
+        ColumnConstraints side = new ColumnConstraints();
+        side.setPercentWidth(5);
+        ColumnConstraints center = new ColumnConstraints();
+        center.setPercentWidth(90);
+        grid.getColumnConstraints().addAll(side, center, side);
+        makeDynamicBackground(grid, colorable.getColor());
+        grid.add(edit, 0, 0);
+        grid.add(content, 1, 0);
+        grid.add(remove, 2, 0);
+        return grid;
+    }
+
     public GridPane makeSeparatorGrid(Region r) {
         GridPane grid = new GridPane();
         ColumnConstraints main = new ColumnConstraints();
         main.setPercentWidth(100);
         grid.getColumnConstraints().add(main);
-        makeDynamicBackground(grid, alert.getColor());
+        makeDynamicBackground(grid, colorable.getColor());
         grid.add(new Label(""), 0, 0);
         return grid;
-    }
-
-    public Color getBackgroundColor(int row) {
-        boolean brighter = row % 2 == 0;
-        Color c = Color.web("#" + alert.getColor().getData());
-        return brighter ? avgColor(c, Color.WHITE) : avgColor(c, avgColor(c, Color.WHITE));
     }
 
     public void makeDynamicBackground(Region r, Observable<String> obs) {
@@ -164,7 +185,7 @@ public class ElementRenderer extends ObserverContainer implements ElementVisitor
                             "<source src=\"" + e.getUrl().getData() + "\"></audio></body>");
         };
         attach(e.getUrl(), o);
-        attach(alert.getColor(), o);
+        attach(colorable.getColor(), o);
         pane.add(webView, 0, 0);
         pane.add(renderLink(e), 0, 1);
         return pane;
@@ -199,31 +220,6 @@ public class ElementRenderer extends ObserverContainer implements ElementVisitor
         return pane;
     }
 
-    @Override
-    public void visit(AudioElement e) {
-        addToBox(renderAudio(e));
-    }
-
-    @Override
-    public void visit(TextElement e) {
-        addToBox(renderText(e));
-    }
-
-    @Override
-    public void visit(PictureElement e) {
-        addToBox(renderPicture(e));
-    }
-
-    @Override
-    public void visit(VideoElement e) {
-        addToBox(renderVideo(e));
-    }
-
-    @Override
-    public void visit(LinkElement e) {
-        addToBox(renderLink(e));
-    }
-
     private Region renderVideo(VideoElement e) {
         int row = this.row;
         GridPane pane = new GridPane();
@@ -242,9 +238,34 @@ public class ElementRenderer extends ObserverContainer implements ElementVisitor
                     "</body>");
         };
         attach(e.getUrl(), contentChange);
-        attach(alert.getColor(), contentChange);
+        attach(colorable.getColor(), contentChange);
         pane.add(webView, 0, 1);
         pane.add(renderLink(e), 0, 0);
         return pane;
+    }
+
+    @Override
+    public void visit(AudioElement e) {
+        addToBox(e, renderAudio(e));
+    }
+
+    @Override
+    public void visit(TextElement e) {
+        addToBox(e, renderText(e));
+    }
+
+    @Override
+    public void visit(PictureElement e) {
+        addToBox(e, renderPicture(e));
+    }
+
+    @Override
+    public void visit(VideoElement e) {
+        addToBox(e, renderVideo(e));
+    }
+
+    @Override
+    public void visit(LinkElement e) {
+        addToBox(e, renderLink(e));
     }
 }

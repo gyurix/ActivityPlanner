@@ -4,7 +4,6 @@ import gyurix.activityplanner.core.data.content.Alert;
 import gyurix.activityplanner.core.data.content.Table;
 import gyurix.activityplanner.core.data.visitors.ContentVisitor;
 import gyurix.activityplanner.core.observation.Observable;
-import gyurix.activityplanner.core.observation.ObserverContainer;
 import gyurix.activityplanner.gui.scenes.main.UserScene;
 import gyurix.activityplanner.gui.scenes.viewer.AlertViewer;
 import javafx.application.Platform;
@@ -14,14 +13,13 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
 import static gyurix.activityplanner.gui.scenes.SceneUtils.bgColorGradientTop;
 import static gyurix.activityplanner.gui.scenes.SceneUtils.formatTime;
 import static java.lang.Double.MAX_VALUE;
 
-public class ContentRenderer extends ObserverContainer implements ContentVisitor {
+public class ContentRenderer extends DataRenderer implements ContentVisitor {
     private int alertIndex, tableIndex;
     private UserScene scene;
 
@@ -91,14 +89,6 @@ public class ContentRenderer extends ObserverContainer implements ContentVisitor
 
     private GridPane renderTable(Table t) {
         return new GridPane();
-    }
-
-    private Label renderText(int fontSize, Observable<String> obs) {
-        Label label = new Label();
-        label.setPrefWidth(MAX_VALUE);
-        label.setFont(Font.font(fontSize));
-        attach(obs, () -> label.setText(obs.getData()));
-        return label;
     }
 
     @Override

@@ -1,7 +1,7 @@
 package gyurix.activityplanner.gui.scenes.viewer;
 
 import gyurix.activityplanner.core.data.content.Table;
-import gyurix.activityplanner.gui.scenes.InfoScreen;
+import gyurix.activityplanner.gui.scenes.core.InfoScreen;
 import javafx.stage.Stage;
 
 public class TableViewer extends InfoScreen<Table> {

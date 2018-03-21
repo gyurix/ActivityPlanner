@@ -2,8 +2,8 @@ package gyurix.activityplanner.gui.scenes.main;
 
 import gyurix.activityplanner.core.storage.DataStorage;
 import gyurix.activityplanner.gui.assets.Icons;
-import gyurix.activityplanner.gui.scenes.AbstractScreen;
 import gyurix.activityplanner.gui.scenes.SceneUtils;
+import gyurix.activityplanner.gui.scenes.core.AbstractScreen;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.geometry.HPos;
@@ -11,14 +11,12 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.ColumnConstraints;
-import javafx.scene.layout.GridPane;
 import javafx.scene.layout.RowConstraints;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 public class LoginScene extends AbstractScreen {
     private Background background = SceneUtils.bgColorGradient(Color.web("#b08045"));
-    private GridPane grid = new GridPane();
     private Button loginButton = new Button("Login");
     private PasswordField passwordField = new PasswordField();
     private Label passwordLabel = new Label("Password");
@@ -67,7 +65,6 @@ public class LoginScene extends AbstractScreen {
     }
 
     public void makeGrid() {
-        grid = new GridPane();
         grid.setBackground(background);
         grid.setHgap(10);
         grid.setVgap(10);
@@ -76,23 +73,23 @@ public class LoginScene extends AbstractScreen {
     }
 
     public void makeGridColumns() {
-        ColumnConstraints column1 = new ColumnConstraints();
-        column1.setPercentWidth(30);
-        column1.setHalignment(HPos.RIGHT);
-        ColumnConstraints column2 = new ColumnConstraints();
-        //column2.setPercentWidth(70);
-        column2.setHalignment(HPos.LEFT);
-        grid.getColumnConstraints().addAll(column1, column2);
+        ColumnConstraints title = new ColumnConstraints();
+        title.setPercentWidth(30);
+        title.setHalignment(HPos.RIGHT);
+
+        ColumnConstraints editor = new ColumnConstraints();
+        editor.setHalignment(HPos.LEFT);
+
+        grid.getColumnConstraints().addAll(title, editor);
     }
 
     public void makeGridRows() {
-        RowConstraints row0 = new RowConstraints();
-        RowConstraints row1 = new RowConstraints();
-        RowConstraints row2 = new RowConstraints();
-        RowConstraints row3 = new RowConstraints();
-        row0.setPercentHeight(11);
-        row3.setPercentHeight(11);
-        grid.getRowConstraints().addAll(row0, row1, row2, row3);
+        RowConstraints sep = new RowConstraints();
+        sep.setPercentHeight(11);
+
+        RowConstraints main = new RowConstraints();
+
+        grid.getRowConstraints().addAll(sep, main, sep, main);
     }
 
     public void prepareScene() {

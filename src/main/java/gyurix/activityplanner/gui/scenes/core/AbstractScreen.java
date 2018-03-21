@@ -1,10 +1,14 @@
-package gyurix.activityplanner.gui.scenes;
+package gyurix.activityplanner.gui.scenes.core;
 
-import gyurix.activityplanner.core.observation.ObserverContainer;
+import gyurix.activityplanner.gui.renderers.DataRenderer;
+import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
+import lombok.Getter;
 
-public abstract class AbstractScreen extends ObserverContainer {
+@Getter
+public abstract class AbstractScreen extends DataRenderer {
     protected final Stage stage;
+    protected GridPane grid = new GridPane();
 
     public AbstractScreen(Stage stage) {
         this.stage = stage;

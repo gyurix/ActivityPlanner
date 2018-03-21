@@ -7,11 +7,12 @@ import lombok.Getter;
 
 @Getter
 public class Table extends Content {
-    private Observable<String> color;
+    private Observable<String> title, subtitle;
 
     public Table(String title, String subtitle, String color) {
-        super(title, subtitle);
-        this.color = new Observable<>(color);
+        super(color);
+        this.title = new Observable<>(title);
+        this.subtitle = new Observable<>(subtitle);
     }
 
     @Override

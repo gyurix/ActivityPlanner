@@ -3,7 +3,7 @@ package gyurix.activityplanner.gui.scenes.main;
 import gyurix.activityplanner.core.data.user.User;
 import gyurix.activityplanner.core.observation.Observable;
 import gyurix.activityplanner.gui.renderers.ContentRenderer;
-import gyurix.activityplanner.gui.scenes.InfoScreen;
+import gyurix.activityplanner.gui.scenes.core.InfoScreen;
 import javafx.geometry.HPos;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
@@ -28,10 +28,9 @@ public class UserScene extends InfoScreen<User> {
     private static final Color tableBackground = Color.web("#a07000");
     private GridPane alerts = new GridPane();
     private GridPane chat = new GridPane();
-    private GridPane grid = new GridPane();
     private Button logoutButton = new Button("Logout");
-    private GridPane tables = new GridPane();
     private ContentRenderer renderer;
+    private GridPane tables = new GridPane();
     private Label usernameLabel = new Label();
 
     public UserScene(User info, Stage stage) {
@@ -46,19 +45,6 @@ public class UserScene extends InfoScreen<User> {
         addNodesToGridChat();
     }
 
-    private void addNodesToGridChat() {
-    }
-
-
-    private void addNodesToMainGrid() {
-        grid.add(usernameLabel, 1, 0);
-        grid.add(logoutButton, 2, 0);
-        grid.add(tables, 0, 1);
-        grid.add(alerts, 1, 1);
-        grid.add(chat, 2, 1);
-    }
-
-
     @Override
     public void createNodes() {
         info.visitCreatedContents(renderer = new ContentRenderer(this));
@@ -66,13 +52,6 @@ public class UserScene extends InfoScreen<User> {
         usernameLabel = new Label();
         logoutButton.setOnAction((e) -> new LoginScene(stage).start());
         attach(un, () -> usernameLabel.setText(un.getData()));
-    }
-
-    public ColumnConstraints makeColumn(double width, HPos alignment) {
-        ColumnConstraints col = new ColumnConstraints();
-        col.setPercentWidth(width);
-        col.setHalignment(alignment);
-        return col;
     }
 
     @Override
@@ -113,19 +92,6 @@ public class UserScene extends InfoScreen<User> {
         grid.getRowConstraints().addAll(row0, row1);
     }
 
-    public void makeMainGridColumns() {
-        ColumnConstraints column1 = new ColumnConstraints();
-        column1.setPercentWidth(33);
-        column1.setHalignment(HPos.LEFT);
-        ColumnConstraints column2 = new ColumnConstraints();
-        column2.setPercentWidth(33);
-        column2.setHalignment(HPos.CENTER);
-        ColumnConstraints column3 = new ColumnConstraints();
-        column3.setPercentWidth(33);
-        column3.setHalignment(HPos.RIGHT);
-        grid.getColumnConstraints().addAll(column1, column2, column3);
-    }
-
     @Override
     public void prepareScene() {
         Screen screen = Screen.getPrimary();
@@ -141,9 +107,40 @@ public class UserScene extends InfoScreen<User> {
         stage.setScene(scene);
     }
 
+    private void addNodesToGridChat() {
+    }
+
+    private void addNodesToMainGrid() {
+        grid.add(usernameLabel, 1, 0);
+        grid.add(logoutButton, 2, 0);
+        grid.add(tables, 0, 1);
+        grid.add(alerts, 1, 1);
+        grid.add(chat, 2, 1);
+    }
+
     @Override
     public void destroy() {
         super.destroy();
         renderer.destroy();
+    }
+
+    public ColumnConstraints makeColumn(double width, HPos alignment) {
+        ColumnConstraints col = new ColumnConstraints();
+        col.setPercentWidth(width);
+        col.setHalignment(alignment);
+        return col;
+    }
+
+    public void makeMainGridColumns() {
+        ColumnConstraints column1 = new ColumnConstraints();
+        column1.setPercentWidth(33);
+        column1.setHalignment(HPos.LEFT);
+        ColumnConstraints column2 = new ColumnConstraints();
+        column2.setPercentWidth(33);
+        column2.setHalignment(HPos.CENTER);
+        ColumnConstraints column3 = new ColumnConstraints();
+        column3.setPercentWidth(33);
+        column3.setHalignment(HPos.RIGHT);
+        grid.getColumnConstraints().addAll(column1, column2, column3);
     }
 }
