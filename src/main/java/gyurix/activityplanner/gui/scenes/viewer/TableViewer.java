@@ -1,10 +1,10 @@
 package gyurix.activityplanner.gui.scenes.viewer;
 
 import gyurix.activityplanner.core.data.content.Table;
-import gyurix.activityplanner.gui.scenes.core.InfoScreen;
+import gyurix.activityplanner.gui.scenes.core.ElementHolderScene;
 import javafx.stage.Stage;
 
-public class TableViewer extends InfoScreen<Table> {
+public class TableViewer extends ElementHolderScene<Table> {
     public TableViewer(Table info, Stage stage) {
         super(info, stage);
     }
@@ -17,6 +17,11 @@ public class TableViewer extends InfoScreen<Table> {
     @Override
     public void createNodes() {
 
+    }
+
+    @Override
+    public void createScene() {
+        createResizableScene(0.5, "Table Viewer");
     }
 
     @Override

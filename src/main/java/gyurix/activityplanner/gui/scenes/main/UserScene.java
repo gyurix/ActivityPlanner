@@ -3,7 +3,7 @@ package gyurix.activityplanner.gui.scenes.main;
 import gyurix.activityplanner.core.data.user.User;
 import gyurix.activityplanner.core.observation.Observable;
 import gyurix.activityplanner.gui.renderers.ContentRenderer;
-import gyurix.activityplanner.gui.scenes.core.InfoScreen;
+import gyurix.activityplanner.gui.scenes.core.InfoScene;
 import javafx.geometry.HPos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -18,7 +18,7 @@ import static gyurix.activityplanner.gui.scenes.SceneUtils.bgColorGradient;
 import static gyurix.activityplanner.gui.scenes.SceneUtils.bgColorGradientTop;
 
 @Getter
-public class UserScene extends InfoScreen<User> {
+public class UserScene extends InfoScene<User> {
     private static final Color alertBackground = Color.web("#ff7070");
     private static final Color chatBackground = Color.web("#a0a0ff");
     private static final Color mainBackground = Color.SILVER;
@@ -43,8 +43,12 @@ public class UserScene extends InfoScreen<User> {
     }
 
     @Override
-    public void createNodes() {
+    public void createScene() {
         createResizableScene(0.8, "User Dashboard");
+    }
+
+    @Override
+    public void createNodes() {
         info.visitCreatedContents(renderer = new ContentRenderer(this));
         Observable<String> un = info.getUsername();
         usernameLabel = new Label();

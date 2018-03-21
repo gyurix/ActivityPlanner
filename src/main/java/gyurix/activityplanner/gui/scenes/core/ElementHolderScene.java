@@ -15,13 +15,13 @@ import lombok.Getter;
 import static gyurix.activityplanner.gui.scenes.SceneUtils.bgColorGradientInv;
 
 @Getter
-public abstract class ElementHolderScreen<T extends ElementHolder> extends InfoScreen<T> {
+public abstract class ElementHolderScene<T extends ElementHolder> extends InfoScene<T> {
     protected ElementRenderer elementRenderer;
     protected ScrollHandler elementScroller = new ScrollHandler();
     protected GridPane elements;
     protected ScrollPane elementsWrapper = new ScrollPane();
 
-    public ElementHolderScreen(T info, Stage stage) {
+    public ElementHolderScene(T info, Stage stage) {
         super(info, stage);
         elementsWrapper.setFitToWidth(true);
     }

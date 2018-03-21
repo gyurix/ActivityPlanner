@@ -3,7 +3,11 @@ package gyurix.activityplanner.gui.assets;
 import javafx.scene.image.Image;
 
 public enum Icons {
-    EDIT("edit.png"), LOGO("logo.png"), LOADING("loading.gif"), REMOVE("remove.png");
+    BROWSE("browse.png"),
+    EDIT("edit.png"),
+    LOADING("loading.gif"),
+    LOGO("logo.png"),
+    REMOVE("remove.png");
 
     private String fileName;
     private Image image;

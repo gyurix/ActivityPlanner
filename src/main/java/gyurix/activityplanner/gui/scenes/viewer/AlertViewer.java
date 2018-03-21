@@ -2,7 +2,7 @@ package gyurix.activityplanner.gui.scenes.viewer;
 
 import gyurix.activityplanner.core.data.content.Alert;
 import gyurix.activityplanner.core.observation.Observable;
-import gyurix.activityplanner.gui.scenes.core.ElementHolderScreen;
+import gyurix.activityplanner.gui.scenes.core.ElementHolderScene;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.layout.RowConstraints;
@@ -13,7 +13,7 @@ import static gyurix.activityplanner.gui.scenes.SceneUtils.formatTime;
 import static java.lang.Double.MAX_VALUE;
 
 @Getter
-public class AlertViewer extends ElementHolderScreen<Alert> {
+public class AlertViewer extends ElementHolderScene<Alert> {
     private Label title, subtitle, date;
 
     public AlertViewer(Alert info, Stage stage) {
@@ -30,7 +30,6 @@ public class AlertViewer extends ElementHolderScreen<Alert> {
 
     @Override
     public void createNodes() {
-        createResizableScene(0.5, "Alert Viewer");
         title = renderText(24, info.getTitle());
         title.setPrefWidth(MAX_VALUE);
         title.setAlignment(Pos.BOTTOM_CENTER);
@@ -44,6 +43,11 @@ public class AlertViewer extends ElementHolderScreen<Alert> {
         date.setAlignment(Pos.BOTTOM_RIGHT);
 
         createElementsGrid();
+    }
+
+    @Override
+    public void createScene() {
+        createResizableScene(0.5, "Alert Viewer");
     }
 
     @Override

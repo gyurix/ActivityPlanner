@@ -12,19 +12,21 @@ import javafx.stage.Stage;
 import lombok.Getter;
 
 @Getter
-public abstract class AbstractScreen extends DataRenderer {
+public abstract class AbstractScene extends DataRenderer {
     protected final Stage stage;
     protected GridPane grid = new GridPane();
     protected Scene scene;
     protected Observable<Double> screenWidth = new Observable<>();
 
-    public AbstractScreen(Stage stage) {
+    public AbstractScene(Stage stage) {
         this.stage = stage;
     }
 
     public abstract void addNodesToGrid();
 
     public abstract void createNodes();
+
+    public abstract void createScene();
 
     public void createResizableScene(double multiplier, String page) {
         Screen screen = Screen.getPrimary();
@@ -68,6 +70,7 @@ public abstract class AbstractScreen extends DataRenderer {
     }
 
     public void start() {
+        createScene();
         createNodes();
         makeGrid();
         addNodesToGrid();

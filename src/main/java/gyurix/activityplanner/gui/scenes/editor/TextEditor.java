@@ -1,8 +1,7 @@
 package gyurix.activityplanner.gui.scenes.editor;
 
-import gyurix.activityplanner.core.data.element.TextElement;
 import gyurix.activityplanner.core.observation.Observable;
-import gyurix.activityplanner.gui.scenes.core.AbstractScreen;
+import gyurix.activityplanner.gui.scenes.core.AbstractScene;
 import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
@@ -13,15 +12,15 @@ import javafx.stage.Stage;
 import lombok.Getter;
 
 @Getter
-public class TextEditor extends AbstractScreen {
+public class TextEditor extends AbstractScene {
     private Observable<String> text;
     private TextArea textArea = new TextArea();
     private Label textLabel = new Label("Text");
     private boolean editLock;
 
-    public TextEditor(TextElement el) {
+    public TextEditor(Observable<String> text) {
         super(new Stage());
-        text = el.getText();
+        this.text = text;
     }
 
     public void addNodesToGrid() {
@@ -32,17 +31,19 @@ public class TextEditor extends AbstractScreen {
     public void createNodes() {
         textLabel.setAlignment(Pos.CENTER);
         textLabel.setPrefWidth(Double.MAX_VALUE);
-        createResizableScene(0.3, "Text Editor");
         attach(text, () -> {
             if (!editLock) textArea.setText(text.getData());
         });
-        textArea.setOnKeyTyped((e) -> {
-            Platform.runLater(() -> {
-                editLock = true;
-                text.setData(textArea.getText());
-                editLock = false;
-            });
-        });
+        textArea.setOnKeyTyped((e) -> Platform.runLater(() -> {
+            editLock = true;
+            text.setData(textArea.getText());
+            editLock = false;
+        }));
+    }
+
+    @Override
+    public void createScene() {
+        createResizableScene(0.3, "Text Editor");
     }
 
     public void makeGrid() {

@@ -2,7 +2,7 @@ package gyurix.activityplanner.gui.scenes.main;
 
 import gyurix.activityplanner.core.storage.DataStorage;
 import gyurix.activityplanner.gui.scenes.SceneUtils;
-import gyurix.activityplanner.gui.scenes.core.AbstractScreen;
+import gyurix.activityplanner.gui.scenes.core.AbstractScene;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.geometry.HPos;
@@ -13,7 +13,7 @@ import javafx.scene.layout.RowConstraints;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
-public class LoginScene extends AbstractScreen {
+public class LoginScene extends AbstractScene {
     private Background background = SceneUtils.bgColorGradient(Color.web("#b08045"));
     private Button loginButton = new Button("Login");
     private PasswordField passwordField = new PasswordField();
@@ -34,26 +34,28 @@ public class LoginScene extends AbstractScreen {
     }
 
     public void createNodes() {
-        createResizableScene(0.3, "Login");
         loginButton.setOnAction(this::login);
         usernameField.setOnAction(this::login);
         passwordField.setOnAction(this::login);
     }
 
+    @Override
+    public void createScene() {
+        createResizableScene(0.3, "Login");
+    }
+
     private void login(ActionEvent e) {
-        DataStorage.getInstance().getUser(usernameField.getText(), (user) -> {
-            Platform.runLater(() -> {
-                if (user == null) {
-                    makeAlert("Incorrect Username", "The entered username is incorrect").showAndWait();
-                    return;
-                }
-                if (!passwordField.getText().equals(user.getPassword().getData())) {
-                    makeAlert("Incorrect Password", "The entered password is incorrect").showAndWait();
-                    return;
-                }
-                new UserScene(user, stage).start();
-            });
-        });
+        DataStorage.getInstance().getUser(usernameField.getText(), (user) -> Platform.runLater(() -> {
+            if (user == null) {
+                makeAlert("Incorrect Username", "The entered username is incorrect").showAndWait();
+                return;
+            }
+            if (!passwordField.getText().equals(user.getPassword().getData())) {
+                makeAlert("Incorrect Password", "The entered password is incorrect").showAndWait();
+                return;
+            }
+            new UserScene(user, stage).start();
+        }));
     }
 
     public Alert makeAlert(String title, String msg) {

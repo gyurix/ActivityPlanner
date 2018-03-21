@@ -9,8 +9,9 @@ import gyurix.activityplanner.core.observation.Observable;
 import gyurix.activityplanner.core.observation.Observer;
 import gyurix.activityplanner.gui.ActivityPlannerLauncher;
 import gyurix.activityplanner.gui.assets.Icons;
-import gyurix.activityplanner.gui.scenes.core.ElementHolderScreen;
+import gyurix.activityplanner.gui.scenes.core.ElementHolderScene;
 import gyurix.activityplanner.gui.scenes.editor.TextEditor;
+import gyurix.activityplanner.gui.scenes.editor.UrlEditor;
 import javafx.application.Platform;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
@@ -37,12 +38,12 @@ public class ElementRenderer extends DataRenderer implements ElementVisitor {
     private static final double WIDTH_MULTIPLIER = 0.74;
     private static final double ICON_SIZE_MULTIPLIER = 0.04;
     private final ElementHolder elementHolder;
-    private final ElementHolderScreen<? extends ElementHolder> parent;
+    private final ElementHolderScene<? extends ElementHolder> parent;
     private final GridPane box;
     private ArrayList<WebView> destroyableWebViews = new ArrayList<>();
     private int row;
 
-    public ElementRenderer(ElementHolderScreen<? extends ElementHolder> viewer) {
+    public ElementRenderer(ElementHolderScene<? extends ElementHolder> viewer) {
         this.parent = viewer;
         this.box = viewer.getElements();
         this.elementHolder = viewer.getInfo();
@@ -54,7 +55,9 @@ public class ElementRenderer extends DataRenderer implements ElementVisitor {
         edit.setOnMouseReleased((me) -> {
             if (me.getButton() != MouseButton.PRIMARY)
                 return;
-            new TextEditor(e).start();
+            (e instanceof LinkElement ?
+                    new UrlEditor(e.getText(), ((LinkElement) e).getUrl())
+                    : new TextEditor(e.getText())).start();
         });
 
         ImageView remove = new ImageView(Icons.REMOVE.getImage());
