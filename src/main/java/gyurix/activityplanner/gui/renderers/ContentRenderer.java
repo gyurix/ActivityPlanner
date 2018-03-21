@@ -72,9 +72,8 @@ public class ContentRenderer extends DataRenderer implements ContentVisitor {
         grid.add(subtitle, 0, 1, 3, 1);
         grid.add(date, 1, 2, 3, 1);
         grid.setOnMouseReleased((e) -> {
-            if (e.getButton() != MouseButton.PRIMARY)
-                return;
-            new AlertViewer(a, new Stage()).start();
+            if (e.getButton() == MouseButton.PRIMARY)
+                new AlertViewer(a, new Stage()).start();
         });
 
         return grid;

@@ -3,8 +3,10 @@ package gyurix.activityplanner.gui.scenes.viewer;
 import gyurix.activityplanner.core.data.content.Alert;
 import gyurix.activityplanner.core.observation.Observable;
 import gyurix.activityplanner.gui.scenes.core.ElementHolderScene;
+import gyurix.activityplanner.gui.scenes.editor.TextEditor;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
+import javafx.scene.input.MouseButton;
 import javafx.scene.layout.RowConstraints;
 import javafx.stage.Stage;
 import lombok.Getter;
@@ -33,10 +35,18 @@ public class AlertViewer extends ElementHolderScene<Alert> {
         title = renderText(24, info.getTitle());
         title.setPrefWidth(MAX_VALUE);
         title.setAlignment(Pos.BOTTOM_CENTER);
+        title.setOnMouseReleased(e -> {
+            if (e.getButton() == MouseButton.PRIMARY && e.getClickCount() == 2)
+                new TextEditor(info.getTitle()).start();
+        });
 
         subtitle = renderText(16, info.getSubtitle());
         subtitle.setAlignment(Pos.TOP_LEFT);
         subtitle.setPrefWidth(MAX_VALUE);
+        subtitle.setOnMouseReleased(e -> {
+            if (e.getButton() == MouseButton.PRIMARY && e.getClickCount() == 2)
+                new TextEditor(info.getSubtitle()).start();
+        });
 
         date = renderDate(info.getDueDate());
         date.setPrefWidth(MAX_VALUE);
