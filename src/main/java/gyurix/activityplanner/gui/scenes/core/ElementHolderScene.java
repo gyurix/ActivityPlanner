@@ -1,7 +1,9 @@
 package gyurix.activityplanner.gui.scenes.core;
 
 import gyurix.activityplanner.core.data.content.ElementHolder;
+import gyurix.activityplanner.core.data.element.Element;
 import gyurix.activityplanner.core.observation.Observable;
+import gyurix.activityplanner.core.observation.ObservableList;
 import gyurix.activityplanner.gui.renderers.ElementRenderer;
 import javafx.event.EventHandler;
 import javafx.scene.control.ScrollPane;
@@ -34,7 +36,9 @@ public abstract class ElementHolderScene<T extends ElementHolder> extends InfoSc
         if (elementRenderer != null)
             elementRenderer.destroy();
         elementRenderer = new ElementRenderer(this);
-        info.getElements().forEach((e) -> e.getData().accept(elementRenderer));
+        ObservableList<Observable<Element>> elementList = info.getElements();
+        elementList.forEach((e) -> e.getData().accept(elementRenderer));
+        elementRenderer.createAddButtons();
         elements.setOnScroll(elementScroller);
         elementsWrapper.setContent(elements);
     }

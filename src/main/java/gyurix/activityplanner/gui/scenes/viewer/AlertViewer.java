@@ -52,7 +52,7 @@ public class AlertViewer extends ElementHolderScene<Alert> {
         date.setPrefWidth(MAX_VALUE);
         date.setAlignment(Pos.BOTTOM_RIGHT);
 
-        createElementsGrid();
+        attach(info.getElements(), this::createElementsGrid);
     }
 
     @Override

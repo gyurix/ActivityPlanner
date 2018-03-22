@@ -2,6 +2,7 @@ package gyurix.activityplanner.gui.renderers;
 
 import com.sun.deploy.uitoolkit.impl.fx.HostServicesFactory;
 import com.sun.javafx.application.HostServicesDelegate;
+import gyurix.activityplanner.core.Callable;
 import gyurix.activityplanner.core.data.content.ElementHolder;
 import gyurix.activityplanner.core.data.element.*;
 import gyurix.activityplanner.core.data.visitors.ElementVisitor;
@@ -13,6 +14,7 @@ import gyurix.activityplanner.gui.scenes.core.ElementHolderScene;
 import gyurix.activityplanner.gui.scenes.editor.TextEditor;
 import gyurix.activityplanner.gui.scenes.editor.UrlEditor;
 import javafx.application.Platform;
+import javafx.scene.Cursor;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
@@ -28,6 +30,7 @@ import org.w3c.dom.Element;
 
 import java.util.ArrayList;
 
+import static gyurix.activityplanner.gui.assets.Icons.*;
 import static gyurix.activityplanner.gui.scenes.SceneUtils.*;
 import static java.lang.Double.MAX_VALUE;
 
@@ -37,6 +40,8 @@ public class ElementRenderer extends DataRenderer implements ElementVisitor {
     private static final double VIDEO_BOX_WIDTH_MULTIPLIER = 0.95;
     private static final double WIDTH_MULTIPLIER = 0.74;
     private static final double ICON_SIZE_MULTIPLIER = 0.04;
+    private static final double ADD_ICON_SIZE_MULTIPLIER = 0.12;
+    private static final Cursor clickableCursor = Cursor.CROSSHAIR;
     private final ElementHolder elementHolder;
     private final ElementHolderScene<? extends ElementHolder> parent;
     private final GridPane box;
@@ -50,33 +55,65 @@ public class ElementRenderer extends DataRenderer implements ElementVisitor {
     }
 
     public void addToBox(TextElement e, Region r) {
-        ImageView edit = new ImageView(Icons.EDIT.getImage());
-        edit.setPreserveRatio(true);
-        edit.setOnMouseReleased((me) -> {
-            if (me.getButton() != MouseButton.PRIMARY)
-                return;
-            (e instanceof LinkElement ?
-                    new UrlEditor(e.getText(), ((LinkElement) e).getUrl())
-                    : new TextEditor(e.getText())).start();
-        });
-
-        ImageView remove = new ImageView(Icons.REMOVE.getImage());
-        remove.setPreserveRatio(true);
-        remove.setOnMouseReleased((me) -> {
-            if (me.getButton() != MouseButton.PRIMARY)
-                return;
-            elementHolder.getElements().remove(new Observable<>(e));
-            parent.createElementsGrid();
-        });
-
-        attach(parent.getScreenWidth(), () -> {
-            double maxx = parent.getScreenWidth().getData() * ICON_SIZE_MULTIPLIER;
-            edit.setFitWidth(maxx);
-            remove.setFitWidth(maxx);
-        });
-
+        ImageView edit = createClickableImage(EDIT, ICON_SIZE_MULTIPLIER, () -> openEditor(e));
+        ImageView remove = createClickableImage(REMOVE, ICON_SIZE_MULTIPLIER, () -> elementHolder.getElements().remove(new Observable<>(e)));
         box.add(makeContentGrid(r, edit, remove), 0, row++);
         box.add(makeSeparatorGrid(r), 0, row++);
+    }
+
+    public void createAddButtons() {
+        GridPane grid = new GridPane();
+        ColumnConstraints col = new ColumnConstraints();
+        col.setPercentWidth(14);
+        ColumnConstraints sep = new ColumnConstraints();
+        sep.setPercentWidth(5);
+        grid.getColumnConstraints().addAll(sep, col, sep, col, sep, col, sep, col, sep, col, sep);
+        grid.add(createAddElementButton(ELEMENT_TEXT,
+                () -> new TextElement("Simple Text")),
+                1, 0);
+        grid.add(createAddElementButton(ELEMENT_URL,
+                () -> new LinkElement("Click here", "Link to page")),
+                3, 0);
+        grid.add(createAddElementButton(ELEMENT_AUDIO,
+                () -> new AudioElement("Audio", "Link to sound")),
+                5, 0);
+        grid.add(createAddElementButton(ELEMENT_PICTURE,
+                () -> new PictureElement("Picture", "Link to picture")),
+                7, 0);
+        grid.add(createAddElementButton(ELEMENT_VIDEO,
+                () -> new VideoElement("Video", "Link to video")),
+                9, 0);
+        box.add(grid, 0, row++);
+    }
+
+    public ImageView createAddElementButton(Icons icon, Callable<TextElement> elementCreator) {
+        return createClickableImage(icon, ADD_ICON_SIZE_MULTIPLIER, () -> {
+            TextElement el = elementCreator.call();
+            elementHolder.getElements().add(new Observable<>(el));
+            openEditor(el);
+        });
+    }
+
+    public ImageView createClickableImage(Icons icon, double sizeMultiplier, Runnable onClick) {
+        ImageView img = new ImageView(icon.getImage());
+        img.setPreserveRatio(true);
+        img.setOnMouseReleased((e) -> {
+            if (e.getButton() != MouseButton.PRIMARY)
+                return;
+            onClick.run();
+        });
+        attach(parent.getScreenWidth(), () -> {
+            double maxx = parent.getScreenWidth().getData() * sizeMultiplier;
+            img.setFitWidth(maxx);
+        });
+        img.setCursor(clickableCursor);
+        return img;
+    }
+
+    public void openEditor(gyurix.activityplanner.core.data.element.TextElement e) {
+        (e instanceof LinkElement ?
+                new UrlEditor(e.getText(), ((LinkElement) e).getUrl())
+                : new TextEditor(e.getText())).start();
     }
 
     private WebView createWebView(boolean audio) {

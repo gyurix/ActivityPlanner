@@ -1,6 +1,9 @@
 package gyurix.activityplanner.core.storage.gson;
 
-import com.google.gson.*;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.TypeAdapter;
+import com.google.gson.TypeAdapterFactory;
 import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
@@ -14,6 +17,7 @@ public class TypeSelectorAdapter implements TypeAdapterFactory {
         TypeAdapterFactory taf = this;
         if (!typeToken.getRawType().getName().startsWith("java.") &&
                 (typeToken.getRawType().getModifiers() & Modifier.ABSTRACT) == Modifier.ABSTRACT) {
+            TypeAdapter delegate = gson.getDelegateAdapter(this, typeToken);
             return new TypeAdapter<T>() {
                 @Override
                 public T read(JsonReader jsonReader) {
@@ -35,14 +39,7 @@ public class TypeSelectorAdapter implements TypeAdapterFactory {
 
                 @Override
                 public void write(JsonWriter jsonWriter, T t) throws IOException {
-                    JsonElement je = gson.getDelegateAdapter(taf, (TypeToken) TypeToken.get(t.getClass())).toJsonTree(t);
-                    if (je instanceof JsonNull) {
-                        jsonWriter.nullValue();
-                        return;
-                    }
-                    JsonObject jo = (JsonObject) je;
-                    jo.addProperty("type", t.getClass().getSimpleName());
-                    gson.getAdapter(JsonObject.class).write(jsonWriter, jo);
+                    delegate.write(jsonWriter, t);
                 }
             };
         }

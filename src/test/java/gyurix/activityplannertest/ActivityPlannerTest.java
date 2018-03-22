@@ -52,18 +52,10 @@ public class ActivityPlannerTest extends Application {
         ds.save(new File("conf.json"));
     }
 
-    public static void loadTestingData() {
-        File f = new File("conf.json");
-        if (!f.exists())
-            generateTestingData();
-        DataStorage.load(f);
-    }
 
     public static void main(String[] args) throws Throwable {
-        //loadTestingData();
         System.setProperty("http.agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:59.0) Gecko/20100101 Firefox/59.0");
         generateTestingData();
-        loadTestingData();
         ActivityPlannerLauncher.main(args);
     }
 

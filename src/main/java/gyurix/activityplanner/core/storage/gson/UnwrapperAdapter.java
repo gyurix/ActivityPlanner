@@ -16,8 +16,8 @@ public class UnwrapperAdapter implements TypeAdapterFactory {
     @Override
     public <T> TypeAdapter<T> create(Gson gson, TypeToken<T> typeToken) {
         if (WrappedData.class.isAssignableFrom(typeToken.getRawType())) {
-            Type t = findWrappedDataType((ParameterizedType) typeToken.getType());
-            TypeAdapter adapter = gson.getAdapter(TypeToken.get(t));
+            Type t = findWrappedDataType(typeToken.getType());
+            TypeAdapter delegate = gson.getDelegateAdapter(this, TypeToken.get(t));
             return new TypeAdapter<T>() {
                 @SuppressWarnings("unchecked")
                 @Override
@@ -34,18 +34,24 @@ public class UnwrapperAdapter implements TypeAdapterFactory {
 
                 @Override
                 public void write(JsonWriter writer, T t) throws IOException {
-                    adapter.write(writer, ((WrappedData) t).getWrappedData());
+                    delegate.write(writer, ((WrappedData) t).getWrappedData());
                 }
             };
         }
         return gson.getDelegateAdapter(this, typeToken);
     }
 
-    public Type findWrappedDataType(ParameterizedType pt) {
-        ParameterizedType type = pt;
-        while (getRawClass(type) != WrappedData.class)
-            type = (ParameterizedType) ((Class) type.getRawType()).getGenericSuperclass();
-        return ((ParameterizedType) replaceParameterType(type, pt.getActualTypeArguments()[0])).getActualTypeArguments()[0];
+    public Type findWrappedDataType(Type main) {
+        if (!(main instanceof ParameterizedType))
+            return main;
+        Type child = ((ParameterizedType) main).getActualTypeArguments()[0];
+        while (getRawClass(main) != WrappedData.class) {
+            main = ((Class) (((ParameterizedType) main).getRawType())).getGenericSuperclass();
+            main = replaceParameterType(main, child);
+            if (main instanceof ParameterizedType)
+                child = ((ParameterizedType) main).getActualTypeArguments()[0];
+        }
+        return child;
     }
 
     public Class getRawClass(Type t) {

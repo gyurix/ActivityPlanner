@@ -8,7 +8,7 @@ public enum Icons {
     LOADING("loading.gif"),
     LOGO("logo.png"),
     REMOVE("remove.png"),
-    ELEMENT_MUSIC("element/music.png"),
+    ELEMENT_AUDIO("element/audio.png"),
     ELEMENT_PICTURE("element/picture.png"),
     ELEMENT_TEXT("element/text.png"),
     ELEMENT_URL("element/url.png"),
