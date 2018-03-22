@@ -7,7 +7,12 @@ public enum Icons {
     EDIT("edit.png"),
     LOADING("loading.gif"),
     LOGO("logo.png"),
-    REMOVE("remove.png");
+    REMOVE("remove.png"),
+    ELEMENT_MUSIC("element/music.png"),
+    ELEMENT_PICTURE("element/picture.png"),
+    ELEMENT_TEXT("element/text.png"),
+    ELEMENT_URL("element/url.png"),
+    ELEMENT_VIDEO("element/video.png");
 
     private String fileName;
     private Image image;
