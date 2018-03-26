@@ -3,6 +3,7 @@ package gyurix.activityplanner.gui.scenes.viewer;
 import gyurix.activityplanner.core.data.content.Alert;
 import gyurix.activityplanner.core.observation.Observable;
 import gyurix.activityplanner.gui.scenes.core.ElementHolderScene;
+import gyurix.activityplanner.gui.scenes.editor.DateEditor;
 import gyurix.activityplanner.gui.scenes.editor.TextEditor;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
@@ -83,6 +84,10 @@ public class AlertViewer extends ElementHolderScene<Alert> {
         Label label = new Label();
         label.setPrefWidth(MAX_VALUE);
         attach(obs, () -> label.setText(formatTime(obs.getData())));
+        label.setOnMouseReleased((e) -> {
+            if (e.getButton() == MouseButton.PRIMARY && e.getClickCount() == 2)
+                new DateEditor(info.getDueDate()).start();
+        });
         return label;
     }
 }
