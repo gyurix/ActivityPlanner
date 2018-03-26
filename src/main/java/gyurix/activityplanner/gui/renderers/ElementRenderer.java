@@ -22,6 +22,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import javafx.scene.web.WebView;
@@ -35,16 +36,16 @@ import static gyurix.activityplanner.gui.scenes.SceneUtils.*;
 import static java.lang.Double.MAX_VALUE;
 
 public class ElementRenderer extends DataRenderer implements ElementVisitor {
+    private static final double ADD_ICON_SIZE_MULTIPLIER = 0.12;
     private static final double ASPECT_RATIO = 0.75;
+    private static final double ICON_SIZE_MULTIPLIER = 0.04;
     private static final double VIDEO_BOX_HEIGHT_MULTIPLIER = 0.9;
     private static final double VIDEO_BOX_WIDTH_MULTIPLIER = 0.95;
     private static final double WIDTH_MULTIPLIER = 0.74;
-    private static final double ICON_SIZE_MULTIPLIER = 0.04;
-    private static final double ADD_ICON_SIZE_MULTIPLIER = 0.12;
     private static final Cursor clickableCursor = Cursor.CROSSHAIR;
+    private final GridPane box;
     private final ElementHolder elementHolder;
     private final ElementHolderScene<? extends ElementHolder> parent;
-    private final GridPane box;
     private ArrayList<WebView> destroyableWebViews = new ArrayList<>();
     private int row;
 
@@ -55,10 +56,10 @@ public class ElementRenderer extends DataRenderer implements ElementVisitor {
     }
 
     public void addToBox(TextElement e, Region r) {
-        ImageView edit = createClickableImage(EDIT, ICON_SIZE_MULTIPLIER, () -> openEditor(e));
-        ImageView remove = createClickableImage(REMOVE, ICON_SIZE_MULTIPLIER, () -> elementHolder.getElements().remove(new Observable<>(e)));
+        Pane edit = createClickableImage(EDIT, ICON_SIZE_MULTIPLIER, () -> openEditor(e));
+        Pane remove = createClickableImage(REMOVE, ICON_SIZE_MULTIPLIER, () -> elementHolder.getElements().remove(new Observable<>(e)));
         box.add(makeContentGrid(r, edit, remove), 0, row++);
-        box.add(makeSeparatorGrid(r), 0, row++);
+        box.add(makeSeparatorGrid(), 0, row++);
     }
 
     public void createAddButtons() {
@@ -86,7 +87,7 @@ public class ElementRenderer extends DataRenderer implements ElementVisitor {
         box.add(grid, 0, row++);
     }
 
-    public ImageView createAddElementButton(Icons icon, Callable<TextElement> elementCreator) {
+    public Pane createAddElementButton(Icons icon, Callable<TextElement> elementCreator) {
         return createClickableImage(icon, ADD_ICON_SIZE_MULTIPLIER, () -> {
             TextElement el = elementCreator.call();
             elementHolder.getElements().add(new Observable<>(el));
@@ -94,26 +95,21 @@ public class ElementRenderer extends DataRenderer implements ElementVisitor {
         });
     }
 
-    public ImageView createClickableImage(Icons icon, double sizeMultiplier, Runnable onClick) {
+    public Pane createClickableImage(Icons icon, double sizeMultiplier, Runnable onClick) {
         ImageView img = new ImageView(icon.getImage());
         img.setPreserveRatio(true);
-        img.setOnMouseReleased((e) -> {
-            if (e.getButton() != MouseButton.PRIMARY)
-                return;
-            onClick.run();
-        });
         attach(parent.getScreenWidth(), () -> {
             double maxx = parent.getScreenWidth().getData() * sizeMultiplier;
             img.setFitWidth(maxx);
         });
-        img.setCursor(clickableCursor);
-        return img;
-    }
-
-    public void openEditor(gyurix.activityplanner.core.data.element.TextElement e) {
-        (e instanceof LinkElement ?
-                new UrlEditor(e.getText(), ((LinkElement) e).getUrl())
-                : new TextEditor(e.getText())).start();
+        Pane wrapper = new Pane(img);
+        wrapper.setCursor(clickableCursor);
+        wrapper.setOnMouseReleased((e) -> {
+            if (e.getButton() != MouseButton.PRIMARY)
+                return;
+            onClick.run();
+        });
+        return wrapper;
     }
 
     private WebView createWebView(boolean audio) {
@@ -159,19 +155,19 @@ public class ElementRenderer extends DataRenderer implements ElementVisitor {
         return webView;
     }
 
-    public Color getBackgroundColor(int row) {
-        boolean brighter = row % 2 == 0;
-        Color c = Color.web("#" + elementHolder.getColor().getData());
-        return brighter ? avgColor(c, Color.WHITE) : avgColor(c, avgColor(c, Color.WHITE));
-    }
-
     @Override
     public void destroy() {
         super.destroy();
         destroyableWebViews.forEach((wv) -> wv.getEngine().load(null));
     }
 
-    public GridPane makeContentGrid(Region content, ImageView edit, ImageView remove) {
+    public Color getBackgroundColor(int row) {
+        boolean brighter = row % 2 == 0;
+        Color c = Color.web("#" + elementHolder.getColor().getData());
+        return brighter ? avgColor(c, Color.WHITE) : avgColor(c, avgColor(c, Color.WHITE));
+    }
+
+    public GridPane makeContentGrid(Region content, Pane edit, Pane remove) {
         GridPane grid = new GridPane();
         ColumnConstraints side = new ColumnConstraints();
         side.setPercentWidth(5);
@@ -185,34 +181,25 @@ public class ElementRenderer extends DataRenderer implements ElementVisitor {
         return grid;
     }
 
-    public GridPane makeSeparatorGrid(Region r) {
-        GridPane grid = new GridPane();
-        ColumnConstraints main = new ColumnConstraints();
-        main.setPercentWidth(100);
-        grid.getColumnConstraints().add(main);
-        makeDynamicBackground(grid, elementHolder.getColor());
-        grid.add(new Label(""), 0, 0);
-        return grid;
-    }
-
     public void makeDynamicBackground(Region r, Observable<String> obs) {
         int row = this.row;
         attach(obs, () -> r.setBackground(bgColor(getBackgroundColor(row))));
     }
 
-    private Region renderLink(LinkElement link) {
-        Label label = renderText(link);
-        Observable<String> url = link.getUrl();
-        Tooltip tooltip = new Tooltip();
-        attach(url, () -> tooltip.setText(url.getData()));
-        label.setTooltip(tooltip);
-        label.setOnMouseReleased((e) -> {
-            if (e.getButton() != MouseButton.PRIMARY)
-                return;
-            HostServicesDelegate hostServices = HostServicesFactory.getInstance(ActivityPlannerLauncher.getInstance());
-            hostServices.showDocument(url.getData());
-        });
-        return label;
+    public GridPane makeSeparatorGrid() {
+        GridPane grid = new GridPane();
+        ColumnConstraints main = new ColumnConstraints();
+        main.setPercentWidth(100);
+        grid.getColumnConstraints().add(main);
+        makeDynamicBackground(grid, elementHolder.getColor());
+        grid.add(new Label(), 0, 0);
+        return grid;
+    }
+
+    public void openEditor(gyurix.activityplanner.core.data.element.TextElement e) {
+        (e instanceof LinkElement ?
+                new UrlEditor(e.getText(), ((LinkElement) e).getUrl())
+                : new TextEditor(e.getText())).start();
     }
 
     private Region renderAudio(AudioElement e) {
@@ -236,11 +223,18 @@ public class ElementRenderer extends DataRenderer implements ElementVisitor {
         return pane;
     }
 
-    private Label renderText(TextElement el) {
-        Observable<String> obs = el.getText();
-        Label label = new Label();
-        label.setPrefWidth(MAX_VALUE);
-        attach(obs, () -> label.setText(obs.getData()));
+    private Region renderLink(LinkElement link) {
+        Label label = renderText(link);
+        Observable<String> url = link.getUrl();
+        Tooltip tooltip = new Tooltip();
+        attach(url, () -> tooltip.setText(url.getData()));
+        label.setTooltip(tooltip);
+        label.setOnMouseReleased((e) -> {
+            if (e.getButton() != MouseButton.PRIMARY)
+                return;
+            HostServicesDelegate hostServices = HostServicesFactory.getInstance(ActivityPlannerLauncher.getInstance());
+            hostServices.showDocument(url.getData());
+        });
         return label;
     }
 
@@ -263,6 +257,14 @@ public class ElementRenderer extends DataRenderer implements ElementVisitor {
         pane.add(renderLink(e), 0, 0);
         pane.add(imgView, 0, 1);
         return pane;
+    }
+
+    private Label renderText(TextElement el) {
+        Observable<String> obs = el.getText();
+        Label label = new Label();
+        label.setPrefWidth(MAX_VALUE);
+        attach(obs, () -> label.setText(obs.getData()));
+        return label;
     }
 
     private Region renderVideo(VideoElement e) {
