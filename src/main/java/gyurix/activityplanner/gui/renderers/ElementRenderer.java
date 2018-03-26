@@ -14,16 +14,15 @@ import gyurix.activityplanner.gui.scenes.core.ElementHolderScene;
 import gyurix.activityplanner.gui.scenes.editor.TextEditor;
 import gyurix.activityplanner.gui.scenes.editor.UrlEditor;
 import javafx.application.Platform;
+import javafx.geometry.HPos;
+import javafx.geometry.VPos;
 import javafx.scene.Cursor;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
-import javafx.scene.layout.ColumnConstraints;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.Region;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.web.WebView;
 import org.w3c.dom.Document;
@@ -36,13 +35,13 @@ import static gyurix.activityplanner.gui.scenes.SceneUtils.*;
 import static java.lang.Double.MAX_VALUE;
 
 public class ElementRenderer extends DataRenderer implements ElementVisitor {
-    private static final double ADD_ICON_SIZE_MULTIPLIER = 0.12;
+    private static final double ADD_ICON_SIZE_MULTIPLIER = 0.04;
     private static final double ASPECT_RATIO = 0.75;
     private static final double ICON_SIZE_MULTIPLIER = 0.04;
     private static final double VIDEO_BOX_HEIGHT_MULTIPLIER = 0.9;
     private static final double VIDEO_BOX_WIDTH_MULTIPLIER = 0.95;
     private static final double WIDTH_MULTIPLIER = 0.74;
-    private static final Cursor clickableCursor = Cursor.CROSSHAIR;
+    private static final Cursor clickableCursor = Cursor.OPEN_HAND;
     private final GridPane box;
     private final ElementHolder elementHolder;
     private final ElementHolderScene<? extends ElementHolder> parent;
@@ -64,26 +63,33 @@ public class ElementRenderer extends DataRenderer implements ElementVisitor {
 
     public void createAddButtons() {
         GridPane grid = new GridPane();
+        RowConstraints seprow = new RowConstraints();
+        RowConstraints mainrow = new RowConstraints();
+        seprow.setPercentHeight(10);
+        mainrow.setPercentHeight(80);
+        grid.getRowConstraints().addAll(seprow, mainrow, seprow);
         ColumnConstraints col = new ColumnConstraints();
         col.setPercentWidth(14);
+        col.setHalignment(HPos.CENTER);
         ColumnConstraints sep = new ColumnConstraints();
         sep.setPercentWidth(5);
+        makeDynamicBackground(grid, elementHolder.getColor());
         grid.getColumnConstraints().addAll(sep, col, sep, col, sep, col, sep, col, sep, col, sep);
         grid.add(createAddElementButton(ELEMENT_TEXT,
                 () -> new TextElement("Simple Text")),
-                1, 0);
+                1, 1);
         grid.add(createAddElementButton(ELEMENT_URL,
                 () -> new LinkElement("Click here", "Link to page")),
-                3, 0);
+                3, 1);
         grid.add(createAddElementButton(ELEMENT_AUDIO,
                 () -> new AudioElement("Audio", "Link to sound")),
-                5, 0);
+                5, 1);
         grid.add(createAddElementButton(ELEMENT_PICTURE,
                 () -> new PictureElement("Picture", "Link to picture")),
-                7, 0);
+                7, 1);
         grid.add(createAddElementButton(ELEMENT_VIDEO,
                 () -> new VideoElement("Video", "Link to video")),
-                9, 0);
+                9, 1);
         box.add(grid, 0, row++);
     }
 
@@ -98,16 +104,18 @@ public class ElementRenderer extends DataRenderer implements ElementVisitor {
     public Pane createClickableImage(Icons icon, double sizeMultiplier, Runnable onClick) {
         ImageView img = new ImageView(icon.getImage());
         img.setPreserveRatio(true);
-        attach(parent.getScreenWidth(), () -> {
-            double maxx = parent.getScreenWidth().getData() * sizeMultiplier;
-            img.setFitWidth(maxx);
-        });
         Pane wrapper = new Pane(img);
         wrapper.setCursor(clickableCursor);
+        wrapper.setMaxHeight(VBox.USE_PREF_SIZE);
         wrapper.setOnMouseReleased((e) -> {
             if (e.getButton() != MouseButton.PRIMARY)
                 return;
             onClick.run();
+        });
+        attach(parent.getScreenWidth(), () -> {
+            double maxx = parent.getScreenWidth().getData() * sizeMultiplier;
+            img.setFitWidth(maxx);
+            wrapper.setMaxWidth(maxx);
         });
         return wrapper;
     }
@@ -174,6 +182,11 @@ public class ElementRenderer extends DataRenderer implements ElementVisitor {
         ColumnConstraints center = new ColumnConstraints();
         center.setPercentWidth(90);
         grid.getColumnConstraints().addAll(side, center, side);
+
+        RowConstraints row = new RowConstraints();
+        row.setValignment(VPos.CENTER);
+        grid.getRowConstraints().add(row);
+
         makeDynamicBackground(grid, elementHolder.getColor());
         grid.add(edit, 0, 0);
         grid.add(content, 1, 0);
