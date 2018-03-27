@@ -8,6 +8,7 @@ import gyurix.activityplanner.gui.scenes.core.InfoScene;
 import javafx.geometry.HPos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.layout.Background;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.RowConstraints;
@@ -16,7 +17,6 @@ import javafx.stage.Stage;
 import lombok.Getter;
 
 import static gyurix.activityplanner.gui.scenes.SceneUtils.bgColorGradient;
-import static gyurix.activityplanner.gui.scenes.SceneUtils.bgColorGradientTop;
 
 @Getter
 public class UserScene extends InfoScene<User> {
@@ -24,6 +24,7 @@ public class UserScene extends InfoScene<User> {
     private static final Color chatBackground = Color.web("#a0a0ff");
     private static final Color mainBackground = Color.SILVER;
     private static final Color tableBackground = Color.web("#a07000");
+
     private GridPane alerts = new GridPane();
     private GridPane chat = new GridPane();
     private Button logoutButton = new Button("Logout");
@@ -44,11 +45,6 @@ public class UserScene extends InfoScene<User> {
     }
 
     @Override
-    public void createScene() {
-        createResizableScene(0.8, "User Dashboard");
-    }
-
-    @Override
     public void createNodes() {
         info.visitCreatedContents(renderer = new ContentRenderer(this));
         Observable<String> un = info.getUsername();
@@ -61,20 +57,16 @@ public class UserScene extends InfoScene<User> {
     }
 
     @Override
-    public void makeGrid() {
-        grid.setBackground(bgColorGradient(mainBackground));
-        grid.setHgap(10);
-        grid.setVgap(10);
+    public void createScene() {
+        createResizableScene(0.8, "User Dashboard");
+    }
 
-        chat.setBackground(bgColorGradientTop(chatBackground));
-        chat.setHgap(5);
-        chat.setVgap(5);
-        tables.setBackground(bgColorGradientTop(tableBackground));
-        tables.setHgap(5);
-        tables.setVgap(5);
-        alerts.setBackground(bgColorGradientTop(alertBackground));
-        alerts.setHgap(5);
-        alerts.setVgap(5);
+    @Override
+    public void makeGrid() {
+        prepareGrid(grid, bgColorGradient(mainBackground), 10);
+        prepareGrid(chat, bgColorGradient(chatBackground), 5);
+        prepareGrid(tables, bgColorGradient(tableBackground), 5);
+        prepareGrid(alerts, bgColorGradient(alertBackground), 5);
 
         makeGridColumns();
         makeGridRows();
@@ -98,7 +90,6 @@ public class UserScene extends InfoScene<User> {
         grid.getRowConstraints().addAll(row0, row1);
     }
 
-
     private void addNodesToGridChat() {
     }
 
@@ -121,6 +112,13 @@ public class UserScene extends InfoScene<User> {
         renderer.destroy();
     }
 
+    public ColumnConstraints makeAlignedColumn(HPos alignment) {
+        ColumnConstraints col = new ColumnConstraints();
+        col.setPercentWidth(33);
+        col.setHalignment(alignment);
+        return col;
+    }
+
     public ColumnConstraints makeColumn(double width, HPos alignment) {
         ColumnConstraints col = new ColumnConstraints();
         col.setPercentWidth(width);
@@ -129,15 +127,12 @@ public class UserScene extends InfoScene<User> {
     }
 
     public void makeMainGridColumns() {
-        ColumnConstraints column1 = new ColumnConstraints();
-        column1.setPercentWidth(33);
-        column1.setHalignment(HPos.LEFT);
-        ColumnConstraints column2 = new ColumnConstraints();
-        column2.setPercentWidth(33);
-        column2.setHalignment(HPos.CENTER);
-        ColumnConstraints column3 = new ColumnConstraints();
-        column3.setPercentWidth(33);
-        column3.setHalignment(HPos.RIGHT);
-        grid.getColumnConstraints().addAll(column1, column2, column3);
+        grid.getColumnConstraints().addAll(makeAlignedColumn(HPos.LEFT), makeAlignedColumn(HPos.CENTER), makeAlignedColumn(HPos.RIGHT));
+    }
+
+    public void prepareGrid(GridPane grid, Background bg, double gap) {
+        grid.setBackground(bg);
+        grid.setHgap(gap);
+        grid.setVgap(gap);
     }
 }
