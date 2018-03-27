@@ -44,27 +44,6 @@ public class LoginScene extends AbstractScene {
         createResizableScene(0.3, "Login");
     }
 
-    private void login(ActionEvent e) {
-        DataStorage.getInstance().getUser(usernameField.getText(), (user) -> Platform.runLater(() -> {
-            if (user == null) {
-                makeAlert("Incorrect Username", "The entered username is incorrect").showAndWait();
-                return;
-            }
-            if (!passwordField.getText().equals(user.getPassword().getData())) {
-                makeAlert("Incorrect Password", "The entered password is incorrect").showAndWait();
-                return;
-            }
-            new UserScene(user, stage).start();
-        }));
-    }
-
-    public Alert makeAlert(String title, String msg) {
-        Alert a = new Alert(Alert.AlertType.ERROR);
-        a.setTitle(title);
-        a.setContentText(msg);
-        return a;
-    }
-
     public void makeGrid() {
         grid.setBackground(background);
         grid.setHgap(10);
@@ -91,5 +70,36 @@ public class LoginScene extends AbstractScene {
         RowConstraints main = new RowConstraints();
 
         grid.getRowConstraints().addAll(sep, main, sep, main);
+    }
+
+    @Override
+    public void destroy() {
+        disable();
+        SceneUtils.getIoThread().shutdown();
+    }
+
+    public void disable() {
+        super.destroy();
+    }
+
+    private void login(ActionEvent e) {
+        DataStorage.getInstance().getUser(usernameField.getText(), (user) -> Platform.runLater(() -> {
+            if (user == null) {
+                makeAlert("Incorrect Username", "The entered username is incorrect").showAndWait();
+                return;
+            }
+            if (!passwordField.getText().equals(user.getPassword().getData())) {
+                makeAlert("Incorrect Password", "The entered password is incorrect").showAndWait();
+                return;
+            }
+            new UserScene(user, stage).start();
+        }));
+    }
+
+    public Alert makeAlert(String title, String msg) {
+        Alert a = new Alert(Alert.AlertType.ERROR);
+        a.setTitle(title);
+        a.setContentText(msg);
+        return a;
     }
 }

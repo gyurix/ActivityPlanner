@@ -3,6 +3,7 @@ package gyurix.activityplanner.gui.scenes.main;
 import gyurix.activityplanner.core.data.user.User;
 import gyurix.activityplanner.core.observation.Observable;
 import gyurix.activityplanner.gui.renderers.ContentRenderer;
+import gyurix.activityplanner.gui.scenes.SceneUtils;
 import gyurix.activityplanner.gui.scenes.core.InfoScene;
 import javafx.geometry.HPos;
 import javafx.scene.control.Button;
@@ -52,7 +53,10 @@ public class UserScene extends InfoScene<User> {
         info.visitCreatedContents(renderer = new ContentRenderer(this));
         Observable<String> un = info.getUsername();
         usernameLabel = new Label();
-        logoutButton.setOnAction((e) -> new LoginScene(stage).start());
+        logoutButton.setOnAction((e) -> {
+            disable();
+            new LoginScene(stage).start();
+        });
         attach(un, () -> usernameLabel.setText(un.getData()));
     }
 
@@ -108,6 +112,11 @@ public class UserScene extends InfoScene<User> {
 
     @Override
     public void destroy() {
+        disable();
+        SceneUtils.getIoThread().shutdown();
+    }
+
+    public void disable() {
         super.destroy();
         renderer.destroy();
     }
