@@ -33,6 +33,7 @@ public class DateEditor extends AbstractScene {
     }
 
     public void createNodes() {
+        datePicker.setPrefWidth(Double.MAX_VALUE);
         dateLabel.setAlignment(Pos.CENTER);
         dateLabel.setPrefWidth(Double.MAX_VALUE);
         attach(text, () -> {
@@ -42,7 +43,6 @@ public class DateEditor extends AbstractScene {
                 LocalDate ld = LocalDate.of(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH) + 1, cal.get(Calendar.DAY_OF_MONTH));
                 LocalTime lt = LocalTime.of(cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE), cal.get(Calendar.SECOND));
                 datePicker.setDateTimeValue(LocalDateTime.of(ld, lt));
-                System.out.println("Updated");
             }
         });
         Runnable r = () -> {
@@ -58,7 +58,7 @@ public class DateEditor extends AbstractScene {
 
     @Override
     public void createScene() {
-        createResizableScene(0.3, "Text Editor");
+        createResizableScene(0.17, "Date Editor");
     }
 
     public void makeGrid() {
