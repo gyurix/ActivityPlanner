@@ -5,7 +5,6 @@ import gyurix.activityplanner.core.data.visitors.ContentVisitor;
 import gyurix.activityplanner.core.data.visitors.UserVisitor;
 import gyurix.activityplanner.core.observation.Observable;
 import gyurix.activityplanner.core.observation.ObservableList;
-import gyurix.activityplanner.core.storage.DataStorage;
 import lombok.Getter;
 
 @Getter
@@ -21,7 +20,13 @@ public abstract class User extends StorableData {
 
     public abstract void accept(UserVisitor visitor);
 
-    public void visitCreatedContents(ContentVisitor visitor) {
-        getCreatedContents().forEach((cid) -> DataStorage.getInstance().getContent(cid, (c) -> c.accept(visitor)));
+    public boolean isContentEditable(int contentId) {
+        return createdContents.getWrappedData().contains(contentId);
     }
+
+    public boolean removeContent(int contentId) {
+        return createdContents.remove(contentId);
+    }
+
+    public abstract void visitCreatedContents(ContentVisitor visitor);
 }

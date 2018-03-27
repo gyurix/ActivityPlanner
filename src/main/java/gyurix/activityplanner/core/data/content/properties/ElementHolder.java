@@ -1,4 +1,4 @@
-package gyurix.activityplanner.core.data.content;
+package gyurix.activityplanner.core.data.content.properties;
 
 import gyurix.activityplanner.core.data.element.Element;
 import gyurix.activityplanner.core.observation.Observable;

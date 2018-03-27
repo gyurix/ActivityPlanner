@@ -3,6 +3,7 @@ package gyurix.activityplanner.gui.assets;
 import javafx.scene.image.Image;
 
 public enum Icons {
+    ADD("add.png"),
     BROWSE("browse.png"),
     EDIT("edit.png"),
     LOADING("loading.gif"),

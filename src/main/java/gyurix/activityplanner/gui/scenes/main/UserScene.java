@@ -40,13 +40,17 @@ public class UserScene extends InfoScene<User> {
     @Override
     public void addNodesToGrid() {
         addNodesToMainGrid();
-        info.visitCreatedContents(renderer = new ContentRenderer(this));
+        attach(info.getCreatedContents(), () -> {
+            tables.getChildren().clear();
+            chat.getChildren().clear();
+            alerts.getChildren().clear();
+            info.visitCreatedContents(renderer = new ContentRenderer(this));
+        });
         addNodesToGridChat();
     }
 
     @Override
     public void createNodes() {
-        info.visitCreatedContents(renderer = new ContentRenderer(this));
         Observable<String> un = info.getUsername();
         usernameLabel = new Label();
         logoutButton.setOnAction((e) -> {

@@ -5,6 +5,7 @@ import gyurix.activityplanner.core.observation.Observable;
 import gyurix.activityplanner.gui.scenes.core.ElementHolderScene;
 import gyurix.activityplanner.gui.scenes.editor.DateEditor;
 import gyurix.activityplanner.gui.scenes.editor.TextEditor;
+import gyurix.activityplanner.gui.scenes.main.UserScene;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseButton;
@@ -19,8 +20,8 @@ import static java.lang.Double.MAX_VALUE;
 public class AlertViewer extends ElementHolderScene<Alert> {
     private Label title, subtitle, date;
 
-    public AlertViewer(Alert info, Stage stage) {
-        super(info, stage);
+    public AlertViewer(UserScene userScene, Alert info, Stage stage) {
+        super(userScene, info, stage);
     }
 
     @Override

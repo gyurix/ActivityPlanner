@@ -3,7 +3,7 @@ package gyurix.activityplanner.gui.renderers;
 import com.sun.deploy.uitoolkit.impl.fx.HostServicesFactory;
 import com.sun.javafx.application.HostServicesDelegate;
 import gyurix.activityplanner.core.Callable;
-import gyurix.activityplanner.core.data.content.ElementHolder;
+import gyurix.activityplanner.core.data.content.properties.ElementHolder;
 import gyurix.activityplanner.core.data.element.*;
 import gyurix.activityplanner.core.data.visitors.ElementVisitor;
 import gyurix.activityplanner.core.observation.Observable;
@@ -16,7 +16,6 @@ import gyurix.activityplanner.gui.scenes.editor.UrlEditor;
 import javafx.application.Platform;
 import javafx.geometry.HPos;
 import javafx.geometry.VPos;
-import javafx.scene.Cursor;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
@@ -41,7 +40,7 @@ public class ElementRenderer extends DataRenderer implements ElementVisitor {
     private static final double VIDEO_BOX_HEIGHT_MULTIPLIER = 0.9;
     private static final double VIDEO_BOX_WIDTH_MULTIPLIER = 0.95;
     private static final double WIDTH_MULTIPLIER = 0.74;
-    private static final Cursor clickableCursor = Cursor.OPEN_HAND;
+    private final boolean editable;
     private final GridPane box;
     private final ElementHolder elementHolder;
     private final ElementHolderScene<? extends ElementHolder> parent;
@@ -52,6 +51,7 @@ public class ElementRenderer extends DataRenderer implements ElementVisitor {
         this.parent = viewer;
         this.box = viewer.getElements();
         this.elementHolder = viewer.getInfo();
+        editable = viewer.getUserScene().getInfo().isContentEditable(elementHolder.getId());
     }
 
     public void addToBox(TextElement e, Region r) {
@@ -62,6 +62,8 @@ public class ElementRenderer extends DataRenderer implements ElementVisitor {
     }
 
     public void createAddButtons() {
+        if (!editable)
+            return;
         GridPane grid = new GridPane();
         RowConstraints seprow = new RowConstraints();
         RowConstraints mainrow = new RowConstraints();
@@ -99,25 +101,6 @@ public class ElementRenderer extends DataRenderer implements ElementVisitor {
             elementHolder.getElements().add(new Observable<>(el));
             openEditor(el);
         });
-    }
-
-    public Pane createClickableImage(Icons icon, double sizeMultiplier, Runnable onClick) {
-        ImageView img = new ImageView(icon.getImage());
-        img.setPreserveRatio(true);
-        Pane wrapper = new Pane(img);
-        wrapper.setCursor(clickableCursor);
-        wrapper.setMaxHeight(VBox.USE_PREF_SIZE);
-        wrapper.setOnMouseReleased((e) -> {
-            if (e.getButton() != MouseButton.PRIMARY)
-                return;
-            onClick.run();
-        });
-        attach(parent.getScreenWidth(), () -> {
-            double maxx = parent.getScreenWidth().getData() * sizeMultiplier;
-            img.setFitWidth(maxx);
-            wrapper.setMaxWidth(maxx);
-        });
-        return wrapper;
     }
 
     private WebView createWebView(boolean audio) {
@@ -175,6 +158,11 @@ public class ElementRenderer extends DataRenderer implements ElementVisitor {
         return brighter ? avgColor(c, Color.WHITE) : avgColor(c, avgColor(c, Color.WHITE));
     }
 
+    @Override
+    public Observable<Double> getScreenWidth() {
+        return parent.getScreenWidth();
+    }
+
     public GridPane makeContentGrid(Region content, Pane edit, Pane remove) {
         GridPane grid = new GridPane();
         ColumnConstraints side = new ColumnConstraints();
@@ -188,9 +176,11 @@ public class ElementRenderer extends DataRenderer implements ElementVisitor {
         grid.getRowConstraints().add(row);
 
         makeDynamicBackground(grid, elementHolder.getColor());
-        grid.add(edit, 0, 0);
+        if (editable) {
+            grid.add(edit, 0, 0);
+            grid.add(remove, 2, 0);
+        }
         grid.add(content, 1, 0);
-        grid.add(remove, 2, 0);
         return grid;
     }
 

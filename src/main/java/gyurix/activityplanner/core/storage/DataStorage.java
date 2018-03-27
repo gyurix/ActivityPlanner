@@ -14,25 +14,33 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.nio.charset.Charset;
+import java.util.NoSuchElementException;
 import java.util.TreeMap;
 import java.util.function.Consumer;
 
 public class DataStorage extends StorableData {
-    @Getter
-    private static DataStorage instance;
     private static final Charset utf8 = Charset.forName("UTF-8");
     @Getter
     private static Gson gson = new GsonBuilder()
             .setPrettyPrinting()
             .registerTypeAdapterFactory(new TypeSelectorAdapter())
             .registerTypeAdapterFactory(new UnwrapperAdapter()).create();
+    @Getter
+    private static DataStorage instance;
     private TreeMap<Integer, Content> contents = new TreeMap<>();
     private TreeMap<String, User> users = new TreeMap<>();
+
+    @SneakyThrows
+    public static void load(File f) {
+        FileReader fr = new FileReader(f);
+        instance = gson.fromJson(fr, DataStorage.class);
+        fr.close();
+    }
 
     public int addContent(Content content) {
         Integer lastId = contents.floorKey(10000000);
         int contentId = lastId == null ? 1 : lastId + 1;
-        content.getId().setData(contentId);
+        content.setId(contentId);
         contents.put(contentId, content);
         return contentId;
     }
@@ -42,6 +50,10 @@ public class DataStorage extends StorableData {
     }
 
     public void getContent(int contentId, Consumer<Content> consumer) {
+        Content con = contents.get(contentId);
+        if (con == null) {
+            throw new NoSuchElementException("Content " + contentId + " was not found.");
+        }
         consumer.accept(contents.get(contentId));
     }
 
@@ -49,15 +61,15 @@ public class DataStorage extends StorableData {
         consumer.accept(users.get(userName));
     }
 
-    public void removeUser(String userName, Consumer<Boolean> consumer) {
-        consumer.accept(users.remove(userName) != null);
+    public void removeContent(User info, int contentId) {
+        if (info.removeContent(contentId)) {
+            Content c = contents.remove(contentId);
+            c.setId(0);
+        }
     }
 
-    @SneakyThrows
-    public static void load(File f) {
-        FileReader fr = new FileReader(f);
-        instance = gson.fromJson(fr, DataStorage.class);
-        fr.close();
+    public void removeUser(String userName, Consumer<Boolean> consumer) {
+        consumer.accept(users.remove(userName) != null);
     }
 
     @SneakyThrows

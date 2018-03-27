@@ -29,9 +29,12 @@ public class ObservableList<T> extends Observable<List<T>> {
         wrappedData.forEach(consumer);
     }
 
-    public void remove(T data) {
-        this.wrappedData.remove(data);
-        observers.forEach(Observer::update);
+    public boolean remove(T data) {
+        if (this.wrappedData.remove(data)) {
+            observers.forEach(Observer::update);
+            return true;
+        }
+        return false;
     }
 
     public int size() {

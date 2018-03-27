@@ -1,10 +1,11 @@
 package gyurix.activityplanner.gui.scenes.core;
 
-import gyurix.activityplanner.core.data.content.ElementHolder;
+import gyurix.activityplanner.core.data.content.properties.ElementHolder;
 import gyurix.activityplanner.core.data.element.Element;
 import gyurix.activityplanner.core.observation.Observable;
 import gyurix.activityplanner.core.observation.ObservableList;
 import gyurix.activityplanner.gui.renderers.ElementRenderer;
+import gyurix.activityplanner.gui.scenes.main.UserScene;
 import javafx.event.EventHandler;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.input.ScrollEvent;
@@ -22,9 +23,11 @@ public abstract class ElementHolderScene<T extends ElementHolder> extends InfoSc
     protected ScrollHandler elementScroller = new ScrollHandler();
     protected GridPane elements;
     protected ScrollPane elementsWrapper = new ScrollPane();
+    protected UserScene userScene;
 
-    public ElementHolderScene(T info, Stage stage) {
+    public ElementHolderScene(UserScene userScene, T info, Stage stage) {
         super(info, stage);
+        this.userScene = userScene;
         elementsWrapper.setFitToWidth(true);
     }
 
