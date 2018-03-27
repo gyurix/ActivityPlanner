@@ -99,7 +99,8 @@ public class UrlEditor extends TextEditor {
             FileChooser fileChooser = new FileChooser();
             fileChooser.setTitle("Choose File");
             File f = fileChooser.showOpenDialog(stage);
-            url.setData("file:///" + f.getAbsoluteFile().toString());
+            if (f != null)
+                url.setData("file:///" + f.getAbsoluteFile().toString());
         });
     }
 
