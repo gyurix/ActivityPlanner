@@ -10,6 +10,7 @@ import javafx.scene.paint.Stop;
 import lombok.Getter;
 
 import java.text.SimpleDateFormat;
+import java.util.Random;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -17,10 +18,15 @@ public class SceneUtils {
     @Getter
     private static final ExecutorService ioThread = Executors.newCachedThreadPool();
     private static final SimpleDateFormat sdf = new SimpleDateFormat("[yyyy.MM.dd] HH:mm:ss");
+    private static final Random random = new Random();
 
     public static String colorToHex(Color c) {
         return String.format("#%02x%02x%02x", (int) (c.getRed() * 255),
                 (int) (c.getGreen() * 255), (int) (c.getBlue() * 255));
+    }
+
+    public static Color getRandomColor() {
+        return Color.color(0.3 + random.nextDouble() * 0.7, 0.3 + random.nextDouble() * 0.7, random.nextDouble());
     }
 
     public static void runAsync(Runnable r) {

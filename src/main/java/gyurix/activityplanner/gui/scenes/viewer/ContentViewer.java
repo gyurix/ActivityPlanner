@@ -1,6 +1,7 @@
 package gyurix.activityplanner.gui.scenes.viewer;
 
 import gyurix.activityplanner.core.data.content.Alert;
+import gyurix.activityplanner.core.data.content.Table;
 import gyurix.activityplanner.core.observation.Observable;
 import gyurix.activityplanner.gui.scenes.core.ElementHolderScene;
 import gyurix.activityplanner.gui.scenes.editor.DateEditor;
@@ -17,10 +18,10 @@ import static gyurix.activityplanner.gui.scenes.SceneUtils.formatTime;
 import static java.lang.Double.MAX_VALUE;
 
 @Getter
-public class AlertViewer extends ElementHolderScene<Alert> {
+public class ContentViewer extends ElementHolderScene<Table> {
     private Label title, subtitle, date;
 
-    public AlertViewer(UserScene userScene, Alert info, Stage stage) {
+    public ContentViewer(UserScene userScene, Table info, Stage stage) {
         super(userScene, info, stage);
     }
 
@@ -28,14 +29,14 @@ public class AlertViewer extends ElementHolderScene<Alert> {
     public void addNodesToGrid() {
         grid.add(title, 1, 1);
         grid.add(subtitle, 1, 2);
-        grid.add(date, 1, 3);
+        if (info instanceof Alert)
+            grid.add(date, 1, 3);
         grid.add(elementsWrapper, 1, 4);
     }
 
     @Override
     public void createNodes() {
         title = renderText(24, info.getTitle());
-        title.setPrefWidth(MAX_VALUE);
         title.setAlignment(Pos.BOTTOM_CENTER);
         title.setOnMouseReleased(e -> {
             if (e.getButton() == MouseButton.PRIMARY && e.getClickCount() == 2)
@@ -44,15 +45,14 @@ public class AlertViewer extends ElementHolderScene<Alert> {
 
         subtitle = renderText(16, info.getSubtitle());
         subtitle.setAlignment(Pos.TOP_LEFT);
-        subtitle.setPrefWidth(MAX_VALUE);
         subtitle.setOnMouseReleased(e -> {
             if (e.getButton() == MouseButton.PRIMARY && e.getClickCount() == 2)
                 new TextEditor(this, info.getSubtitle()).start();
         });
-
-        date = renderDate(info.getDueDate());
-        date.setPrefWidth(MAX_VALUE);
-        date.setAlignment(Pos.BOTTOM_RIGHT);
+        if (info instanceof Alert) {
+            date = renderDate(((Alert) info).getDueDate());
+            date.setAlignment(Pos.BOTTOM_RIGHT);
+        }
 
         attach(info.getElements(), this::createElementsGrid);
     }
@@ -87,7 +87,7 @@ public class AlertViewer extends ElementHolderScene<Alert> {
         attach(obs, () -> label.setText(formatTime(obs.getData())));
         label.setOnMouseReleased((e) -> {
             if (e.getButton() == MouseButton.PRIMARY && e.getClickCount() == 2)
-                new DateEditor(this, info.getDueDate()).start();
+                new DateEditor(this, obs).start();
         });
         return label;
     }

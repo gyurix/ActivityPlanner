@@ -40,12 +40,7 @@ public class UserScene extends InfoScene<User> {
     @Override
     public void addNodesToGrid() {
         addNodesToMainGrid();
-        attach(info.getCreatedContents(), () -> {
-            tables.getChildren().clear();
-            chat.getChildren().clear();
-            alerts.getChildren().clear();
-            info.visitCreatedContents(renderer = new ContentRenderer(this));
-        });
+        attach(info.getCreatedContents(), () -> info.visitCreatedContents(renderer = new ContentRenderer(this)));
         addNodesToGridChat();
     }
 
