@@ -23,7 +23,7 @@ import static gyurix.activityplanner.gui.scenes.SceneUtils.formatTime;
 import static java.lang.Double.MAX_VALUE;
 
 public class ContentRenderer extends DataRenderer implements ContentVisitor {
-    private static final double REMOVE_ICON_SIZE = 0.04;
+    private static final double REMOVE_ICON_SIZE = 0.025;
     private int alertIndex, tableIndex;
     private UserScene scene;
 
@@ -46,16 +46,16 @@ public class ContentRenderer extends DataRenderer implements ContentVisitor {
     }
 
     public void makeAlertGridColumns(GridPane grid) {
-        ColumnConstraints column1 = new ColumnConstraints();
-        column1.setPercentWidth(15);
+        ColumnConstraints side = new ColumnConstraints();
+        side.setPercentWidth(5);
 
-        ColumnConstraints column2 = new ColumnConstraints();
-        column2.setPercentWidth(70);
+        ColumnConstraints center = new ColumnConstraints();
+        center.setPercentWidth(85);
 
-        ColumnConstraints column3 = new ColumnConstraints();
-        column3.setPercentWidth(15);
+        ColumnConstraints right = new ColumnConstraints();
+        right.setPercentWidth(5);
 
-        grid.getColumnConstraints().addAll(column1, column2, column3);
+        grid.getColumnConstraints().addAll(side, center, right, side);
     }
 
     public void makeDynamicBackground(GridPane grid, Observable<String> obs) {
@@ -69,14 +69,14 @@ public class ContentRenderer extends DataRenderer implements ContentVisitor {
         Label date = renderDate(a.getDueDate());
         date.setAlignment(Pos.BOTTOM_RIGHT);
 
-        grid.add(title, 0, 0, 2, 1);
+        grid.add(title, 1, 0);
         if (scene.getInfo().isContentEditable(a.getId().getData())) {
             Pane removeIcon = createClickableImage(Icons.REMOVE, REMOVE_ICON_SIZE, () ->
                     DataStorage.getInstance().removeContent(scene.getInfo(), a.getId().getData()));
             grid.add(removeIcon, 2, 0);
         }
-        grid.add(subtitle, 0, 1, 3, 1);
-        grid.add(date, 1, 2, 3, 1);
+        grid.add(subtitle, 1, 1, 2, 1);
+        grid.add(date, 1, 2, 2, 1);
         grid.setOnMouseReleased((e) -> {
             if (e.getButton() == MouseButton.PRIMARY) {
                 Platform.runLater(() -> {

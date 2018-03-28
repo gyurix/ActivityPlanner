@@ -68,9 +68,9 @@ public class UserScene extends InfoScene<User> {
     @Override
     public void makeGrid() {
         prepareGrid(grid, bgColorGradient(mainBackground), 10);
-        prepareGrid(chat, bgColorGradient(chatBackground), 5);
-        prepareGrid(tables, bgColorGradient(tableBackground), 5);
-        prepareGrid(alerts, bgColorGradient(alertBackground), 5);
+        prepareGrid(chat, bgColorGradient(chatBackground), 10);
+        prepareGrid(tables, bgColorGradient(tableBackground), 10);
+        prepareGrid(alerts, bgColorGradient(alertBackground), 10);
 
         makeGridColumns();
         makeGridRows();
@@ -78,11 +78,12 @@ public class UserScene extends InfoScene<User> {
 
     public void makeGridColumns() {
         makeMainGridColumns();
-        ColumnConstraints col1 = makeColumn(10, HPos.LEFT);
-        ColumnConstraints col2 = makeColumn(80, HPos.CENTER);
-        ColumnConstraints col3 = makeColumn(10, HPos.RIGHT);
-        tables.getColumnConstraints().addAll(col1, col2, col3);
-        alerts.getColumnConstraints().addAll(col1, col2, col3);
+        ColumnConstraints side = new ColumnConstraints();
+        side.setPercentWidth(5);
+        ColumnConstraints main = new ColumnConstraints();
+        main.setPercentWidth(90);
+        tables.getColumnConstraints().addAll(side, main, side);
+        alerts.getColumnConstraints().addAll(side, main, side);
     }
 
     @Override
