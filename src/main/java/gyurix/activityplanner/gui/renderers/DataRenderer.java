@@ -4,12 +4,15 @@ import gyurix.activityplanner.core.observation.Observable;
 import gyurix.activityplanner.core.observation.ObserverContainer;
 import gyurix.activityplanner.gui.assets.Icons;
 import javafx.scene.Cursor;
+import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
+
+import java.util.function.Consumer;
 
 import static java.lang.Double.MAX_VALUE;
 
@@ -26,6 +29,24 @@ public abstract class DataRenderer extends ObserverContainer {
             if (e.getButton() != MouseButton.PRIMARY)
                 return;
             onClick.run();
+        });
+        attach(getScreenWidth(), () -> {
+            double maxx = getScreenWidth().getData() * sizeMultiplier;
+            img.setFitWidth(maxx);
+            wrapper.setMaxWidth(maxx);
+        });
+        return wrapper;
+    }
+
+    public Pane createImageMenu(Icons icon, double sizeMultiplier, Consumer<Consumer<ContextMenu>> menu) {
+        ImageView img = new ImageView(icon.getImage());
+        img.setPreserveRatio(true);
+        Pane wrapper = new Pane(img);
+        wrapper.setCursor(clickableCursor);
+        wrapper.setMaxHeight(VBox.USE_PREF_SIZE);
+        wrapper.setOnMouseReleased(event -> {
+            if (event.getButton() == MouseButton.PRIMARY)
+                menu.accept((m) -> m.show(wrapper, event.getScreenX(), event.getScreenY() - 10));
         });
         attach(getScreenWidth(), () -> {
             double maxx = getScreenWidth().getData() * sizeMultiplier;

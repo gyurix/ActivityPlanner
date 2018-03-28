@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import gyurix.activityplanner.core.data.StorableData;
 import gyurix.activityplanner.core.data.content.Content;
+import gyurix.activityplanner.core.data.user.Lecture;
 import gyurix.activityplanner.core.data.user.User;
 import gyurix.activityplanner.core.storage.gson.TypeSelectorAdapter;
 import gyurix.activityplanner.core.storage.gson.UnwrapperAdapter;
@@ -14,9 +15,11 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.nio.charset.Charset;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.TreeMap;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 public class DataStorage extends StorableData {
     private static final Charset utf8 = Charset.forName("UTF-8");
@@ -55,6 +58,11 @@ public class DataStorage extends StorableData {
             throw new NoSuchElementException("Content " + contentId + " was not found.");
         }
         consumer.accept(contents.get(contentId));
+    }
+
+    public void getLectures(Consumer<List<Lecture>> consumer) {
+        List list = users.values().stream().filter(Lecture.class::isInstance).collect(Collectors.toList());
+        consumer.accept(list);
     }
 
     public void getUser(String userName, Consumer<User> consumer) {

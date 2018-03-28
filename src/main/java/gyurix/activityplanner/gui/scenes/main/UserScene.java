@@ -6,6 +6,7 @@ import gyurix.activityplanner.core.data.user.User;
 import gyurix.activityplanner.core.observation.Observable;
 import gyurix.activityplanner.core.storage.DataStorage;
 import gyurix.activityplanner.gui.assets.Icons;
+import gyurix.activityplanner.gui.renderers.ChatRenderer;
 import gyurix.activityplanner.gui.renderers.ContentRenderer;
 import gyurix.activityplanner.gui.scenes.SceneUtils;
 import gyurix.activityplanner.gui.scenes.core.InfoScene;
@@ -23,7 +24,6 @@ import static gyurix.activityplanner.gui.scenes.SceneUtils.*;
 
 @Getter
 public class UserScene extends InfoScene<User> {
-    private static final double CHAT_ICON_SIZE = 0.06;
     private static final double ICON_SIZE = 0.025;
     private static final Color alertBackground = Color.web("#ff7070");
     private static final Color chatBackground = Color.web("#a0a0ff");
@@ -34,6 +34,7 @@ public class UserScene extends InfoScene<User> {
     private GridPane chat = new GridPane();
     private Button logoutButton = new Button("Logout");
     private ContentRenderer renderer;
+    private ChatRenderer chatRenderer = new ChatRenderer(this);
     private GridPane tables = new GridPane(), tableWrapper;
     private Label usernameLabel = new Label();
 
@@ -44,7 +45,7 @@ public class UserScene extends InfoScene<User> {
 
     @Override
     public void addNodesToGrid() {
-        addNodesToGridChat();
+        chatRenderer.render();
         addNodesToMainGrid();
     }
 
@@ -112,21 +113,6 @@ public class UserScene extends InfoScene<User> {
         row1.setPercentHeight(90);
         grid.getRowConstraints().addAll(row0, row1);
         chat.getRowConstraints().addAll(row0, row1);
-    }
-
-    private void addNodesToGridChat() {
-        chat.add(createClickableImage(Icons.CHAT_STUDENT, CHAT_ICON_SIZE, () -> {
-            System.out.println("Clicked to student");
-        }), 1, 0);
-        chat.add(createClickableImage(Icons.CHAT_STUDENTS, CHAT_ICON_SIZE, () -> {
-            System.out.println("Clicked to students");
-        }), 2, 0);
-        chat.add(createClickableImage(Icons.CHAT_LECTOR, CHAT_ICON_SIZE, () -> {
-            System.out.println("Clicked to lector");
-        }), 3, 0);
-        chat.add(createClickableImage(Icons.CHAT_BOTH, CHAT_ICON_SIZE, () -> {
-            System.out.println("Clicked to both");
-        }), 4, 0);
     }
 
     private void addNodesToMainGrid() {
