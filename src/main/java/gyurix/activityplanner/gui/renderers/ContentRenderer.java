@@ -18,11 +18,12 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
-import static gyurix.activityplanner.gui.scenes.SceneUtils.*;
+import static gyurix.activityplanner.gui.scenes.SceneUtils.bgColorGradientTop;
+import static gyurix.activityplanner.gui.scenes.SceneUtils.formatTime;
 import static java.lang.Double.MAX_VALUE;
 
 public class ContentRenderer extends DataRenderer implements ContentVisitor {
-    private static final double ICON_SIZE = 0.025;
+    private static final double REMOVE_ICON_SIZE = 0.025;
     private int alertIndex, tableIndex;
     private UserScene scene;
 
@@ -30,27 +31,7 @@ public class ContentRenderer extends DataRenderer implements ContentVisitor {
         this.scene = scene;
         scene.getChat().getChildren().clear();
         scene.getAlerts().getChildren().clear();
-        scene.getAlerts().add(createClickableImage(Icons.ADD, ICON_SIZE, () -> {
-            Alert a = new Alert(System.currentTimeMillis(),
-                    "Alert Title",
-                    "Alert Subtitle",
-                    colorToHex(getRandomColor()).substring(1));
-            DataStorage ds = DataStorage.getInstance();
-            scene.getInfo().getCreatedContents().add(ds.addContent(a));
-            new ContentViewer(scene, a, new Stage()).start();
-
-        }), 2, 0);
-
         scene.getTables().getChildren().clear();
-        scene.getTables().add(createClickableImage(Icons.ADD, ICON_SIZE, () -> {
-            Table t = new Table("Table Title",
-                    "Table Subtitle",
-                    colorToHex(getRandomColor()).substring(1));
-            DataStorage ds = DataStorage.getInstance();
-            scene.getInfo().getCreatedContents().add(ds.addContent(t));
-            new ContentViewer(scene, t, new Stage()).start();
-
-        }), 2, 0);
     }
 
     @Override
@@ -70,14 +51,9 @@ public class ContentRenderer extends DataRenderer implements ContentVisitor {
     public void makeContentGridColumns(GridPane grid) {
         ColumnConstraints side = new ColumnConstraints();
         side.setPercentWidth(5);
-
         ColumnConstraints center = new ColumnConstraints();
         center.setPercentWidth(85);
-
-        ColumnConstraints right = new ColumnConstraints();
-        right.setPercentWidth(5);
-
-        grid.getColumnConstraints().addAll(side, center, right, side);
+        grid.getColumnConstraints().addAll(side, center, side, side);
     }
 
     public void makeDynamicBackground(GridPane grid, Observable<String> obs) {
@@ -106,7 +82,7 @@ public class ContentRenderer extends DataRenderer implements ContentVisitor {
 
         grid.add(title, 1, 0);
         if (scene.getInfo().isContentEditable(t.getId().getData())) {
-            Pane removeIcon = createClickableImage(Icons.REMOVE, ICON_SIZE, () ->
+            Pane removeIcon = createClickableImage(Icons.REMOVE, REMOVE_ICON_SIZE, () ->
                     DataStorage.getInstance().removeContent(scene.getInfo(), t.getId().getData()));
             grid.add(removeIcon, 2, 0);
         }
@@ -125,11 +101,11 @@ public class ContentRenderer extends DataRenderer implements ContentVisitor {
 
     @Override
     public void visit(Alert a) {
-        Platform.runLater(() -> scene.getAlerts().add(renderAlert(a), 1, ++alertIndex));
+        Platform.runLater(() -> scene.getAlerts().add(renderAlert(a), 1, alertIndex++));
     }
 
     @Override
     public void visit(Table t) {
-        Platform.runLater(() -> scene.getTables().add(renderTable(t), 1, ++tableIndex));
+        Platform.runLater(() -> scene.getTables().add(renderTable(t), 1, tableIndex++));
     }
 }

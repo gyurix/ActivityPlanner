@@ -59,7 +59,7 @@ public class ContentViewer extends ElementHolderScene<Table> {
 
     @Override
     public void createScene() {
-        createResizableScene(0.5, "Alert Viewer");
+        createResizableScene(0.5, (info instanceof Alert ? "Alert" : "Table") + " Viewer");
     }
 
     @Override
