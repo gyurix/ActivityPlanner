@@ -11,6 +11,11 @@ public class ObserverContainer implements Destroyable {
         observable.attach(observer);
     }
 
+    public <T> void attachLater(Observable<T> observable, Observer observer) {
+        registeredObservers.put(observable, observer);
+        observable.attach(observer);
+    }
+
     @Override
     public void destroy() {
         registeredObservers.forEach(Observable::detach);

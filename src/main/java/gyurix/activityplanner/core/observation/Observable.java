@@ -30,6 +30,6 @@ public class Observable<T> extends WrappedData<T> {
 
     public void setData(T data) {
         wrappedData = data;
-        observers.forEach(Observer::update);
+        new ArrayList<>(observers).forEach(Observer::update);
     }
 }

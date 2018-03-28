@@ -1,7 +1,8 @@
 package gyurix.activityplanner.gui.scenes.editor;
 
+import gyurix.activityplanner.core.data.content.properties.ElementHolder;
 import gyurix.activityplanner.core.observation.Observable;
-import gyurix.activityplanner.gui.scenes.core.AbstractScene;
+import gyurix.activityplanner.gui.scenes.core.ElementHolderScene;
 import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
@@ -12,14 +13,14 @@ import javafx.stage.Stage;
 import lombok.Getter;
 
 @Getter
-public class TextEditor extends AbstractScene {
+public class TextEditor extends Editor {
     private Observable<String> text;
     private TextArea textArea = new TextArea();
     private Label textLabel = new Label("Text");
     private boolean editLock;
 
-    public TextEditor(Observable<String> text) {
-        super(new Stage());
+    public TextEditor(ElementHolderScene<? extends ElementHolder> holder, Observable<String> text) {
+        super(holder, new Stage());
         this.text = text;
     }
 

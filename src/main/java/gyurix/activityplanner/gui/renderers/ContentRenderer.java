@@ -70,9 +70,9 @@ public class ContentRenderer extends DataRenderer implements ContentVisitor {
         date.setAlignment(Pos.BOTTOM_RIGHT);
 
         grid.add(title, 0, 0, 2, 1);
-        if (scene.getInfo().isContentEditable(a.getId())) {
+        if (scene.getInfo().isContentEditable(a.getId().getData())) {
             Pane removeIcon = createClickableImage(Icons.REMOVE, REMOVE_ICON_SIZE, () ->
-                    DataStorage.getInstance().removeContent(scene.getInfo(), a.getId()));
+                    DataStorage.getInstance().removeContent(scene.getInfo(), a.getId().getData()));
             grid.add(removeIcon, 2, 0);
         }
         grid.add(subtitle, 0, 1, 3, 1);
@@ -80,7 +80,7 @@ public class ContentRenderer extends DataRenderer implements ContentVisitor {
         grid.setOnMouseReleased((e) -> {
             if (e.getButton() == MouseButton.PRIMARY) {
                 Platform.runLater(() -> {
-                    if (a.getId() != 0)
+                    if (a.getId().getData() != 0)
                         new AlertViewer(scene, a, new Stage()).start();
                 });
             }

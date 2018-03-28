@@ -29,6 +29,10 @@ public abstract class ElementHolderScene<T extends ElementHolder> extends InfoSc
         super(info, stage);
         this.userScene = userScene;
         elementsWrapper.setFitToWidth(true);
+        attachLater(info.getId(), () -> {
+            stage.hide();
+            destroy();
+        });
     }
 
     public void createElementsGrid() {

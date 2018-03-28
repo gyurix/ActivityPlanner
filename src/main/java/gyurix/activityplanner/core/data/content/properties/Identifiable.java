@@ -1,7 +1,7 @@
 package gyurix.activityplanner.core.data.content.properties;
 
-public interface Identifiable {
-    Integer getId();
+import gyurix.activityplanner.core.observation.Observable;
 
-    void setId(int id);
+public interface Identifiable {
+    Observable<Integer> getId();
 }

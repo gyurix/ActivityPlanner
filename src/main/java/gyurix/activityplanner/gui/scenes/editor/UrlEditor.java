@@ -1,8 +1,10 @@
 
 package gyurix.activityplanner.gui.scenes.editor;
 
+import gyurix.activityplanner.core.data.content.properties.ElementHolder;
 import gyurix.activityplanner.core.observation.Observable;
 import gyurix.activityplanner.gui.assets.Icons;
+import gyurix.activityplanner.gui.scenes.core.ElementHolderScene;
 import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
@@ -26,8 +28,8 @@ public class UrlEditor extends TextEditor {
     private TextField urlField = new TextField();
     private Label urlLabel = new Label("Link");
 
-    public UrlEditor(Observable<String> text, Observable<String> url) {
-        super(text);
+    public UrlEditor(ElementHolderScene<? extends ElementHolder> holder, Observable<String> text, Observable<String> url) {
+        super(holder, text);
         this.url = url;
     }
 

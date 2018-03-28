@@ -1,7 +1,8 @@
 package gyurix.activityplanner.gui.scenes.editor;
 
+import gyurix.activityplanner.core.data.content.properties.ElementHolder;
 import gyurix.activityplanner.core.observation.Observable;
-import gyurix.activityplanner.gui.scenes.core.AbstractScene;
+import gyurix.activityplanner.gui.scenes.core.ElementHolderScene;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.layout.ColumnConstraints;
@@ -16,15 +17,15 @@ import java.util.Calendar;
 import java.util.Date;
 
 @Getter
-public class DateEditor extends AbstractScene {
+public class DateEditor extends Editor {
+    private Observable<Long> date;
     private Label dateLabel = new Label("Date");
     private DateTimePicker datePicker = new DateTimePicker();
     private boolean editLock;
-    private Observable<Long> text;
 
-    public DateEditor(Observable<Long> text) {
-        super(new Stage());
-        this.text = text;
+    public DateEditor(ElementHolderScene<? extends ElementHolder> holder, Observable<Long> date) {
+        super(holder, new Stage());
+        this.date = date;
     }
 
     public void addNodesToGrid() {
@@ -36,10 +37,10 @@ public class DateEditor extends AbstractScene {
         datePicker.setPrefWidth(Double.MAX_VALUE);
         dateLabel.setAlignment(Pos.CENTER);
         dateLabel.setPrefWidth(Double.MAX_VALUE);
-        attach(text, () -> {
+        attach(date, () -> {
             if (!editLock) {
                 Calendar cal = Calendar.getInstance();
-                cal.setTime(new Date(text.getData()));
+                cal.setTime(new Date(date.getData()));
                 LocalDate ld = LocalDate.of(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH) + 1, cal.get(Calendar.DAY_OF_MONTH));
                 LocalTime lt = LocalTime.of(cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE), cal.get(Calendar.SECOND));
                 datePicker.setDateTimeValue(LocalDateTime.of(ld, lt));
@@ -50,7 +51,7 @@ public class DateEditor extends AbstractScene {
             LocalDateTime ld = datePicker.getDateTimeValue();
             Calendar cal = Calendar.getInstance();
             cal.set(ld.getYear(), ld.getMonthValue() - 1, ld.getDayOfMonth(), ld.getHour(), ld.getMinute(), ld.getSecond());
-            text.setData(cal.getTime().getTime());
+            date.setData(cal.getTime().getTime());
             editLock = false;
         };
         datePicker.dateTimeValueProperty().addListener((observable, oldValue, newValue) -> r.run());

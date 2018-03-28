@@ -39,7 +39,7 @@ public class AlertViewer extends ElementHolderScene<Alert> {
         title.setAlignment(Pos.BOTTOM_CENTER);
         title.setOnMouseReleased(e -> {
             if (e.getButton() == MouseButton.PRIMARY && e.getClickCount() == 2)
-                new TextEditor(info.getTitle()).start();
+                new TextEditor(this, info.getTitle()).start();
         });
 
         subtitle = renderText(16, info.getSubtitle());
@@ -47,7 +47,7 @@ public class AlertViewer extends ElementHolderScene<Alert> {
         subtitle.setPrefWidth(MAX_VALUE);
         subtitle.setOnMouseReleased(e -> {
             if (e.getButton() == MouseButton.PRIMARY && e.getClickCount() == 2)
-                new TextEditor(info.getSubtitle()).start();
+                new TextEditor(this, info.getSubtitle()).start();
         });
 
         date = renderDate(info.getDueDate());
@@ -87,7 +87,7 @@ public class AlertViewer extends ElementHolderScene<Alert> {
         attach(obs, () -> label.setText(formatTime(obs.getData())));
         label.setOnMouseReleased((e) -> {
             if (e.getButton() == MouseButton.PRIMARY && e.getClickCount() == 2)
-                new DateEditor(info.getDueDate()).start();
+                new DateEditor(this, info.getDueDate()).start();
         });
         return label;
     }

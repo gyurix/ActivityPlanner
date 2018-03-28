@@ -51,7 +51,7 @@ public class ElementRenderer extends DataRenderer implements ElementVisitor {
         this.parent = viewer;
         this.box = viewer.getElements();
         this.elementHolder = viewer.getInfo();
-        editable = viewer.getUserScene().getInfo().isContentEditable(elementHolder.getId());
+        editable = viewer.getUserScene().getInfo().isContentEditable(elementHolder.getId().getData());
     }
 
     public void addToBox(TextElement e, Region r) {
@@ -201,8 +201,8 @@ public class ElementRenderer extends DataRenderer implements ElementVisitor {
 
     public void openEditor(gyurix.activityplanner.core.data.element.TextElement e) {
         (e instanceof LinkElement ?
-                new UrlEditor(e.getText(), ((LinkElement) e).getUrl())
-                : new TextEditor(e.getText())).start();
+                new UrlEditor(parent, e.getText(), ((LinkElement) e).getUrl())
+                : new TextEditor(parent, e.getText())).start();
     }
 
     private Region renderAudio(AudioElement e) {

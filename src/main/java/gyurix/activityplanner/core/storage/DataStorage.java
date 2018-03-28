@@ -40,7 +40,7 @@ public class DataStorage extends StorableData {
     public int addContent(Content content) {
         Integer lastId = contents.floorKey(10000000);
         int contentId = lastId == null ? 1 : lastId + 1;
-        content.setId(contentId);
+        content.getId().setData(contentId);
         contents.put(contentId, content);
         return contentId;
     }
@@ -64,7 +64,7 @@ public class DataStorage extends StorableData {
     public void removeContent(User info, int contentId) {
         if (info.removeContent(contentId)) {
             Content c = contents.remove(contentId);
-            c.setId(0);
+            c.getId().setData(0);
         }
     }
 
