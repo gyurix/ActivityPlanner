@@ -22,7 +22,7 @@ public class ObservableList<T> extends Observable<List<T>> {
 
     @Override
     public void setData(List<T> data) {
-        throw new ObservationException(false);
+        throw new ObservationException(true);
     }
 
     public void forEach(Consumer<T> consumer) {

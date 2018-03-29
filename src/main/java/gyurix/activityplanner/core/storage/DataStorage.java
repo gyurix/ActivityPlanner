@@ -4,8 +4,10 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import gyurix.activityplanner.core.data.StorableData;
 import gyurix.activityplanner.core.data.content.Content;
+import gyurix.activityplanner.core.data.element.ChatMessage;
 import gyurix.activityplanner.core.data.user.Lecture;
 import gyurix.activityplanner.core.data.user.User;
+import gyurix.activityplanner.core.observation.ObservableList;
 import gyurix.activityplanner.core.storage.gson.TypeSelectorAdapter;
 import gyurix.activityplanner.core.storage.gson.UnwrapperAdapter;
 import lombok.Getter;
@@ -32,6 +34,7 @@ public class DataStorage extends StorableData {
     private static DataStorage instance;
     private TreeMap<Integer, Content> contents = new TreeMap<>();
     private TreeMap<String, User> users = new TreeMap<>();
+    private TreeMap<String, ObservableList<ChatMessage>> chatMessages = new TreeMap<>();
 
     @SneakyThrows
     public static void load(File f) {
@@ -46,6 +49,15 @@ public class DataStorage extends StorableData {
         content.getId().setData(contentId);
         contents.put(contentId, content);
         return contentId;
+    }
+
+    public void getChatMessages(String key, Consumer<ObservableList<ChatMessage>> con) {
+        ObservableList<ChatMessage> cm = chatMessages.get(key);
+        if (cm == null) {
+            cm = new ObservableList<>();
+            chatMessages.put(key, cm);
+        }
+        con.accept(cm);
     }
 
     public boolean addUser(User user) {
