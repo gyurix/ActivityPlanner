@@ -9,7 +9,6 @@ import gyurix.activityplanner.gui.assets.Icons;
 import gyurix.activityplanner.gui.scenes.main.UserScene;
 import gyurix.activityplanner.gui.scenes.viewer.ContentViewer;
 import javafx.application.Platform;
-import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.ColumnConstraints;
@@ -19,8 +18,6 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 import static gyurix.activityplanner.gui.scenes.SceneUtils.bgColorGradientTop;
-import static gyurix.activityplanner.gui.scenes.SceneUtils.formatTime;
-import static java.lang.Double.MAX_VALUE;
 
 public class ContentRenderer extends DataRenderer implements ContentVisitor {
     private static final double REMOVE_ICON_SIZE = 0.025;
@@ -63,16 +60,8 @@ public class ContentRenderer extends DataRenderer implements ContentVisitor {
     private GridPane renderAlert(Alert a) {
         GridPane grid = renderTable(a);
         Label date = renderDate(a.getDueDate());
-        date.setAlignment(Pos.BOTTOM_RIGHT);
         grid.add(date, 1, 2, 2, 1);
         return grid;
-    }
-
-    private Label renderDate(Observable<Long> obs) {
-        Label label = new Label();
-        label.setPrefWidth(MAX_VALUE);
-        attach(obs, () -> label.setText(formatTime(obs.getData())));
-        return label;
     }
 
     private GridPane renderTable(Table t) {

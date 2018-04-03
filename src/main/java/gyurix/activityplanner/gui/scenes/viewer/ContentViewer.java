@@ -81,7 +81,8 @@ public class ContentViewer extends ElementHolderScene<Table> {
         elementRenderer.destroy();
     }
 
-    private Label renderDate(Observable<Long> obs) {
+    @Override
+    protected Label renderDate(Observable<Long> obs) {
         Label label = new Label();
         label.setPrefWidth(MAX_VALUE);
         attach(obs, () -> label.setText(formatTime(obs.getData())));

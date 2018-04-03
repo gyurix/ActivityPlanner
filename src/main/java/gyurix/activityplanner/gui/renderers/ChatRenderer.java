@@ -1,6 +1,7 @@
 package gyurix.activityplanner.gui.renderers;
 
 import gyurix.activityplanner.core.data.element.ChatMessage;
+import gyurix.activityplanner.core.data.element.Element;
 import gyurix.activityplanner.core.data.user.Lecture;
 import gyurix.activityplanner.core.data.user.Student;
 import gyurix.activityplanner.core.data.user.User;
@@ -8,37 +9,51 @@ import gyurix.activityplanner.core.observation.Observable;
 import gyurix.activityplanner.core.observation.ObservableList;
 import gyurix.activityplanner.core.storage.DataStorage;
 import gyurix.activityplanner.gui.assets.Icons;
+import gyurix.activityplanner.gui.scenes.SceneUtils;
 import gyurix.activityplanner.gui.scenes.main.UserScene;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.ColumnConstraints;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.RowConstraints;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
 public class ChatRenderer extends DataRenderer {
     private static final double CHAT_ICON_SIZE = 0.06;
+    private static final Background OTHERS_BG = SceneUtils.bgColorGradient(Color.web("#a0a0ff"));
+    private static final Background OWN_BG = SceneUtils.bgColorGradient(Color.web("#d0d0ff"));
+    private final ElementRenderer elementRenderer;
     private GridPane chat;
     private GridPane chatMessages = new GridPane();
     private Observable<ObservableList<ChatMessage>> currentChannel = new Observable<>();
     private UserScene parent;
+    private int row = 0;
     private TextField sendMessage;
 
     public ChatRenderer(UserScene parent) {
         this.parent = parent;
+        elementRenderer = new ElementRenderer(parent);
+        showChat(parent.getInfo());
+        attach(currentChannel, this::renderCurrentChannel);
         chat = parent.getChat();
     }
 
     private void createBody() {
+        ColumnConstraints side = new ColumnConstraints();
+        side.setPercentWidth(5);
+        ColumnConstraints main = new ColumnConstraints();
+        main.setPercentWidth(90);
+        chatMessages.getColumnConstraints().addAll(side, main, side);
         chat.add(doubleWrap(chatMessages), 0, 1, 4, 1);
     }
 
     private void createBottomRow() {
         sendMessage = new TextField();
         sendMessage.setOnAction((e) -> sendMessage());
+        chat.add(sendMessage, 0, 2, 4, 1);
     }
 
     private MenuItem createInvidualMenuItem(User user) {
@@ -88,6 +103,25 @@ public class ChatRenderer extends DataRenderer {
         }));
     }
 
+    public GridPane makeChatLine(ChatMessage chatMessage) {
+        GridPane grid = new GridPane();
+        grid.add(renderDate(chatMessage.getDate()), 1, 0);
+        grid.add(renderText(12, chatMessage.getSender()), 0, 0);
+        attach(chatMessage.getSender(), () ->
+                grid.setBackground(chatMessage.getSender().equals(parent.getInfo().getUsername()) ? OWN_BG : OTHERS_BG));
+        chatMessage.getMessage().getData().accept(elementRenderer);
+        AtomicReference<Region> old = new AtomicReference<>();
+        SingleElementRenderer renderer = new SingleElementRenderer(elementRenderer, (newEl) -> {
+            Region oldEl = old.getAndSet(newEl);
+            if (oldEl != null)
+                grid.getChildren().remove(oldEl);
+            grid.add(newEl, 0, 1, 2, 1);
+        });
+        Observable<Element> message = chatMessage.getMessage();
+        attach(message, () -> message.getData().accept(renderer));
+        return grid;
+    }
+
     private Consumer<Consumer<ContextMenu>> makeOneLectorMenu() {
         return (consumer) -> {
             DataStorage ds = DataStorage.getInstance();
@@ -134,7 +168,8 @@ public class ChatRenderer extends DataRenderer {
     }
 
     public void renderCurrentChannel() {
-
+        chatMessages.getChildren().clear();
+        currentChannel.getData().forEach((cm) -> chatMessages.add(makeChatLine(cm), 1, row++));
     }
 
     public void sendMessage() {
@@ -161,6 +196,8 @@ public class ChatRenderer extends DataRenderer {
     }
 
     public void showGroupChat(Lecture l, boolean includeLecture) {
-        System.out.println("Show group chat - " + l.getUsername().getData() + " - " + includeLecture);
+        String lectureName = l.getUsername().getData();
+        String channel = (includeLecture ? "l:" : "nl:") + lectureName;
+        DataStorage.getInstance().getChatMessages(channel, (cm) -> currentChannel.setData(cm));
     }
 }

@@ -3,6 +3,7 @@ package gyurix.activityplanner.gui.renderers;
 import gyurix.activityplanner.core.observation.Observable;
 import gyurix.activityplanner.core.observation.ObserverContainer;
 import gyurix.activityplanner.gui.assets.Icons;
+import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
@@ -14,12 +15,13 @@ import javafx.scene.text.Font;
 
 import java.util.function.Consumer;
 
+import static gyurix.activityplanner.gui.scenes.SceneUtils.formatTime;
 import static java.lang.Double.MAX_VALUE;
 
 public abstract class DataRenderer extends ObserverContainer {
     private static final Cursor clickableCursor = Cursor.OPEN_HAND;
 
-    public Pane createClickableImage(Icons icon, double sizeMultiplier, Runnable onClick) {
+    protected Pane createClickableImage(Icons icon, double sizeMultiplier, Runnable onClick) {
         ImageView img = new ImageView(icon.getImage());
         img.setPreserveRatio(true);
         Pane wrapper = new Pane(img);
@@ -38,7 +40,7 @@ public abstract class DataRenderer extends ObserverContainer {
         return wrapper;
     }
 
-    public Pane createImageMenu(Icons icon, double sizeMultiplier, Consumer<Consumer<ContextMenu>> menu) {
+    protected Pane createImageMenu(Icons icon, double sizeMultiplier, Consumer<Consumer<ContextMenu>> menu) {
         ImageView img = new ImageView(icon.getImage());
         img.setPreserveRatio(true);
         Pane wrapper = new Pane(img);
@@ -58,7 +60,15 @@ public abstract class DataRenderer extends ObserverContainer {
 
     public abstract Observable<Double> getScreenWidth();
 
-    public Label renderText(int fontSize, Observable<String> obs) {
+    protected Label renderDate(Observable<Long> obs) {
+        Label label = new Label();
+        label.setPrefWidth(MAX_VALUE);
+        label.setAlignment(Pos.BOTTOM_RIGHT);
+        attach(obs, () -> label.setText(formatTime(obs.getData())));
+        return label;
+    }
+
+    protected Label renderText(int fontSize, Observable<String> obs) {
         Label label = new Label();
         label.setPrefWidth(MAX_VALUE);
         label.setFont(Font.font(fontSize));
