@@ -9,7 +9,9 @@ import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
+import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.RowConstraints;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 
@@ -59,6 +61,18 @@ public abstract class DataRenderer extends ObserverContainer {
     }
 
     public abstract Observable<Double> getScreenWidth();
+
+    protected ColumnConstraints pctCol(double percent) {
+        ColumnConstraints col = new ColumnConstraints();
+        col.setPercentWidth(percent);
+        return col;
+    }
+
+    protected RowConstraints pctRow(double percent) {
+        RowConstraints row = new RowConstraints();
+        row.setPercentHeight(percent);
+        return row;
+    }
 
     protected Label renderDate(Observable<Long> obs) {
         Label label = new Label();

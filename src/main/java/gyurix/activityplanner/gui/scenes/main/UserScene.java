@@ -34,7 +34,7 @@ public class UserScene extends InfoScene<User> {
     private GridPane chat = new GridPane();
     private Button logoutButton = new Button("Logout");
     private ContentRenderer renderer;
-    private ChatRenderer chatRenderer = new ChatRenderer(this);
+    private ChatRenderer chatRenderer;
     private GridPane tables = new GridPane(), tableWrapper;
     private Label usernameLabel = new Label();
 
@@ -51,6 +51,7 @@ public class UserScene extends InfoScene<User> {
 
     @Override
     public void createNodes() {
+        chatRenderer = new ChatRenderer(this);
         Observable<String> un = info.getUsername();
         usernameLabel = new Label();
         logoutButton.setOnAction((e) -> {
@@ -112,7 +113,6 @@ public class UserScene extends InfoScene<User> {
         row0.setPercentHeight(10);
         row1.setPercentHeight(90);
         grid.getRowConstraints().addAll(row0, row1);
-        chat.getRowConstraints().addAll(row0, row1);
     }
 
     private void addNodesToMainGrid() {

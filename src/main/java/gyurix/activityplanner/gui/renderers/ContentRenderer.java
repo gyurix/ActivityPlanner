@@ -26,7 +26,6 @@ public class ContentRenderer extends DataRenderer implements ContentVisitor {
 
     public ContentRenderer(UserScene scene) {
         this.scene = scene;
-        scene.getChat().getChildren().clear();
         scene.getAlerts().getChildren().clear();
         scene.getTables().getChildren().clear();
     }

@@ -9,7 +9,6 @@ import gyurix.activityplanner.core.observation.Observable;
 import gyurix.activityplanner.core.observation.ObservableList;
 import gyurix.activityplanner.core.storage.DataStorage;
 import gyurix.activityplanner.gui.assets.Icons;
-import gyurix.activityplanner.gui.scenes.SceneUtils;
 import gyurix.activityplanner.gui.scenes.main.UserScene;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
@@ -21,10 +20,14 @@ import javafx.scene.paint.Color;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
+import static gyurix.activityplanner.gui.scenes.SceneUtils.bgColor;
+import static gyurix.activityplanner.gui.scenes.SceneUtils.bgColorGradient;
+
 public class ChatRenderer extends DataRenderer {
     private static final double CHAT_ICON_SIZE = 0.06;
-    private static final Background OTHERS_BG = SceneUtils.bgColorGradient(Color.web("#a0a0ff"));
-    private static final Background OWN_BG = SceneUtils.bgColorGradient(Color.web("#d0d0ff"));
+    private static final Background MAIN_BG = bgColor(Color.web("#aaf"));
+    private static final Background OTHERS_BG = bgColorGradient(Color.web("#aaa"), new CornerRadii(5));
+    private static final Background OWN_BG = bgColorGradient(Color.web("#ffa"), new CornerRadii(5));
     private final ElementRenderer elementRenderer;
     private GridPane chat;
     private GridPane chatMessages = new GridPane();
@@ -42,18 +45,20 @@ public class ChatRenderer extends DataRenderer {
     }
 
     private void createBody() {
+        chatMessages.setBackground(MAIN_BG);
+        chatMessages.setPrefHeight(10000);
         ColumnConstraints side = new ColumnConstraints();
-        side.setPercentWidth(5);
+        side.setPercentWidth(3);
         ColumnConstraints main = new ColumnConstraints();
-        main.setPercentWidth(90);
+        main.setPercentWidth(94);
         chatMessages.getColumnConstraints().addAll(side, main, side);
-        chat.add(doubleWrap(chatMessages), 0, 1, 4, 1);
+        chat.add(doubleWrap(chatMessages), 0, 1, 6, 1);
     }
 
     private void createBottomRow() {
         sendMessage = new TextField();
         sendMessage.setOnAction((e) -> sendMessage());
-        chat.add(sendMessage, 0, 2, 4, 1);
+        chat.add(sendMessage, 1, 2, 4, 1);
     }
 
     private MenuItem createInvidualMenuItem(User user) {
@@ -63,6 +68,8 @@ public class ChatRenderer extends DataRenderer {
     }
 
     private void createNodes() {
+        chat.setPrefHeight(Double.MAX_VALUE);
+        chat.getRowConstraints().addAll(pctRow(15), pctRow(75), pctRow(10));
         createTopRow();
         createBody();
         createBottomRow();
@@ -103,20 +110,22 @@ public class ChatRenderer extends DataRenderer {
         }));
     }
 
+
     public GridPane makeChatLine(ChatMessage chatMessage) {
         GridPane grid = new GridPane();
-        grid.add(renderDate(chatMessage.getDate()), 1, 0);
-        grid.add(renderText(12, chatMessage.getSender()), 0, 0);
+        grid.getColumnConstraints().addAll(pctCol(2), pctCol(3), pctCol(45), pctCol(45), pctCol(3), pctCol(2));
+        grid.add(renderDate(chatMessage.getDate()), 3, 0, 2, 1);
+        grid.add(renderText(12, chatMessage.getSender()), 1, 0, 2, 1);
         attach(chatMessage.getSender(), () ->
                 grid.setBackground(chatMessage.getSender().equals(parent.getInfo().getUsername()) ? OWN_BG : OTHERS_BG));
-        chatMessage.getMessage().getData().accept(elementRenderer);
         AtomicReference<Region> old = new AtomicReference<>();
         SingleElementRenderer renderer = new SingleElementRenderer(elementRenderer, (newEl) -> {
             Region oldEl = old.getAndSet(newEl);
             if (oldEl != null)
                 grid.getChildren().remove(oldEl);
-            grid.add(newEl, 0, 1, 2, 1);
+            grid.add(newEl, 2, 1, 2, 1);
         });
+        chatMessage.getMessage().getData().accept(renderer);
         Observable<Element> message = chatMessage.getMessage();
         attach(message, () -> message.getData().accept(renderer));
         return grid;
@@ -167,13 +176,26 @@ public class ChatRenderer extends DataRenderer {
         showChat(parent.getInfo());
     }
 
+    public GridPane makeEmptyLine() {
+        GridPane emptyLine = new GridPane();
+        emptyLine.setMinHeight(12);
+        return emptyLine;
+    }
+
     public void renderCurrentChannel() {
+        row = 0;
         chatMessages.getChildren().clear();
-        currentChannel.getData().forEach((cm) -> chatMessages.add(makeChatLine(cm), 1, row++));
+        chatMessages.add(makeEmptyLine(), 1, row++);
+        currentChannel.getData().forEach((cm) -> {
+            chatMessages.add(makeChatLine(cm), 1, row++);
+            chatMessages.add(makeEmptyLine(), 1, row++);
+        });
     }
 
     public void sendMessage() {
-
+        currentChannel.getData().add(new ChatMessage(System.currentTimeMillis(),
+                Element.of(sendMessage.getText()), parent.getInfo().getUsername().getData()));
+        currentChannel.setData(currentChannel.getData());
     }
 
     public void showChat(User user) {

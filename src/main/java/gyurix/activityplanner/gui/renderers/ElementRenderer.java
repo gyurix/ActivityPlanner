@@ -25,6 +25,7 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.web.WebView;
+import lombok.Getter;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -38,6 +39,7 @@ public class ElementRenderer extends DataRenderer implements ElementVisitor {
     private static final double ADD_ICON_SIZE_MULTIPLIER = 0.04;
     private static final double ASPECT_RATIO = 0.75;
     private static final double ICON_SIZE_MULTIPLIER = 0.04;
+    private static final double USER_WIDTH_MULTIPLIER = 0.366;
     private static final double VIDEO_BOX_HEIGHT_MULTIPLIER = 0.9;
     private static final double VIDEO_BOX_WIDTH_MULTIPLIER = 0.95;
     private static final double WIDTH_MULTIPLIER = 0.74;
@@ -48,9 +50,12 @@ public class ElementRenderer extends DataRenderer implements ElementVisitor {
     private ElementHolder elementHolder;
     private ElementHolderScene<? extends ElementHolder> holder;
     private int row;
+    @Getter
+    private Observable<Double> screenWidth;
 
     public ElementRenderer(ElementHolderScene<? extends ElementHolder> holderScene) {
         this.userScene = holderScene.getUserScene();
+        screenWidth = holderScene.getScreenWidth();
         this.holder = holderScene;
         this.box = holderScene.getElements();
         this.elementHolder = holderScene.getInfo();
@@ -59,6 +64,8 @@ public class ElementRenderer extends DataRenderer implements ElementVisitor {
 
     public ElementRenderer(UserScene userScene) {
         this.userScene = userScene;
+        screenWidth = new Observable<>();
+        attach(userScene.getScreenWidth(), () -> screenWidth.setData(userScene.getScreenWidth().getData() * USER_WIDTH_MULTIPLIER));
     }
 
     public void addToBox(TextElement e, Region r) {
@@ -113,7 +120,7 @@ public class ElementRenderer extends DataRenderer implements ElementVisitor {
     private WebView createWebView(boolean audio) {
         WebView webView = new WebView();
         webView.setContextMenuEnabled(false);
-        int width = (int) (holder.getScreenWidth().getData() * WIDTH_MULTIPLIER);
+        int width = (int) (getScreenWidth().getData() * WIDTH_MULTIPLIER);
         int height = audio ? 58 : (int) (width * ASPECT_RATIO);
         webView.setMaxSize(width, height);
         webView.setPrefSize(width, height);
@@ -125,7 +132,7 @@ public class ElementRenderer extends DataRenderer implements ElementVisitor {
                 if (d != null) {
                     Element el = d.getElementById("d");
                     if (el != null) {
-                        int maxx = (int) (holder.getScreenWidth().getData() * 0.75);
+                        int maxx = (int) (getScreenWidth().getData() * 0.75);
                         webView.setMaxWidth(maxx);
                         webView.setPrefWidth(maxx);
                         el.setAttribute("style", "width: " + String.valueOf(maxx * VIDEO_BOX_WIDTH_MULTIPLIER) + "px");
@@ -138,7 +145,7 @@ public class ElementRenderer extends DataRenderer implements ElementVisitor {
                 if (d != null) {
                     Element el = d.getElementById("d");
                     if (el != null) {
-                        int maxx = (int) (holder.getScreenWidth().getData() * 0.75);
+                        int maxx = (int) (getScreenWidth().getData() * 0.75);
                         int maxy = (int) (maxx * ASPECT_RATIO);
                         webView.setMaxSize(maxx, maxy);
                         webView.setPrefSize(maxx, maxy);
@@ -148,7 +155,7 @@ public class ElementRenderer extends DataRenderer implements ElementVisitor {
                 }
             };
         }
-        attach(holder.getScreenWidth(), resize);
+        attach(getScreenWidth(), resize);
         destroyableWebViews.add(webView);
         return webView;
     }
@@ -163,11 +170,6 @@ public class ElementRenderer extends DataRenderer implements ElementVisitor {
         boolean brighter = row % 2 == 0;
         Color c = Color.web("#" + elementHolder.getColor().getData());
         return brighter ? avgColor(c, Color.WHITE) : avgColor(c, avgColor(c, Color.WHITE));
-    }
-
-    @Override
-    public Observable<Double> getScreenWidth() {
-        return holder.getScreenWidth();
     }
 
     public GridPane makeContentGrid(Region content, Pane edit, Pane remove) {
@@ -220,7 +222,7 @@ public class ElementRenderer extends DataRenderer implements ElementVisitor {
         pane.getColumnConstraints().add(main);
         WebView webView = createWebView(true);
         Observer o = () -> {
-            int width = (int) (holder.getScreenWidth().getData() * WIDTH_MULTIPLIER);
+            int width = (int) (getScreenWidth().getData() * WIDTH_MULTIPLIER);
             webView.getEngine().loadContent(
                     "<body style=\"background-color:" + colorToHex(getBackgroundColor(row)) + "\">" +
                             "<audio id=\"d\" style=\"width:" + width * VIDEO_BOX_WIDTH_MULTIPLIER + "px\"controls>" +
@@ -260,10 +262,10 @@ public class ElementRenderer extends DataRenderer implements ElementVisitor {
             Image img = new Image(e.getUrl().getData());
             Platform.runLater(() -> {
                 imgView.setImage(img);
-                imgView.setFitWidth(holder.getScreenWidth().getData() * WIDTH_MULTIPLIER);
+                imgView.setFitWidth(getScreenWidth().getData() * WIDTH_MULTIPLIER);
             });
         }));
-        attach(holder.getScreenWidth(), () -> imgView.setFitWidth(holder.getScreenWidth().getData() * WIDTH_MULTIPLIER));
+        attach(getScreenWidth(), () -> imgView.setFitWidth(getScreenWidth().getData() * WIDTH_MULTIPLIER));
         pane.add(renderLink(e), 0, 0);
         pane.add(imgView, 0, 1);
         return pane;
@@ -285,7 +287,7 @@ public class ElementRenderer extends DataRenderer implements ElementVisitor {
         pane.getColumnConstraints().add(main);
         WebView webView = createWebView(false);
         Observer contentChange = () -> {
-            int width = (int) (holder.getScreenWidth().getData() * WIDTH_MULTIPLIER);
+            int width = (int) (getScreenWidth().getData() * WIDTH_MULTIPLIER);
             int height = (int) (width * ASPECT_RATIO);
             webView.getEngine().loadContent("<body style=\"background-color:" + colorToHex(getBackgroundColor(row)) + "\">" +
                     "<video id=\"d\" width=\"" + width * VIDEO_BOX_WIDTH_MULTIPLIER + "\" " +

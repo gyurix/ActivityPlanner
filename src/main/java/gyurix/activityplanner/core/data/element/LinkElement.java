@@ -17,4 +17,5 @@ public class LinkElement extends TextElement {
     public void accept(ElementVisitor visitor) {
         visitor.visit(this);
     }
+
 }
