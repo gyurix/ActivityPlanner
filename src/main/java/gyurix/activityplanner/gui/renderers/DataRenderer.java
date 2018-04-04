@@ -23,17 +23,12 @@ import static java.lang.Double.MAX_VALUE;
 public abstract class DataRenderer extends ObserverContainer {
     private static final Cursor clickableCursor = Cursor.OPEN_HAND;
 
-    protected Pane createClickableImage(Icons icon, double sizeMultiplier, Runnable onClick) {
+    private Pane createAutoResizeImage(Icons icon, double sizeMultiplier) {
         ImageView img = new ImageView(icon.getImage());
         img.setPreserveRatio(true);
         Pane wrapper = new Pane(img);
         wrapper.setCursor(clickableCursor);
         wrapper.setMaxHeight(VBox.USE_PREF_SIZE);
-        wrapper.setOnMouseReleased((e) -> {
-            if (e.getButton() != MouseButton.PRIMARY)
-                return;
-            onClick.run();
-        });
         attach(getScreenWidth(), () -> {
             double maxx = getScreenWidth().getData() * sizeMultiplier;
             img.setFitWidth(maxx);
@@ -42,20 +37,21 @@ public abstract class DataRenderer extends ObserverContainer {
         return wrapper;
     }
 
+    protected Pane createClickableImage(Icons icon, double sizeMultiplier, Runnable onClick) {
+        Pane wrapper = createAutoResizeImage(icon, sizeMultiplier);
+        wrapper.setOnMouseReleased((e) -> {
+            if (e.getButton() != MouseButton.PRIMARY)
+                return;
+            onClick.run();
+        });
+        return wrapper;
+    }
+
     protected Pane createImageMenu(Icons icon, double sizeMultiplier, Consumer<Consumer<ContextMenu>> menu) {
-        ImageView img = new ImageView(icon.getImage());
-        img.setPreserveRatio(true);
-        Pane wrapper = new Pane(img);
-        wrapper.setCursor(clickableCursor);
-        wrapper.setMaxHeight(VBox.USE_PREF_SIZE);
+        Pane wrapper = createAutoResizeImage(icon, sizeMultiplier);
         wrapper.setOnMouseReleased(event -> {
             if (event.getButton() == MouseButton.PRIMARY)
                 menu.accept((m) -> m.show(wrapper, event.getScreenX(), event.getScreenY() - 10));
-        });
-        attach(getScreenWidth(), () -> {
-            double maxx = getScreenWidth().getData() * sizeMultiplier;
-            img.setFitWidth(maxx);
-            wrapper.setMaxWidth(maxx);
         });
         return wrapper;
     }

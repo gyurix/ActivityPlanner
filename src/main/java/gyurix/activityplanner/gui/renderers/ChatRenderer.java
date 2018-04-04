@@ -8,18 +8,15 @@ import gyurix.activityplanner.core.data.user.User;
 import gyurix.activityplanner.core.observation.Observable;
 import gyurix.activityplanner.core.observation.ObservableList;
 import gyurix.activityplanner.core.storage.DataStorage;
-import gyurix.activityplanner.gui.assets.Icons;
 import gyurix.activityplanner.gui.scenes.main.UserScene;
-import javafx.scene.control.ContextMenu;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
+import static gyurix.activityplanner.gui.assets.Icons.*;
 import static gyurix.activityplanner.gui.scenes.SceneUtils.bgColor;
 import static gyurix.activityplanner.gui.scenes.SceneUtils.bgColorGradient;
 
@@ -46,7 +43,6 @@ public class ChatRenderer extends DataRenderer {
 
     private void createBody() {
         chatMessages.setBackground(MAIN_BG);
-        chatMessages.setPrefHeight(10000);
         ColumnConstraints side = new ColumnConstraints();
         side.setPercentWidth(3);
         ColumnConstraints main = new ColumnConstraints();
@@ -67,6 +63,18 @@ public class ChatRenderer extends DataRenderer {
         return menuItem;
     }
 
+
+    private Menu createStudentListMenu(Lecture l) {
+        Menu menu = new Menu(l.getUsername().getData());
+        javafx.collections.ObservableList<MenuItem> items = menu.getItems();
+        DataStorage ds = DataStorage.getInstance();
+        l.getAssignedStudents().forEach(
+                (name) -> ds.getUser(name,
+                        (s) -> items.add(createInvidualMenuItem(s))));
+
+        return menu;
+    }
+
     private void createNodes() {
         chat.setPrefHeight(Double.MAX_VALUE);
         chat.getRowConstraints().addAll(pctRow(15), pctRow(75), pctRow(10));
@@ -76,19 +84,16 @@ public class ChatRenderer extends DataRenderer {
     }
 
     private void createTopRow() {
-        chat.add(createImageMenu(Icons.CHAT_STUDENT, CHAT_ICON_SIZE, makeOneStudentMenu()), 1, 0);
-        chat.add(createImageMenu(Icons.CHAT_STUDENTS, CHAT_ICON_SIZE, makeStudentsMenu()), 2, 0);
-        chat.add(createImageMenu(Icons.CHAT_LECTOR, CHAT_ICON_SIZE, makeOneLectorMenu()), 3, 0);
-        chat.add(createImageMenu(Icons.CHAT_BOTH, CHAT_ICON_SIZE, makeBothMenu()), 4, 0);
+        chat.add(createImageMenu(CHAT_STUDENT, CHAT_ICON_SIZE, makeOneStudentMenu()), 1, 0);
+        chat.add(createImageMenu(CHAT_STUDENTS, CHAT_ICON_SIZE, makeStudentsMenu()), 2, 0);
+        chat.add(createImageMenu(CHAT_LECTOR, CHAT_ICON_SIZE, makeOneLectorMenu()), 3, 0);
+        chat.add(createImageMenu(CHAT_BOTH, CHAT_ICON_SIZE, makeBothMenu()), 4, 0);
     }
 
     private ScrollPane doubleWrap(GridPane pane) {
         GridPane wrap = new GridPane();
-        ColumnConstraints col = new ColumnConstraints();
-        col.setPercentWidth(100);
-        wrap.getColumnConstraints().add(col);
-        RowConstraints row = new RowConstraints();
-        row.setPercentHeight(100);
+        wrap.getColumnConstraints().add(pctCol(100));
+        wrap.getRowConstraints().add(pctRow(100));
         wrap.add(pane, 0, 0);
         ScrollPane scroll = new ScrollPane(wrap);
         scroll.setFitToHeight(true);
@@ -139,25 +144,35 @@ public class ChatRenderer extends DataRenderer {
                 ds.getLectures((lectures -> {
                     javafx.collections.ObservableList<MenuItem> items = menu.getItems();
                     lectures.forEach((l) -> items.add(createInvidualMenuItem(l)));
-                    consumer.accept(menu);
                 }));
+                consumer.accept(menu);
                 return;
             }
+            javafx.collections.ObservableList<MenuItem> items = menu.getItems();
             ((Student) parent.getInfo()).getLectures().forEach((name) -> {
-                javafx.collections.ObservableList<MenuItem> items = menu.getItems();
                 ds.getUser(name, (u) -> items.add(createInvidualMenuItem(u)));
-                consumer.accept(menu);
             });
+            consumer.accept(menu);
         };
     }
 
     private Consumer<Consumer<ContextMenu>> makeOneStudentMenu() {
-        return (consumer) -> DataStorage.getInstance().getLectures((lectures -> {
+        return (consumer) -> {
+            DataStorage ds = DataStorage.getInstance();
             ContextMenu menu = new ContextMenu();
-            MenuItem loading = new MenuItem("Loading one student menu...");
-            menu.getItems().add(loading);
+            javafx.collections.ObservableList<MenuItem> items = menu.getItems();
+            if (parent.getInfo() instanceof Lecture) {
+                ((Lecture) parent.getInfo()).getAssignedStudents().forEach(
+                        (name) -> ds.getUser(name,
+                                (u) -> items.add(createInvidualMenuItem(u))));
+                consumer.accept(menu);
+                return;
+            }
+            ((Student) parent.getInfo()).getLectures().forEach(
+                    (name) -> ds.getUser(name,
+                            (u) -> items.add(createStudentListMenu((Lecture) u))));
             consumer.accept(menu);
-        }));
+        };
     }
 
     private Consumer<Consumer<ContextMenu>> makeStudentsMenu() {

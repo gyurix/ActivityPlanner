@@ -39,7 +39,7 @@ public class ElementRenderer extends DataRenderer implements ElementVisitor {
     private static final double ADD_ICON_SIZE_MULTIPLIER = 0.04;
     private static final double ASPECT_RATIO = 0.75;
     private static final double ICON_SIZE_MULTIPLIER = 0.04;
-    private static final double USER_WIDTH_MULTIPLIER = 0.366;
+    private static final double USER_WIDTH_MULTIPLIER = 0.35;
     private static final double VIDEO_BOX_HEIGHT_MULTIPLIER = 0.9;
     private static final double VIDEO_BOX_WIDTH_MULTIPLIER = 0.95;
     private static final double WIDTH_MULTIPLIER = 0.74;

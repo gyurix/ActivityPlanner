@@ -22,6 +22,9 @@ public class ActivityPlannerTest extends Application {
         Student s2 = new Student("s2", "pwd");
         Lecture l1 = new Lecture("l1", "pwd");
         Lecture l2 = new Lecture("l2", "pwd");
+        l1.getAssignedStudents().add("s1");
+        l1.getAssignedStudents().add("s2");
+        l2.getAssignedStudents().add("s1");
         ds.addUser(s1);
         ds.addUser(s2);
         ds.addUser(l1);

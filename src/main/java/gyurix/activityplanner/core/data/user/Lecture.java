@@ -9,6 +9,7 @@ import lombok.Getter;
 
 @Getter
 public class Lecture extends User {
+    private static boolean lock;
     private ObservableList<String> assignedStudents = new ObservableList<>();
 
     public Lecture(String username, String password) {
@@ -38,8 +39,12 @@ public class Lecture extends User {
 
     @Override
     public void visitCreatedContents(ContentVisitor visitor) {
+        if (lock)
+            return;
+        lock = true;
         DataStorage ds = DataStorage.getInstance();
         getCreatedContents().forEach((cid) -> ds.getContent(cid, (c) -> c.accept(visitor)));
         assignedStudents.forEach((s) -> ds.getUser(s, (u) -> u.visitCreatedContents(visitor)));
+        lock = false;
     }
 }
