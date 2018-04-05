@@ -25,6 +25,11 @@ public class ActivityPlannerTest extends Application {
         l1.getAssignedStudents().add("s1");
         l1.getAssignedStudents().add("s2");
         l2.getAssignedStudents().add("s1");
+        l2.getAssignedStudents().add("s2");
+        s1.getLectures().add("l1");
+        s1.getLectures().add("l2");
+        s2.getLectures().add("l2");
+        s2.getLectures().add("l2");
         ds.addUser(s1);
         ds.addUser(s2);
         ds.addUser(l1);
@@ -47,7 +52,6 @@ public class ActivityPlannerTest extends Application {
                 "https://gyurix.pro/oop/attackontitan.mp4")));
 
         Alert a2 = new Alert(currentTimeMillis(), "Alert2 title", "Alert2 subtitle", "ff4000");
-        s1.getLectures().add("l1");
         l1.getCreatedContents().add(ds.addContent(t1));
         l1.getCreatedContents().add(ds.addContent(t2));
         l1.getCreatedContents().add(ds.addContent(a1));

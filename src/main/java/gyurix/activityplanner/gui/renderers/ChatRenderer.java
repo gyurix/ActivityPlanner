@@ -28,8 +28,66 @@ public class ChatRenderer extends DataRenderer {
     private final ElementRenderer elementRenderer;
     private GridPane chat;
     private GridPane chatMessages = new GridPane();
+    private Label chatTitle = new Label("Chat with yourself");
     private Observable<ObservableList<ChatMessage>> currentChannel = new Observable<>();
     private UserScene parent;
+    private Consumer<Consumer<ContextMenu>> groupBoth = (consumer) -> {
+        DataStorage ds = DataStorage.getInstance();
+        ContextMenu menu = new ContextMenu();
+        User user = parent.getInfo();
+        javafx.collections.ObservableList<MenuItem> items = menu.getItems();
+        if (user instanceof Student) {
+            ((Student) user).getLectures().forEach(
+                    (name) -> ds.getUser(name,
+                            (l) -> items.add(createGroupMenuItem((Lecture) l, true))));
+            consumer.accept(menu);
+            return;
+        }
+        consumer.accept(menu);
+    };
+    private Consumer<Consumer<ContextMenu>> groupStudents = (consumer) -> {
+        DataStorage ds = DataStorage.getInstance();
+        ContextMenu menu = new ContextMenu();
+        User user = parent.getInfo();
+        javafx.collections.ObservableList<MenuItem> items = menu.getItems();
+        if (user instanceof Student) {
+            ((Student) user).getLectures().forEach(
+                    (name) -> ds.getUser(name,
+                            (l) -> items.add(createGroupMenuItem((Lecture) l, false))));
+            consumer.accept(menu);
+            return;
+        }
+        consumer.accept(menu);
+    };
+    private Consumer<Consumer<ContextMenu>> invLector = (consumer) -> {
+        DataStorage ds = DataStorage.getInstance();
+        ContextMenu menu = new ContextMenu();
+        javafx.collections.ObservableList<MenuItem> items = menu.getItems();
+        if (parent.getInfo() instanceof Lecture) {
+            ds.getLectures((lectures -> lectures.forEach(
+                    (l) -> items.add(createInvidualMenuItem(l)))));
+            consumer.accept(menu);
+            return;
+        }
+        ((Student) parent.getInfo()).getLectures().forEach((name) -> ds.getUser(name, (u) -> items.add(createInvidualMenuItem(u))));
+        consumer.accept(menu);
+    };
+    private Consumer<Consumer<ContextMenu>> invStudent = (consumer) -> {
+        DataStorage ds = DataStorage.getInstance();
+        ContextMenu menu = new ContextMenu();
+        javafx.collections.ObservableList<MenuItem> items = menu.getItems();
+        if (parent.getInfo() instanceof Lecture) {
+            ((Lecture) parent.getInfo()).getAssignedStudents().forEach(
+                    (name) -> ds.getUser(name,
+                            (u) -> items.add(createInvidualMenuItem(u))));
+            consumer.accept(menu);
+            return;
+        }
+        ((Student) parent.getInfo()).getLectures().forEach(
+                (name) -> ds.getUser(name,
+                        (u) -> items.add(createStudentListMenu((Lecture) u))));
+        consumer.accept(menu);
+    };
     private int row = 0;
     private TextField sendMessage;
 
@@ -48,13 +106,19 @@ public class ChatRenderer extends DataRenderer {
         ColumnConstraints main = new ColumnConstraints();
         main.setPercentWidth(94);
         chatMessages.getColumnConstraints().addAll(side, main, side);
-        chat.add(doubleWrap(chatMessages), 0, 1, 6, 1);
+        chat.add(doubleWrap(chatMessages), 0, 2, 6, 1);
     }
 
     private void createBottomRow() {
         sendMessage = new TextField();
         sendMessage.setOnAction((e) -> sendMessage());
-        chat.add(sendMessage, 1, 2, 4, 1);
+        chat.add(sendMessage, 1, 3, 4, 1);
+    }
+
+    private MenuItem createGroupMenuItem(Lecture l, boolean includeLector) {
+        MenuItem menuItem = new MenuItem(l.getUsername().getData());
+        menuItem.setOnAction((e) -> showGroupChat(l, includeLector));
+        return menuItem;
     }
 
     private MenuItem createInvidualMenuItem(User user) {
@@ -63,6 +127,13 @@ public class ChatRenderer extends DataRenderer {
         return menuItem;
     }
 
+    private void createNodes() {
+        chat.setPrefHeight(Double.MAX_VALUE);
+        chat.getRowConstraints().addAll(pctRow(15), pctRow(5), pctRow(70), pctRow(10));
+        createTopRow();
+        createBody();
+        createBottomRow();
+    }
 
     private Menu createStudentListMenu(Lecture l) {
         Menu menu = new Menu(l.getUsername().getData());
@@ -75,19 +146,13 @@ public class ChatRenderer extends DataRenderer {
         return menu;
     }
 
-    private void createNodes() {
-        chat.setPrefHeight(Double.MAX_VALUE);
-        chat.getRowConstraints().addAll(pctRow(15), pctRow(75), pctRow(10));
-        createTopRow();
-        createBody();
-        createBottomRow();
-    }
-
     private void createTopRow() {
-        chat.add(createImageMenu(CHAT_STUDENT, CHAT_ICON_SIZE, makeOneStudentMenu()), 1, 0);
-        chat.add(createImageMenu(CHAT_STUDENTS, CHAT_ICON_SIZE, makeStudentsMenu()), 2, 0);
-        chat.add(createImageMenu(CHAT_LECTOR, CHAT_ICON_SIZE, makeOneLectorMenu()), 3, 0);
-        chat.add(createImageMenu(CHAT_BOTH, CHAT_ICON_SIZE, makeBothMenu()), 4, 0);
+        chat.add(createImageMenu(CHAT_STUDENT, CHAT_ICON_SIZE, invStudent), 1, 0);
+        chat.add(createImageMenu(CHAT_STUDENTS, CHAT_ICON_SIZE, groupStudents), 2, 0);
+        chat.add(createImageMenu(CHAT_LECTOR, CHAT_ICON_SIZE, invLector), 3, 0);
+        chat.add(createImageMenu(CHAT_BOTH, CHAT_ICON_SIZE, groupBoth), 4, 0);
+        chatTitle.setPrefWidth(Double.MAX_VALUE);
+        chat.add(chatTitle, 0, 1, 4, 1);
     }
 
     private ScrollPane doubleWrap(GridPane pane) {
@@ -101,20 +166,14 @@ public class ChatRenderer extends DataRenderer {
         return scroll;
     }
 
+    public int fixCompare(int result) {
+        return result == 0 ? 0 : result / Math.abs(result);
+    }
+
     @Override
     public Observable<Double> getScreenWidth() {
         return parent.getScreenWidth();
     }
-
-    private Consumer<Consumer<ContextMenu>> makeBothMenu() {
-        return (consumer) -> DataStorage.getInstance().getLectures((lectures -> {
-            ContextMenu menu = new ContextMenu();
-            MenuItem loading = new MenuItem("Loading both menu...");
-            menu.getItems().add(loading);
-            consumer.accept(menu);
-        }));
-    }
-
 
     public GridPane makeChatLine(ChatMessage chatMessage) {
         GridPane grid = new GridPane();
@@ -136,65 +195,24 @@ public class ChatRenderer extends DataRenderer {
         return grid;
     }
 
-    private Consumer<Consumer<ContextMenu>> makeOneLectorMenu() {
-        return (consumer) -> {
-            DataStorage ds = DataStorage.getInstance();
-            ContextMenu menu = new ContextMenu();
-            if (parent.getInfo() instanceof Lecture) {
-                ds.getLectures((lectures -> {
-                    javafx.collections.ObservableList<MenuItem> items = menu.getItems();
-                    lectures.forEach((l) -> items.add(createInvidualMenuItem(l)));
-                }));
-                consumer.accept(menu);
-                return;
-            }
-            javafx.collections.ObservableList<MenuItem> items = menu.getItems();
-            ((Student) parent.getInfo()).getLectures().forEach((name) -> {
-                ds.getUser(name, (u) -> items.add(createInvidualMenuItem(u)));
-            });
-            consumer.accept(menu);
-        };
-    }
-
-    private Consumer<Consumer<ContextMenu>> makeOneStudentMenu() {
-        return (consumer) -> {
-            DataStorage ds = DataStorage.getInstance();
-            ContextMenu menu = new ContextMenu();
-            javafx.collections.ObservableList<MenuItem> items = menu.getItems();
-            if (parent.getInfo() instanceof Lecture) {
-                ((Lecture) parent.getInfo()).getAssignedStudents().forEach(
-                        (name) -> ds.getUser(name,
-                                (u) -> items.add(createInvidualMenuItem(u))));
-                consumer.accept(menu);
-                return;
-            }
-            ((Student) parent.getInfo()).getLectures().forEach(
-                    (name) -> ds.getUser(name,
-                            (u) -> items.add(createStudentListMenu((Lecture) u))));
-            consumer.accept(menu);
-        };
+    public GridPane makeEmptyLine() {
+        GridPane emptyLine = new GridPane();
+        emptyLine.setMinHeight(12);
+        return emptyLine;
     }
 
     private Consumer<Consumer<ContextMenu>> makeStudentsMenu() {
-        return (consumer) -> {
-            DataStorage.getInstance().getLectures((lectures -> {
-                ContextMenu menu = new ContextMenu();
-                MenuItem loading = new MenuItem("Loading students menu...");
-                menu.getItems().add(loading);
-                consumer.accept(menu);
-            }));
-        };
+        return (consumer) -> DataStorage.getInstance().getLectures((lectures -> {
+            ContextMenu menu = new ContextMenu();
+            MenuItem loading = new MenuItem("Loading students menu...");
+            menu.getItems().add(loading);
+            consumer.accept(menu);
+        }));
     }
 
     public void render() {
         createNodes();
         showChat(parent.getInfo());
-    }
-
-    public GridPane makeEmptyLine() {
-        GridPane emptyLine = new GridPane();
-        emptyLine.setMinHeight(12);
-        return emptyLine;
     }
 
     public void renderCurrentChannel() {
@@ -216,8 +234,9 @@ public class ChatRenderer extends DataRenderer {
     public void showChat(User user) {
         String u1 = parent.getInfo().getUsername().getData();
         String u2 = user.getUsername().getData();
+        chatTitle.setText(u1.equals(u2) ? "Chat with yourself" : "Chat with " + u2);
         StringBuilder channel = new StringBuilder("uu:");
-        switch (u1.compareTo(u2)) {
+        switch (fixCompare(u1.compareTo(u2))) {
             case -1:
                 channel.append(u1).append(':').append(u2);
                 break;
@@ -229,12 +248,16 @@ public class ChatRenderer extends DataRenderer {
                 break;
 
         }
+        System.out.println("Set channel to " + channel.toString());
         DataStorage.getInstance().getChatMessages(channel.toString(), (cm) -> currentChannel.setData(cm));
     }
 
     public void showGroupChat(Lecture l, boolean includeLecture) {
         String lectureName = l.getUsername().getData();
+        chatTitle.setText("Chat with " + lectureName + "'s group " +
+                (includeLecture ? "with" : "without") + " lecture");
         String channel = (includeLecture ? "l:" : "nl:") + lectureName;
+        System.out.println("Set channel to " + channel);
         DataStorage.getInstance().getChatMessages(channel, (cm) -> currentChannel.setData(cm));
     }
 }
