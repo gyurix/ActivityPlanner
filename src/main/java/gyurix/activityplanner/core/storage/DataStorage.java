@@ -32,9 +32,13 @@ public class DataStorage extends StorableData {
             .registerTypeAdapterFactory(new UnwrapperAdapter()).create();
     @Getter
     private static DataStorage instance;
+    private TreeMap<String, ObservableList<ChatMessage>> chatMessages = new TreeMap<>();
     private TreeMap<Integer, Content> contents = new TreeMap<>();
     private TreeMap<String, User> users = new TreeMap<>();
-    private TreeMap<String, ObservableList<ChatMessage>> chatMessages = new TreeMap<>();
+
+    public DataStorage() {
+        instance = this;
+    }
 
     @SneakyThrows
     public static void load(File f) {
@@ -51,6 +55,10 @@ public class DataStorage extends StorableData {
         return contentId;
     }
 
+    public boolean addUser(User user) {
+        return users.put(user.getUsername().getData(), user) == null;
+    }
+
     public void getChatMessages(String key, Consumer<ObservableList<ChatMessage>> con) {
         ObservableList<ChatMessage> cm = chatMessages.get(key);
         if (cm == null) {
@@ -58,10 +66,6 @@ public class DataStorage extends StorableData {
             chatMessages.put(key, cm);
         }
         con.accept(cm);
-    }
-
-    public boolean addUser(User user) {
-        return users.put(user.getUsername().getData(), user) == null;
     }
 
     public void getContent(int contentId, Consumer<Content> consumer) {
