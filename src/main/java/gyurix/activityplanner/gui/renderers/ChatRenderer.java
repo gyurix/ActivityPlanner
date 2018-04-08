@@ -9,6 +9,7 @@ import gyurix.activityplanner.core.observation.Observable;
 import gyurix.activityplanner.core.observation.ObservableList;
 import gyurix.activityplanner.core.storage.DataStorage;
 import gyurix.activityplanner.gui.scenes.main.UserScene;
+import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
@@ -151,8 +152,9 @@ public class ChatRenderer extends DataRenderer {
         chat.add(createImageMenu(CHAT_STUDENTS, CHAT_ICON_SIZE, groupStudents), 2, 0);
         chat.add(createImageMenu(CHAT_LECTOR, CHAT_ICON_SIZE, invLector), 3, 0);
         chat.add(createImageMenu(CHAT_BOTH, CHAT_ICON_SIZE, groupBoth), 4, 0);
+        chatTitle.setAlignment(Pos.CENTER);
         chatTitle.setPrefWidth(Double.MAX_VALUE);
-        chat.add(chatTitle, 0, 1, 4, 1);
+        chat.add(chatTitle, 0, 1, 6, 1);
     }
 
     private ScrollPane doubleWrap(GridPane pane) {
