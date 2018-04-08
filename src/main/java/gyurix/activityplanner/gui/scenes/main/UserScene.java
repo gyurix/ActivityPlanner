@@ -4,6 +4,7 @@ import gyurix.activityplanner.core.data.content.Alert;
 import gyurix.activityplanner.core.data.content.Table;
 import gyurix.activityplanner.core.data.user.User;
 import gyurix.activityplanner.core.observation.Observable;
+import gyurix.activityplanner.core.storage.ConfigUtils;
 import gyurix.activityplanner.core.storage.DataStorage;
 import gyurix.activityplanner.gui.assets.Icons;
 import gyurix.activityplanner.gui.renderers.ChatRenderer;
@@ -20,8 +21,6 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import lombok.Getter;
 
-import java.io.File;
-
 import static gyurix.activityplanner.gui.scenes.SceneUtils.*;
 
 @Getter
@@ -34,9 +33,9 @@ public class UserScene extends InfoScene<User> {
 
     private GridPane alerts = new GridPane(), alertsWrapper;
     private GridPane chat = new GridPane();
+    private ChatRenderer chatRenderer;
     private Button logoutButton = new Button("Logout");
     private ContentRenderer renderer;
-    private ChatRenderer chatRenderer;
     private GridPane tables = new GridPane(), tableWrapper;
     private Label usernameLabel = new Label();
 
@@ -155,7 +154,7 @@ public class UserScene extends InfoScene<User> {
 
     public void disable() {
         super.destroy();
-        DataStorage.getInstance().save(new File("conf.json"));
+        ConfigUtils.getInstance().saveConfig();
         renderer.destroy();
     }
 
