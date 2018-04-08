@@ -1,5 +1,6 @@
 package gyurix.activityplanner.gui.scenes;
 
+import javafx.scene.control.Alert;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.CornerRadii;
@@ -17,25 +18,8 @@ import java.util.concurrent.Executors;
 public class SceneUtils {
     @Getter
     private static final ExecutorService ioThread = Executors.newCachedThreadPool();
-    private static final SimpleDateFormat sdf = new SimpleDateFormat("[yyyy.MM.dd] HH:mm:ss");
     private static final Random random = new Random();
-
-    public static String colorToHex(Color c) {
-        return String.format("#%02x%02x%02x", (int) (c.getRed() * 255),
-                (int) (c.getGreen() * 255), (int) (c.getBlue() * 255));
-    }
-
-    public static Color getRandomColor() {
-        return Color.color(0.3 + random.nextDouble() * 0.7, 0.3 + random.nextDouble() * 0.7, random.nextDouble());
-    }
-
-    public static void runAsync(Runnable r) {
-        ioThread.submit(r);
-    }
-
-    public static String formatTime(long time) {
-        return sdf.format(time);
-    }
+    private static final SimpleDateFormat sdf = new SimpleDateFormat("[yyyy.MM.dd] HH:mm:ss");
 
     public static double avg(double d1, double d2) {
         return (d1 + d2) / 2.0;
@@ -61,6 +45,10 @@ public class SceneUtils {
         return new Background(new BackgroundFill(lg, radii, null));
     }
 
+    public static Background bgColorGradient(Color color) {
+        return bgColorGradient(color, null);
+    }
+
     public static Background bgColorGradientInv(Color color) {
         Color brighter = avgColor(Color.WHITE, color);
         Color darker = avgColor(Color.BLACK, color);
@@ -69,11 +57,31 @@ public class SceneUtils {
         return new Background(new BackgroundFill(lg, null, null));
     }
 
-    public static Background bgColorGradient(Color color) {
-        return bgColorGradient(color, null);
-    }
-
     public static Background bgColorGradientTop(Color color) {
         return bgColorGradient(color, new CornerRadii(0.15, 0.15, 0, 0, true));
+    }
+
+    public static String colorToHex(Color c) {
+        return String.format("#%02x%02x%02x", (int) (c.getRed() * 255),
+                (int) (c.getGreen() * 255), (int) (c.getBlue() * 255));
+    }
+
+    public static String formatTime(long time) {
+        return sdf.format(time);
+    }
+
+    public static Color getRandomColor() {
+        return Color.color(0.3 + random.nextDouble() * 0.7, 0.3 + random.nextDouble() * 0.7, random.nextDouble());
+    }
+
+    public static Alert makeAlert(String title, String msg) {
+        Alert a = new Alert(Alert.AlertType.ERROR);
+        a.setTitle(title);
+        a.setContentText(msg);
+        return a;
+    }
+
+    public static void runAsync(Runnable r) {
+        ioThread.submit(r);
     }
 }

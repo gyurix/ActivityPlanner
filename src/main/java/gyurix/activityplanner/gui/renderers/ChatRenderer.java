@@ -18,8 +18,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
 import static gyurix.activityplanner.gui.assets.Icons.*;
-import static gyurix.activityplanner.gui.scenes.SceneUtils.bgColor;
-import static gyurix.activityplanner.gui.scenes.SceneUtils.bgColorGradient;
+import static gyurix.activityplanner.gui.scenes.SceneUtils.*;
 
 public class ChatRenderer extends DataRenderer {
     private static final double CHAT_ICON_SIZE = 0.06;
@@ -44,7 +43,7 @@ public class ChatRenderer extends DataRenderer {
             consumer.accept(menu);
             return;
         }
-        consumer.accept(menu);
+        showGroupChat((Lecture) user, true);
     };
     private Consumer<Consumer<ContextMenu>> groupStudents = (consumer) -> {
         DataStorage ds = DataStorage.getInstance();
@@ -58,7 +57,7 @@ public class ChatRenderer extends DataRenderer {
             consumer.accept(menu);
             return;
         }
-        consumer.accept(menu);
+        makeAlert("Only students", "This channel is only accessible by students").showAndWait();
     };
     private Consumer<Consumer<ContextMenu>> invLector = (consumer) -> {
         DataStorage ds = DataStorage.getInstance();
@@ -203,15 +202,6 @@ public class ChatRenderer extends DataRenderer {
         return emptyLine;
     }
 
-    private Consumer<Consumer<ContextMenu>> makeStudentsMenu() {
-        return (consumer) -> DataStorage.getInstance().getLectures((lectures -> {
-            ContextMenu menu = new ContextMenu();
-            MenuItem loading = new MenuItem("Loading students menu...");
-            menu.getItems().add(loading);
-            consumer.accept(menu);
-        }));
-    }
-
     public void render() {
         createNodes();
         showChat(parent.getInfo());
@@ -236,7 +226,7 @@ public class ChatRenderer extends DataRenderer {
     public void showChat(User user) {
         String u1 = parent.getInfo().getUsername().getData();
         String u2 = user.getUsername().getData();
-        chatTitle.setText(u1.equals(u2) ? "Chat with yourself" : "Chat with " + u2);
+        chatTitle.setText(u1.equals(u2) ? "Yourself" : user.getClass().getSimpleName() + " " + u2);
         StringBuilder channel = new StringBuilder("uu:");
         switch (fixCompare(u1.compareTo(u2))) {
             case -1:
@@ -250,16 +240,16 @@ public class ChatRenderer extends DataRenderer {
                 break;
 
         }
-        System.out.println("Set channel to " + channel.toString());
         DataStorage.getInstance().getChatMessages(channel.toString(), (cm) -> currentChannel.setData(cm));
     }
 
     public void showGroupChat(Lecture l, boolean includeLecture) {
         String lectureName = l.getUsername().getData();
-        chatTitle.setText("Chat with " + lectureName + "'s group " +
-                (includeLecture ? "with" : "without") + " lecture");
+        if (lectureName.equals(parent.getInfo().getUsername().getData()))
+            chatTitle.setText("Your group");
+        else
+            chatTitle.setText((includeLecture ? "Group of lecture " : "Students of lecture ") + lectureName);
         String channel = (includeLecture ? "l:" : "nl:") + lectureName;
-        System.out.println("Set channel to " + channel);
         DataStorage.getInstance().getChatMessages(channel, (cm) -> currentChannel.setData(cm));
     }
 }

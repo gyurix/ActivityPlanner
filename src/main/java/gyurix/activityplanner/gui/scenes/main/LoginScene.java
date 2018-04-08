@@ -6,12 +6,17 @@ import gyurix.activityplanner.gui.scenes.core.AbstractScene;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.geometry.HPos;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.PasswordField;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.RowConstraints;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+
+import static gyurix.activityplanner.gui.scenes.SceneUtils.makeAlert;
 
 public class LoginScene extends AbstractScene {
     private Background background = SceneUtils.bgColorGradient(Color.web("#b08045"));
@@ -94,12 +99,5 @@ public class LoginScene extends AbstractScene {
             }
             new UserScene(user, stage).start();
         }));
-    }
-
-    public Alert makeAlert(String title, String msg) {
-        Alert a = new Alert(Alert.AlertType.ERROR);
-        a.setTitle(title);
-        a.setContentText(msg);
-        return a;
     }
 }
