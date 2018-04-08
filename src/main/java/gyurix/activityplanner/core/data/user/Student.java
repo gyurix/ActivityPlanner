@@ -6,6 +6,8 @@ import gyurix.activityplanner.core.observation.ObservableList;
 import gyurix.activityplanner.core.storage.DataStorage;
 import lombok.Getter;
 
+import java.util.HashSet;
+
 
 @Getter
 public class Student extends User {
@@ -23,6 +25,7 @@ public class Student extends User {
     @Override
     public void visitCreatedContents(ContentVisitor visitor) {
         DataStorage ds = DataStorage.getInstance();
-        lectures.forEach((s) -> ds.getUser(s, (u) -> u.visitCreatedContents(visitor)));
+        HashSet<Integer> visited = new HashSet<>();
+        lectures.forEach((s) -> ds.getUser(s, (u) -> u.visitCreatedContents(visitor, visited)));
     }
 }

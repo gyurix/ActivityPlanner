@@ -6,10 +6,11 @@ import gyurix.activityplanner.core.observation.ObservableList;
 import gyurix.activityplanner.core.storage.DataStorage;
 import lombok.Getter;
 
+import java.util.HashSet;
+
 
 @Getter
 public class Lecture extends User {
-    private static boolean lock;
     private ObservableList<String> assignedStudents = new ObservableList<>();
 
     public Lecture(String username, String password) {
@@ -38,13 +39,9 @@ public class Lecture extends User {
     }
 
     @Override
-    public void visitCreatedContents(ContentVisitor visitor) {
-        if (lock)
-            return;
-        lock = true;
+    protected void visitCreatedContents(ContentVisitor visitor, HashSet<Integer> visited) {
         DataStorage ds = DataStorage.getInstance();
-        getCreatedContents().forEach((cid) -> ds.getContent(cid, (c) -> c.accept(visitor)));
-        assignedStudents.forEach((s) -> ds.getUser(s, (u) -> u.visitCreatedContents(visitor)));
-        lock = false;
+        visitOwnCreatedContents(visitor, visited);
+        assignedStudents.forEach((s) -> ds.getUser(s, (u) -> u.visitCreatedContents(visitor, visited)));
     }
 }
