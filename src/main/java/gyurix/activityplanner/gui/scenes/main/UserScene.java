@@ -20,6 +20,8 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import lombok.Getter;
 
+import java.io.File;
+
 import static gyurix.activityplanner.gui.scenes.SceneUtils.*;
 
 @Getter
@@ -153,6 +155,7 @@ public class UserScene extends InfoScene<User> {
 
     public void disable() {
         super.destroy();
+        DataStorage.getInstance().save(new File("conf.json"));
         renderer.destroy();
     }
 
