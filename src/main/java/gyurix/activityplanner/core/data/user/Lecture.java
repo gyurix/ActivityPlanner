@@ -9,10 +9,22 @@ import lombok.Getter;
 import java.util.HashSet;
 
 
+/**
+ * Lecture extends the base User by adding a list of assigned students to it
+ */
 @Getter
 public class Lecture extends User {
+    /**
+     * List of students assigned to this Lecture
+     */
     private ObservableList<String> assignedStudents = new ObservableList<>();
 
+    /**
+     * Constructs a new Lecture from it's username and password parameters
+     *
+     * @param username - The username of the constructable Lecture
+     * @param password - The password of the constructable Lecture
+     */
     public Lecture(String username, String password) {
         super(username, password);
     }
@@ -22,11 +34,24 @@ public class Lecture extends User {
         visitor.visit(this);
     }
 
+    /**
+     * Lectures can edit every content
+     *
+     * @param contentId - Id of the checkable Content
+     * @return Always True
+     */
     @Override
     public boolean isContentEditable(int contentId) {
         return true;
     }
 
+    /**
+     * Removes the content from the Lectures own contents or
+     * from the Lectures assigned students contents
+     *
+     * @param contentId - Id of the removable Content
+     * @return True if the removing process was successful, false otherwise
+     */
     @Override
     public boolean removeContent(int contentId) {
         if (super.removeContent(contentId))
@@ -38,6 +63,12 @@ public class Lecture extends User {
         return true;
     }
 
+    /**
+     * Visits the lectures own created contents first, then their assigned students contents
+     *
+     * @param visitor - The ContentVisitor, which wants to visit the Contents
+     * @param visited - Already visited contents, which should not be visited again
+     */
     @Override
     protected void visitCreatedContents(ContentVisitor visitor, HashSet<Integer> visited) {
         DataStorage ds = DataStorage.getInstance();

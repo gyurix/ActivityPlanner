@@ -9,10 +9,22 @@ import lombok.Getter;
 import java.util.HashSet;
 
 
+/**
+ * Students extends the base User class with a lecture list parameter
+ */
 @Getter
 public class Student extends User {
+    /**
+     * The lectures of this Student
+     */
     private ObservableList<String> lectures = new ObservableList<>();
 
+    /**
+     * Constructs a new Student from username and password parameters
+     *
+     * @param username - The username of the constructable Student
+     * @param password - The password of the constructable Student
+     */
     public Student(String username, String password) {
         super(username, password);
     }
@@ -22,6 +34,11 @@ public class Student extends User {
         visitor.visit(this);
     }
 
+    /**
+     * Visiting contents associated to Students means visiting contents created by their lectures and by the lectures students
+     *
+     * @param visitor - The ContentVisitor, which wants to visit the Contents
+     */
     @Override
     public void visitCreatedContents(ContentVisitor visitor) {
         DataStorage ds = DataStorage.getInstance();
