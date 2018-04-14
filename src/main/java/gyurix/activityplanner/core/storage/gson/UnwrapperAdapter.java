@@ -12,6 +12,10 @@ import java.io.IOException;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 
+/**
+ * Custom GSON adapter for simplifying the stored format of WrappedData and their extensions,
+ * like Observables by storing only the wrapped data instead of the whole wrapper to the JSON.
+ */
 public class UnwrapperAdapter implements TypeAdapterFactory {
     @Override
     public <T> TypeAdapter<T> create(Gson gson, TypeToken<T> typeToken) {
@@ -41,6 +45,12 @@ public class UnwrapperAdapter implements TypeAdapterFactory {
         return gson.getDelegateAdapter(this, typeToken);
     }
 
+    /**
+     * Finds the type of a WrappedData
+     *
+     * @param main - TypeTokens type
+     * @return The found type of the WrappedData
+     */
     public Type findWrappedDataType(Type main) {
         if (!(main instanceof ParameterizedType))
             return main;
@@ -54,10 +64,23 @@ public class UnwrapperAdapter implements TypeAdapterFactory {
         return child;
     }
 
+    /**
+     * Gets the raw class of a Type
+     *
+     * @param t - The Type
+     * @return The class of a Type
+     */
     public Class getRawClass(Type t) {
         return (Class) (t instanceof ParameterizedType ? ((ParameterizedType) t).getRawType() : t);
     }
 
+    /**
+     * Replaces parameterized types, to the replacement type
+     *
+     * @param pt   - The replaceable ParameterizedType
+     * @param repl - The replacement type
+     * @return The replaced ParameterizedType
+     */
     public Type replaceParameterType(Type pt, Type repl) {
         if (pt instanceof ParameterizedType) {
             return new ParameterizedType() {

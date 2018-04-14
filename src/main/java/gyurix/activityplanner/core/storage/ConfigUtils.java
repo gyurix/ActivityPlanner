@@ -12,14 +12,31 @@ import java.io.File;
 
 import static java.lang.System.currentTimeMillis;
 
+/**
+ * Utilities for configuration management
+ */
 public class ConfigUtils {
+    /**
+     * Default File name used for configuration
+     */
     private static final File configFile = new File("conf.json");
+
+    /**
+     * Instance of this singleton class
+     */
     @Getter
     private static final ConfigUtils instance = new ConfigUtils();
 
+    /**
+     * ConfigUtils should not be instantiated more than ones.
+     */
     private ConfigUtils() {
     }
 
+    /**
+     * Generates the default configuration, which contains 2 students, 2 lectures.
+     * The first lecture has some created contents
+     */
     public void generateDefaultConfig() {
         DataStorage ds = new DataStorage();
         Student s1 = new Student("s1", "pwd");
@@ -63,12 +80,18 @@ public class ConfigUtils {
         saveConfig();
     }
 
+    /**
+     * Loads the configuration, generates default one, if tbe config file does not exist
+     */
     public void loadConfig() {
         if (!configFile.exists())
             generateDefaultConfig();
         DataStorage.load(configFile);
     }
 
+    /**
+     * Saves the configuration
+     */
     public void saveConfig() {
         DataStorage.getInstance().save(configFile);
     }

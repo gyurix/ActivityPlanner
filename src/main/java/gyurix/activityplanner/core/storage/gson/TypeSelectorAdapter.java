@@ -8,13 +8,18 @@ import com.google.gson.stream.JsonWriter;
 import java.io.IOException;
 import java.lang.reflect.Modifier;
 
+/**
+ * Custom GSON adapter for supporting the deserialization of type selectable objects.
+ * Type selectable objects has a base abstract class, and their extensions
+ * stored under the same package.
+ * For example the extensions of Element and User classes are type selectable
+ */
 public class TypeSelectorAdapter implements TypeAdapterFactory {
     @Override
     public <T> TypeAdapter<T> create(Gson gson, TypeToken<T> typeToken) {
         TypeAdapterFactory taf = this;
         if (!typeToken.getRawType().getName().startsWith("java.") &&
                 (typeToken.getRawType().getModifiers() & Modifier.ABSTRACT) == Modifier.ABSTRACT) {
-            TypeAdapter delegate = gson.getDelegateAdapter(this, typeToken);
             return new TypeAdapter<T>() {
                 @Override
                 public T read(JsonReader jsonReader) {
