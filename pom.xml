@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>gyurix</groupId>
-    <artifactId>activityplanner</artifactId>
+    <artifactId>ActivityPlanner</artifactId>
     <version>1.0</version>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -16,9 +16,41 @@
         <sourceDirectory>${project.build.directory}/generated-sources/delombok</sourceDirectory>
         <plugins>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
+                <artifactId>maven-clean-plugin</artifactId>
+                <version>3.1.0</version>
+                <executions>
+                    <execution>
+                        <id>pre-clean</id>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>clean</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>post-clean</id>
+                        <phase>install</phase>
+                        <goals>
+                            <goal>clean</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
                 <configuration>
+                    <appendAssemblyId>false</appendAssemblyId>
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
+                    <outputDirectory>${project.build.directory}/../artifacts</outputDirectory>
                     <archive>
                         <manifest>
                             <mainClass>gyurix.activityplanner.gui.ActivityPlannerLauncher</mainClass>
@@ -35,6 +67,7 @@
                         <phase>generate-sources</phase>
                         <goals>
                             <goal>delombok</goal>
+                            <goal>testDelombok</goal>
                         </goals>
                     </execution>
                 </executions>
@@ -51,9 +84,11 @@
                     <complianceLevel>1.8</complianceLevel>
                     <source>1.8</source>
                     <target>1.8</target>
+                    <forceAjcCompile>true</forceAjcCompile>
                 </configuration>
                 <executions>
                     <execution>
+                        <phase>process-classes</phase>
                         <goals>
                             <goal>compile</goal>
                             <goal>test-compile</goal>
@@ -67,12 +102,19 @@
                 <version>1.2.1</version>
                 <executions>
                     <execution>
+                        <phase>install</phase>
                         <goals>
-                            <goal>java</goal>
+                            <goal>exec</goal>
                         </goals>
                     </execution>
                 </executions>
                 <configuration>
+                    <executable>java</executable>
+                    <arguments>
+                        <argument>-jar</argument>
+                        <argument>${project.build.directory}/../artifacts/${project.artifactId}-${project.version}.jar
+                        </argument>
+                    </arguments>
                     <mainClass>gyurix.activityplanner.gui.ActivityPlannerLauncher</mainClass>
                 </configuration>
             </plugin>
@@ -82,6 +124,7 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
+            <scope>provided</scope>
             <version>1.16.20</version>
         </dependency>
         <dependency>
