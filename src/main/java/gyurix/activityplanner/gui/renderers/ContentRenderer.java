@@ -19,11 +19,32 @@ import javafx.stage.Stage;
 
 import static gyurix.activityplanner.gui.scenes.SceneUtils.bgColorGradientTop;
 
+/**
+ * ContentRenderer used for rendering Contents (Tables and Alerts)
+ */
 public class ContentRenderer extends DataRenderer implements ContentVisitor {
+    /**
+     * Multiplier of the remove button size
+     */
     private static final double REMOVE_ICON_SIZE = 0.025;
-    private int alertIndex, tableIndex;
+    /**
+     * Next Alerts index
+     */
+    private int alertIndex;
+    /**
+     * The parent UserScene
+     */
     private UserScene scene;
+    /**
+     * Next Tables index
+     */
+    private int tableIndex;
 
+    /**
+     * Constructs a new ContentRenderer with the given UserScene
+     *
+     * @param scene
+     */
     public ContentRenderer(UserScene scene) {
         this.scene = scene;
         scene.getAlerts().getChildren().clear();
