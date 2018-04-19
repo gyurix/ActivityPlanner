@@ -1,6 +1,6 @@
 package gyurix.activityplanner.core.data.visitors;
 
-import gyurix.activityplanner.core.data.user.Lecture;
+import gyurix.activityplanner.core.data.user.Lector;
 import gyurix.activityplanner.core.data.user.Student;
 
 /**
@@ -19,5 +19,5 @@ public interface UserVisitor {
      *
      * @param l - The visitable Lector
      */
-    void visit(Lecture l);
+    void visit(Lector l);
 }

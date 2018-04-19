@@ -5,7 +5,7 @@ import com.google.gson.GsonBuilder;
 import gyurix.activityplanner.core.data.StorableData;
 import gyurix.activityplanner.core.data.content.Content;
 import gyurix.activityplanner.core.data.element.ChatMessage;
-import gyurix.activityplanner.core.data.user.Lecture;
+import gyurix.activityplanner.core.data.user.Lector;
 import gyurix.activityplanner.core.data.user.User;
 import gyurix.activityplanner.core.observation.ObservableList;
 import gyurix.activityplanner.core.storage.gson.TypeSelectorAdapter;
@@ -129,8 +129,8 @@ public class DataStorage extends StorableData {
      *
      * @param consumer - Consumer, which consumes the list of every lecture
      */
-    public void getLectures(Consumer<List<Lecture>> consumer) {
-        List list = users.values().stream().filter(Lecture.class::isInstance).collect(Collectors.toList());
+    public void getLectures(Consumer<List<Lector>> consumer) {
+        List list = users.values().stream().filter(Lector.class::isInstance).collect(Collectors.toList());
         consumer.accept(list);
     }
 

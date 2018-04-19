@@ -10,22 +10,22 @@ import java.util.HashSet;
 
 
 /**
- * Lecture extends the base User by adding a list of assigned students to it
+ * Lector extends the base User by adding a list of assigned students to it
  */
 @Getter
-public class Lecture extends User {
+public class Lector extends User {
     /**
-     * List of students assigned to this Lecture
+     * List of students assigned to this Lector
      */
     private ObservableList<String> assignedStudents = new ObservableList<>();
 
     /**
-     * Constructs a new Lecture from it's username and password parameters
+     * Constructs a new Lector from it's username and password parameters
      *
-     * @param username - The username of the constructable Lecture
-     * @param password - The password of the constructable Lecture
+     * @param username - The username of the constructable Lector
+     * @param password - The password of the constructable Lector
      */
-    public Lecture(String username, String password) {
+    public Lector(String username, String password) {
         super(username, password);
     }
 
