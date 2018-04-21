@@ -47,10 +47,10 @@ public class ConfigUtils {
         l1.getAssignedStudents().add("s2");
         l2.getAssignedStudents().add("s1");
         l2.getAssignedStudents().add("s2");
-        s1.getLectures().add("l1");
-        s1.getLectures().add("l2");
-        s2.getLectures().add("l1");
-        s2.getLectures().add("l2");
+        s1.getLectores().add("l1");
+        s1.getLectores().add("l2");
+        s2.getLectores().add("l1");
+        s2.getLectores().add("l2");
         ds.addUser(s1);
         ds.addUser(s2);
         ds.addUser(l1);

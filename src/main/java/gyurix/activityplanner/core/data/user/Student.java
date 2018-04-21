@@ -15,9 +15,9 @@ import java.util.HashSet;
 @Getter
 public class Student extends User {
     /**
-     * The lectures of this Student
+     * The lectores of this Student
      */
-    private ObservableList<String> lectures = new ObservableList<>();
+    private ObservableList<String> lectores = new ObservableList<>();
 
     /**
      * Constructs a new Student from username and password parameters
@@ -35,7 +35,7 @@ public class Student extends User {
     }
 
     /**
-     * Visiting contents associated to Students means visiting contents created by their lectures and by the lectures students
+     * Visiting contents associated to Students means visiting contents created by their lectores and by the lectores students
      *
      * @param visitor - The ContentVisitor, which wants to visit the Contents
      */
@@ -43,6 +43,6 @@ public class Student extends User {
     public void visitCreatedContents(ContentVisitor visitor) {
         DataStorage ds = DataStorage.getInstance();
         HashSet<Integer> visited = new HashSet<>();
-        lectures.forEach((s) -> ds.getUser(s, (u) -> u.visitCreatedContents(visitor, visited)));
+        lectores.forEach((s) -> ds.getUser(s, (u) -> u.visitCreatedContents(visitor, visited)));
     }
 }

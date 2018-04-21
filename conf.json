@@ -1,0 +1,168 @@
+{
+  "chatMessages": {
+    "uu:l1": [
+      {
+        "date": 1524338169523,
+        "message": {
+          "text": "Hello",
+          "type": "TextElement"
+        },
+        "sender": "l1"
+      },
+      {
+        "date": 1524338400273,
+        "message": {
+          "text": "D:\\Mega\\STU\\OOP",
+          "type": "TextElement"
+        },
+        "sender": "l1"
+      },
+      {
+        "date": 1524338408285,
+        "message": {
+          "text": "file:\\\\\\D:\\Mega\\STU\\OOP",
+          "type": "TextElement"
+        },
+        "sender": "l1"
+      },
+      {
+        "date": 1524338418254,
+        "message": {
+          "url": "file:///D:\\Mega\\STU\\OOP",
+          "text": "OOP",
+          "type": "LinkElement"
+        },
+        "sender": "l1"
+      }
+    ],
+    "uu:l1:l2": [
+      {
+        "date": 1524338427541,
+        "message": {
+          "url": "file:///D:\\Mega\\STU\\OOP",
+          "text": "OOP",
+          "type": "LinkElement"
+        },
+        "sender": "l1"
+      },
+      {
+        "date": 1524339494744,
+        "message": {
+          "url": "https://media.timeout.com/images/104828929/image.jpg",
+          "text": "image",
+          "type": "PictureElement"
+        },
+        "sender": "l2"
+      }
+    ],
+    "uu:l2": []
+  },
+  "contents": {
+    "1": {
+      "subtitle": "Table subtitle",
+      "title": "Table title",
+      "color": "ffff00",
+      "elements": [],
+      "id": 1,
+      "type": "Table"
+    },
+    "2": {
+      "subtitle": "Table2 subtitle",
+      "title": "Table2 title",
+      "color": "ffffff",
+      "elements": [],
+      "id": 2,
+      "type": "Table"
+    },
+    "3": {
+      "dueDate": 1524338092127,
+      "subtitle": "Alert subtitle",
+      "title": "Alert title",
+      "color": "ff8000",
+      "elements": [
+        {
+          "text": "Some text",
+          "type": "TextElement"
+        },
+        {
+          "url": "http://google.com",
+          "text": "Click here",
+          "type": "LinkElement"
+        },
+        {
+          "url": "https://gyurix.pro/oop/cat.jpg",
+          "text": "Some nice cat picture",
+          "type": "PictureElement"
+        },
+        {
+          "url": "https://gyurix.pro/oop/alone.mp3",
+          "text": "With some song :D",
+          "type": "AudioElement"
+        },
+        {
+          "url": "https://gyurix.pro/oop/attackontitan.mp4",
+          "text": "And even video",
+          "type": "VideoElement"
+        }
+      ],
+      "id": 3,
+      "type": "Alert"
+    },
+    "4": {
+      "dueDate": 1524338092129,
+      "subtitle": "Alert2 subtitle",
+      "title": "Alert2 title",
+      "color": "ff4000",
+      "elements": [],
+      "id": 4,
+      "type": "Alert"
+    }
+  },
+  "users": {
+    "l1": {
+      "assignedStudents": [
+        "s1",
+        "s2"
+      ],
+      "createdContents": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "password": "pwd",
+      "username": "l1",
+      "type": "Lector"
+    },
+    "l2": {
+      "assignedStudents": [
+        "s1",
+        "s2"
+      ],
+      "createdContents": [],
+      "password": "pwd",
+      "username": "l2",
+      "type": "Lector"
+    },
+    "s1": {
+      "lectores": [
+        "l1",
+        "l2"
+      ],
+      "createdContents": [],
+      "password": "pwd",
+      "username": "s1",
+      "type": "Student"
+    },
+    "s2": {
+      "lectores": [
+        "l1",
+        "l2"
+      ],
+      "createdContents": [],
+      "password": "pwd",
+      "username": "s2",
+      "type": "Student"
+    }
+  }
+}

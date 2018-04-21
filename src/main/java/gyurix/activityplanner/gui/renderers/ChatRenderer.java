@@ -86,7 +86,7 @@ public class ChatRenderer extends DataRenderer {
             DataStorage ds = DataStorage.getInstance();
             ContextMenu menu = new ContextMenu();
             javafx.collections.ObservableList<MenuItem> items = menu.getItems();
-            ((Student) user).getLectures().forEach(
+            ((Student) user).getLectores().forEach(
                     (name) -> ds.getUser(name,
                             (l) -> items.add(createGroupMenuItem((Lector) l, true))));
             consumer.accept(menu);
@@ -105,7 +105,7 @@ public class ChatRenderer extends DataRenderer {
             DataStorage ds = DataStorage.getInstance();
             ContextMenu menu = new ContextMenu();
             javafx.collections.ObservableList<MenuItem> items = menu.getItems();
-            ((Student) user).getLectures().forEach(
+            ((Student) user).getLectores().forEach(
                     (name) -> ds.getUser(name,
                             (l) -> items.add(createGroupMenuItem((Lector) l, false))));
             consumer.accept(menu);
@@ -130,7 +130,7 @@ public class ChatRenderer extends DataRenderer {
             consumer.accept(menu);
             return;
         }
-        ((Student) user).getLectures().forEach((name) -> ds.getUser(name, (u) -> items.add(createInvidualMenuItem(u))));
+        ((Student) user).getLectores().forEach((name) -> ds.getUser(name, (u) -> items.add(createInvidualMenuItem(u))));
         consumer.accept(menu);
     };
 
@@ -150,7 +150,7 @@ public class ChatRenderer extends DataRenderer {
             consumer.accept(menu);
             return;
         }
-        ((Student) parent.getInfo()).getLectures().forEach(
+        ((Student) parent.getInfo()).getLectores().forEach(
                 (name) -> ds.getUser(name,
                         (u) -> items.add(createStudentListMenu((Lector) u))));
         consumer.accept(menu);

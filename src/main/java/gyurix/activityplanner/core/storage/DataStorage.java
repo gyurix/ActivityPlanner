@@ -11,11 +11,11 @@ import gyurix.activityplanner.core.observation.ObservableList;
 import gyurix.activityplanner.core.storage.gson.TypeSelectorAdapter;
 import gyurix.activityplanner.core.storage.gson.UnwrapperAdapter;
 import lombok.Getter;
-import lombok.SneakyThrows;
 
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.TreeMap;
@@ -64,11 +64,14 @@ public class DataStorage extends StorableData {
      *
      * @param f - The file used for loading data
      */
-    @SneakyThrows
     public static void load(File f) {
-        FileReader fr = new FileReader(f);
-        instance = gson.fromJson(fr, DataStorage.class);
-        fr.close();
+        try {
+            FileReader fr = new FileReader(f);
+            instance = gson.fromJson(fr, DataStorage.class);
+            fr.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -172,10 +175,13 @@ public class DataStorage extends StorableData {
      *
      * @param f - The File to which the data should be written
      */
-    @SneakyThrows
     public void save(File f) {
-        FileWriter fw = new FileWriter(f);
-        fw.write(gson.toJson(this));
-        fw.close();
+        try {
+            FileWriter fw = new FileWriter(f);
+            fw.write(gson.toJson(this));
+            fw.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
