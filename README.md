@@ -119,24 +119,25 @@ element. If the URL ends to a known file extension, then it will be shown up as 
 extension to a **LinkElement**, so it will be **AudioElement**,
 **PictureElement** or **VideoElement**. You can check this table for the exact extension
 element pairs: 
-|-----|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+
 |**Extension**|**Element type**|
-| m4a | [AudioElement](https://github.com/OOP-FIIT/oop-projekt-stv-09-a-povazanova-gyurix/blob/master/src/main/java/gyurix/activityplanner/core/data/element/AudioElement.java) |
-| m4b | [AudioElement](https://github.com/OOP-FIIT/oop-projekt-stv-09-a-povazanova-gyurix/blob/master/src/main/java/gyurix/activityplanner/core/data/element/AudioElement.java) |
-| mp3 | [AudioElement](https://github.com/OOP-FIIT/oop-projekt-stv-09-a-povazanova-gyurix/blob/master/src/main/java/gyurix/activityplanner/core/data/element/AudioElement.java) |
-| wav | [AudioElement](https://github.com/OOP-FIIT/oop-projekt-stv-09-a-povazanova-gyurix/blob/master/src/main/java/gyurix/activityplanner/core/data/element/AudioElement.java) |
 |-----|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| bmp | [PictureElement](https://github.com/OOP-FIIT/oop-projekt-stv-09-a-povazanova-gyurix/blob/master/src/main/java/gyurix/activityplanner/core/data/element/PictureElement.java) |
-| gif | [PictureElement](https://github.com/OOP-FIIT/oop-projekt-stv-09-a-povazanova-gyurix/blob/master/src/main/java/gyurix/activityplanner/core/data/element/PictureElement.java) |
-| jpeg| [PictureElement](https://github.com/OOP-FIIT/oop-projekt-stv-09-a-povazanova-gyurix/blob/master/src/main/java/gyurix/activityplanner/core/data/element/PictureElement.java) |
-| jpg | [PictureElement](https://github.com/OOP-FIIT/oop-projekt-stv-09-a-povazanova-gyurix/blob/master/src/main/java/gyurix/activityplanner/core/data/element/PictureElement.java) |
-| png | [PictureElement](https://github.com/OOP-FIIT/oop-projekt-stv-09-a-povazanova-gyurix/blob/master/src/main/java/gyurix/activityplanner/core/data/element/PictureElement.java) |
-|-----|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| avi | [VideoElement](https://github.com/OOP-FIIT/oop-projekt-stv-09-a-povazanova-gyurix/blob/master/src/main/java/gyurix/activityplanner/core/data/element/VideoElement.java) |
-| mkv | [VideoElement](https://github.com/OOP-FIIT/oop-projekt-stv-09-a-povazanova-gyurix/blob/master/src/main/java/gyurix/activityplanner/core/data/element/VideoElement.java) |
-| mp4 | [VideoElement](https://github.com/OOP-FIIT/oop-projekt-stv-09-a-povazanova-gyurix/blob/master/src/main/java/gyurix/activityplanner/core/data/element/VideoElement.java) |
-| wmv | [VideoElement](https://github.com/OOP-FIIT/oop-projekt-stv-09-a-povazanova-gyurix/blob/master/src/main/java/gyurix/activityplanner/core/data/element/VideoElement.java) |
-|-----|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------| 
+| _m4a_ | [AudioElement](https://github.com/OOP-FIIT/oop-projekt-stv-09-a-povazanova-gyurix/blob/master/src/main/java/gyurix/activityplanner/core/data/element/AudioElement.java) |
+| _m4b_ | [AudioElement](https://github.com/OOP-FIIT/oop-projekt-stv-09-a-povazanova-gyurix/blob/master/src/main/java/gyurix/activityplanner/core/data/element/AudioElement.java) |
+| _mp3_ | [AudioElement](https://github.com/OOP-FIIT/oop-projekt-stv-09-a-povazanova-gyurix/blob/master/src/main/java/gyurix/activityplanner/core/data/element/AudioElement.java) |
+| _wav_ | [AudioElement](https://github.com/OOP-FIIT/oop-projekt-stv-09-a-povazanova-gyurix/blob/master/src/main/java/gyurix/activityplanner/core/data/element/AudioElement.java) |
+| | |
+| _bmp_ | [PictureElement](https://github.com/OOP-FIIT/oop-projekt-stv-09-a-povazanova-gyurix/blob/master/src/main/java/gyurix/activityplanner/core/data/element/PictureElement.java) |
+| _gif_ | [PictureElement](https://github.com/OOP-FIIT/oop-projekt-stv-09-a-povazanova-gyurix/blob/master/src/main/java/gyurix/activityplanner/core/data/element/PictureElement.java) |
+| _jpeg_| [PictureElement](https://github.com/OOP-FIIT/oop-projekt-stv-09-a-povazanova-gyurix/blob/master/src/main/java/gyurix/activityplanner/core/data/element/PictureElement.java) |
+| _jpg_ | [PictureElement](https://github.com/OOP-FIIT/oop-projekt-stv-09-a-povazanova-gyurix/blob/master/src/main/java/gyurix/activityplanner/core/data/element/PictureElement.java) |
+| _png_ | [PictureElement](https://github.com/OOP-FIIT/oop-projekt-stv-09-a-povazanova-gyurix/blob/master/src/main/java/gyurix/activityplanner/core/data/element/PictureElement.java) |
+| | |
+| _avi_ | [VideoElement](https://github.com/OOP-FIIT/oop-projekt-stv-09-a-povazanova-gyurix/blob/master/src/main/java/gyurix/activityplanner/core/data/element/VideoElement.java) |
+| _mkv_ | [VideoElement](https://github.com/OOP-FIIT/oop-projekt-stv-09-a-povazanova-gyurix/blob/master/src/main/java/gyurix/activityplanner/core/data/element/VideoElement.java) |
+| _mp4_ | [VideoElement](https://github.com/OOP-FIIT/oop-projekt-stv-09-a-povazanova-gyurix/blob/master/src/main/java/gyurix/activityplanner/core/data/element/VideoElement.java) |
+| _wmv_ | [VideoElement](https://github.com/OOP-FIIT/oop-projekt-stv-09-a-povazanova-gyurix/blob/master/src/main/java/gyurix/activityplanner/core/data/element/VideoElement.java) |
+ 
 
 * **Content Viewer**
 
