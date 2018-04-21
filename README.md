@@ -47,12 +47,12 @@ while the created contents and their elements can be created, edited and removed
 ### Step 4: Finished
 You are done with the setup and can use the application whenever you want.
 
-#Changelog
+# Changelog
 
-###1.0
+### 1.0
 - Initial release
 
-###1.1
+### 1.1
 - Setup a whole maven building process
 - Added [AutoSaver](https://github.com/OOP-FIIT/oop-projekt-stv-09-a-povazanova-gyurix/blob/master/src/main/java/gyurix/activityplanner/core/storage/AutoSaver.aj)
 aspect for automatically saving the configuration on every data change
