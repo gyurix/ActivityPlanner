@@ -193,10 +193,24 @@ The types of the supported elements are as follows:
 
 ![Text Editor](https://gyurix.pro/oop/screenshots/texteditor.jpg)
 
+When you are editing [TextElements](https://github.com/OOP-FIIT/oop-projekt-stv-09-a-povazanova-gyurix/blob/master/src/main/java/gyurix/activityplanner/core/data/element/TextElement.java)
+or the title/subtitle of a
+[Content](https://github.com/OOP-FIIT/oop-projekt-stv-09-a-povazanova-gyurix/blob/master/src/main/java/gyurix/activityplanner/core/data/content/Content.java)
+then you are doing it with this editor. Every change you make will be instantly visible by anything else showing the same text. 
+
 * **Date Editor**
 
 ![Date Editor](https://gyurix.pro/oop/screenshots/dateeditor.jpg)
 
+You are using this editor for changing the date of a
+[Alert](https://github.com/OOP-FIIT/oop-projekt-stv-09-a-povazanova-gyurix/blob/master/src/main/java/gyurix/activityplanner/core/data/content/Alert.java)
+You can click to the calendar icon for showing up that popup calendar for easier date selection.
+
 * **Url Editor**
 
 ![Url Editor](https://gyurix.pro/oop/screenshots/urleditor.jpg)
+
+You are using this editor for changing a
+[LinkElement](https://github.com/OOP-FIIT/oop-projekt-stv-09-a-povazanova-gyurix/blob/master/src/main/java/gyurix/activityplanner/core/data/element/LinkElement.java)
+or one of it's extensions. You can click to the browse icon next to the link for opening your local file explorer and
+choosing a file with it.
