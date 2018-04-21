@@ -202,7 +202,7 @@ then you are doing it with this editor. Every change you make will be instantly 
 
 ![Date Editor](https://gyurix.pro/oop/screenshots/dateeditor.jpg)
 
-You are using this editor for changing the date of a
+You are using this editor for changing the date of an
 [Alert](https://github.com/OOP-FIIT/oop-projekt-stv-09-a-povazanova-gyurix/blob/master/src/main/java/gyurix/activityplanner/core/data/content/Alert.java)
 You can click to the calendar icon for showing up that popup calendar for easier date selection.
 
