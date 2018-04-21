@@ -47,6 +47,19 @@ while the created contents and their elements can be created, edited and removed
 ### Step 4: Finished
 You are done with the setup and can use the application whenever you want.
 
+#Changelog
+
+###1.0
+- Initial release
+
+###1.1
+- Setup a whole maven building process
+- Added [AutoSaver](https://github.com/OOP-FIIT/oop-projekt-stv-09-a-povazanova-gyurix/blob/master/src/main/java/gyurix/activityplanner/core/storage/AutoSaver.aj)
+aspect for automatically saving the configuration on every data change
+- Added UML class hierarchy visualization for the core part 
+- Added documentation (README.MD with screenshots and JavaDoc)
+
+
 # Logical parts
 ActivityPlanner consists of two logical parts: the core and the GUI part.
 
@@ -69,13 +82,14 @@ you can press the **ENTER** or click to the **Login** button for logging in
 
   ![User Dashboard](https://gyurix.pro/oop/screenshots/user.jpg)
   
-  You can see this screen after logging in. It consists of the following elements:
+You can see this screen after logging in. It consists of the following elements:
 
 1. **Your username:** Just an informative text, for checking who is logged in
 2. **Logout button:** Click to it for logging out
 3. **Tables column:** Here you can find all the tables accessible by the logged in user.
 Tables are information blocks. They consists of a title, subtitle, and a list of elements.
 They also have a color, which is randomly choice on when you create them.
+You can click to a table for opening its content viewer.
 Lectors can see and edit their own and their students tables.
 Students can see their lectors, and their lectors students tables.
 Students can see and edit their own tables.
@@ -87,12 +101,12 @@ Alerts have the same visibility and edit permission system, as Tables.
 for students and lectors to directly communicate between each other very easily. There are
 individual and group chat channels too. And users can also communicate with themselves for
 making private notes easily.
-6. **New table button:** Creates a new table
-7. **Remove table button:** You can see this icon on the right top corner of every table
-to which you have edit permission. It removes the table.
-8. **New alert button:** Creates a new alert.
-By default alerts date is their creation time.
-9. **Remove alert button:** Removes the alert. If you remove a table or an alert it's
+6. **New [Table](https://github.com/OOP-FIIT/oop-projekt-stv-09-a-povazanova-gyurix/blob/master/src/main/java/gyurix/activityplanner/core/data/content/Table.java) button:** Creates a new [Table](https://github.com/OOP-FIIT/oop-projekt-stv-09-a-povazanova-gyurix/blob/master/src/main/java/gyurix/activityplanner/core/data/content/Table.java)
+7. **Remove [Table](https://github.com/OOP-FIIT/oop-projekt-stv-09-a-povazanova-gyurix/blob/master/src/main/java/gyurix/activityplanner/core/data/content/Table.java) button:** You can see this icon on the right top corner of every [Table](https://github.com/OOP-FIIT/oop-projekt-stv-09-a-povazanova-gyurix/blob/master/src/main/java/gyurix/activityplanner/core/data/content/Table.java)
+to which you have edit permission. It removes the [Table](https://github.com/OOP-FIIT/oop-projekt-stv-09-a-povazanova-gyurix/blob/master/src/main/java/gyurix/activityplanner/core/data/content/Table.java).
+8. **New [Alert](https://github.com/OOP-FIIT/oop-projekt-stv-09-a-povazanova-gyurix/blob/master/src/main/java/gyurix/activityplanner/core/data/content/Alert.java) button:** Creates a new [Alert](https://github.com/OOP-FIIT/oop-projekt-stv-09-a-povazanova-gyurix/blob/master/src/main/java/gyurix/activityplanner/core/data/content/Alert.java).
+By default [Alert](https://github.com/OOP-FIIT/oop-projekt-stv-09-a-povazanova-gyurix/blob/master/src/main/java/gyurix/activityplanner/core/data/content/Alert.java)s date is their creation time.
+9. **Remove [Alert](https://github.com/OOP-FIIT/oop-projekt-stv-09-a-povazanova-gyurix/blob/master/src/main/java/gyurix/activityplanner/core/data/content/Alert.java) button:** Removes the [Alert](https://github.com/OOP-FIIT/oop-projekt-stv-09-a-povazanova-gyurix/blob/master/src/main/java/gyurix/activityplanner/core/data/content/Alert.java). If you remove a [Table](https://github.com/OOP-FIIT/oop-projekt-stv-09-a-povazanova-gyurix/blob/master/src/main/java/gyurix/activityplanner/core/data/content/Table.java) or an [Alert](https://github.com/OOP-FIIT/oop-projekt-stv-09-a-povazanova-gyurix/blob/master/src/main/java/gyurix/activityplanner/core/data/content/Alert.java) it's
 every opened content viewer window will be closed automatically
 10. **Chat channel selector icons:**
     1. Student selector for **individual chatting** with a student.
@@ -107,20 +121,25 @@ other lectors, while students can only see their own lectors.
     4. Lector selector for **group chatting** with a lectors group **with** the lector.
 For students a menu pops up for selecting the lector, while for lectors this
 button shows the chat with their group.
-11. **Own chat messages:** You can see your own chat messages in a yellow box, while
+11. **Own [ChatMessages](https://github.com/OOP-FIIT/oop-projekt-stv-09-a-povazanova-gyurix/blob/master/src/main/java/gyurix/activityplanner/core/data/element/ChatMessage.java):** You can see your own chat messages in a yellow box, while
 others chat messages in a silver one. The message senders name is shown on the left top
 part of the box, while the sending date and time is shown on the right top part of the
 box.
-12. **Others chat messages:** As you can see the chat messages can be any kind of
+12. **Others [ChatMessages](https://github.com/OOP-FIIT/oop-projekt-stv-09-a-povazanova-gyurix/blob/master/src/main/java/gyurix/activityplanner/core/data/element/ChatMessage.java):** As you can see the chat messages can be any kind of
 supported elements, not just simple text messages
 13. **Message box:** You can write your sendable message to this box. For sending it
 just press ENTER. For messages containing an URL the message will show up as a link
 element. If the URL ends to a known file extension, then it will be shown up as an
-extension to a **LinkElement**, so it will be **AudioElement**,
-**PictureElement** or **VideoElement**. You can check this table for the exact extension
-element pairs: 
+extension to a
+**[LinkElement](https://github.com/OOP-FIIT/oop-projekt-stv-09-a-povazanova-gyurix/blob/master/src/main/java/gyurix/activityplanner/core/data/element/LinkElement.java)**,
+so it will be
+**[AudioElement](https://github.com/OOP-FIIT/oop-projekt-stv-09-a-povazanova-gyurix/blob/master/src/main/java/gyurix/activityplanner/core/data/element/AudioElement.java)**,
+**[PictureElement](https://github.com/OOP-FIIT/oop-projekt-stv-09-a-povazanova-gyurix/blob/master/src/main/java/gyurix/activityplanner/core/data/element/PictureElement.java)**
+or
+**[VideoElement](https://github.com/OOP-FIIT/oop-projekt-stv-09-a-povazanova-gyurix/blob/master/src/main/java/gyurix/activityplanner/core/data/element/VideoElement.java)**.
+You can check this table for the exact extension [Element](https://github.com/OOP-FIIT/oop-projekt-stv-09-a-povazanova-gyurix/blob/master/src/main/java/gyurix/activityplanner/core/data/element/Element.java) pairs:
 
-|**Extension**|**Element type**|
+|**Extension**|**[Element](https://github.com/OOP-FIIT/oop-projekt-stv-09-a-povazanova-gyurix/blob/master/src/main/java/gyurix/activityplanner/core/data/element/Element.java) type**|
 |-----|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | _m4a_ | [AudioElement](https://github.com/OOP-FIIT/oop-projekt-stv-09-a-povazanova-gyurix/blob/master/src/main/java/gyurix/activityplanner/core/data/element/AudioElement.java) |
 | _m4b_ | [AudioElement](https://github.com/OOP-FIIT/oop-projekt-stv-09-a-povazanova-gyurix/blob/master/src/main/java/gyurix/activityplanner/core/data/element/AudioElement.java) |
@@ -139,9 +158,36 @@ element pairs:
 | _wmv_ | [VideoElement](https://github.com/OOP-FIIT/oop-projekt-stv-09-a-povazanova-gyurix/blob/master/src/main/java/gyurix/activityplanner/core/data/element/VideoElement.java) |
  
 
-* **Content Viewer**
+* **[Content](https://github.com/OOP-FIIT/oop-projekt-stv-09-a-povazanova-gyurix/blob/master/src/main/java/gyurix/activityplanner/core/data/content/Content.java) Viewer**
 
-![Content Viewer](https://gyurix.pro/oop/screenshots//contentviewer.jpg)
+![Content Viewer](https://gyurix.pro/oop/screenshots/contentviewer.jpg)
+
+You can see this new window popping up when you open an **Alert** or a **Table** by clicking to them.
+It consists of the following elements:
+1. **The title of the [Content](https://github.com/OOP-FIIT/oop-projekt-stv-09-a-povazanova-gyurix/blob/master/src/main/java/gyurix/activityplanner/core/data/content/Content.java):**
+You can double click to edit it if you have edit permissions
+2. **The subtitle of the [Content](https://github.com/OOP-FIIT/oop-projekt-stv-09-a-povazanova-gyurix/blob/master/src/main/java/gyurix/activityplanner/core/data/content/Content.java):**
+You can double click to edit it if you have edit permissions
+3. **The date of the [Alert](https://github.com/OOP-FIIT/oop-projekt-stv-09-a-povazanova-gyurix/blob/master/src/main/java/gyurix/activityplanner/core/data/content/Alert.java):**
+For tables you can't see this.
+You can double click to edit it if you have edit permissions
+4. **Edit [Element](https://github.com/OOP-FIIT/oop-projekt-stv-09-a-povazanova-gyurix/blob/master/src/main/java/gyurix/activityplanner/core/data/element/Element.java) button:**
+You can only see it if you have edit permissions for the opened content.
+You can click to it for opening the elements editor.
+5. **Remove [Element](https://github.com/OOP-FIIT/oop-projekt-stv-09-a-povazanova-gyurix/blob/master/src/main/java/gyurix/activityplanner/core/data/element/Element.java) button:**
+You can only see it if you have edit permissions for the opened content.
+You can click to it for removing the element.
+If an element is removed, it's editors are closed automatically.
+6. **Add new Element buttons:**
+You can only see it if you have edit permissions for the opened content.
+Creates a new element and opens its editor.
+The types of the supported elements are as follows: 
+    1. [TextElement](https://github.com/OOP-FIIT/oop-projekt-stv-09-a-povazanova-gyurix/blob/master/src/main/java/gyurix/activityplanner/core/data/element/TextElement.java)
+    2. [LinkElement](https://github.com/OOP-FIIT/oop-projekt-stv-09-a-povazanova-gyurix/blob/master/src/main/java/gyurix/activityplanner/core/data/element/LinkElement.java)
+    3. [AudioElement](https://github.com/OOP-FIIT/oop-projekt-stv-09-a-povazanova-gyurix/blob/master/src/main/java/gyurix/activityplanner/core/data/element/AudioElement.java)
+    4. [PictureElement](https://github.com/OOP-FIIT/oop-projekt-stv-09-a-povazanova-gyurix/blob/master/src/main/java/gyurix/activityplanner/core/data/element/PictureElement.java)
+    5. [VideoElement](https://github.com/OOP-FIIT/oop-projekt-stv-09-a-povazanova-gyurix/blob/master/src/main/java/gyurix/activityplanner/core/data/element/VideoElement.java)
+    
 
 * **Text Editor**
 
