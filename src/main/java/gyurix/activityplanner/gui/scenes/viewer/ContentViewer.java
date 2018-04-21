@@ -82,13 +82,13 @@ public class ContentViewer extends ElementHolderScene<Table> {
     }
 
     @Override
-    protected Label renderDate(Observable<Long> obs) {
+    protected Label renderDate(Observable<Long> date) {
         Label label = new Label();
         label.setPrefWidth(MAX_VALUE);
-        attach(obs, () -> label.setText(formatTime(obs.getData())));
+        attach(date, () -> label.setText(formatTime(date.getData())));
         label.setOnMouseReleased((e) -> {
             if (e.getButton() == MouseButton.PRIMARY && e.getClickCount() == 2)
-                new DateEditor(this, obs).start();
+                new DateEditor(this, date).start();
         });
         return label;
     }

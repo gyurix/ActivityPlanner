@@ -106,7 +106,7 @@ public class ContentRenderer extends DataRenderer implements ContentVisitor {
 
         grid.add(title, 1, 0);
         if (scene.getInfo().isContentEditable(t.getId().getData())) {
-            Pane removeIcon = createClickableImage(Icons.REMOVE, REMOVE_ICON_SIZE, () ->
+            Pane removeIcon = createClickablePicture(Icons.REMOVE, REMOVE_ICON_SIZE, () ->
                     DataStorage.getInstance().removeContent(scene.getInfo(), t.getId().getData()));
             grid.add(removeIcon, 2, 0);
         }

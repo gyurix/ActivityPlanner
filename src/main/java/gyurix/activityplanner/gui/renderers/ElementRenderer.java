@@ -69,8 +69,8 @@ public class ElementRenderer extends DataRenderer implements ElementVisitor {
     }
 
     public void addToBox(TextElement e, Region r) {
-        Pane edit = createClickableImage(EDIT, ICON_SIZE_MULTIPLIER, () -> openEditor(e));
-        Pane remove = createClickableImage(REMOVE, ICON_SIZE_MULTIPLIER, () -> elementHolder.getElements().remove(new Observable<>(e)));
+        Pane edit = createClickablePicture(EDIT, ICON_SIZE_MULTIPLIER, () -> openEditor(e));
+        Pane remove = createClickablePicture(REMOVE, ICON_SIZE_MULTIPLIER, () -> elementHolder.getElements().remove(new Observable<>(e)));
         box.add(makeContentGrid(r, edit, remove), 0, row++);
         box.add(makeSeparatorGrid(), 0, row++);
     }
@@ -110,7 +110,7 @@ public class ElementRenderer extends DataRenderer implements ElementVisitor {
     }
 
     public Pane createAddElementButton(Icons icon, Callable<TextElement> elementCreator) {
-        return createClickableImage(icon, ADD_ICON_SIZE_MULTIPLIER, () -> {
+        return createClickablePicture(icon, ADD_ICON_SIZE_MULTIPLIER, () -> {
             TextElement el = elementCreator.call();
             elementHolder.getElements().add(new Observable<>(el));
             openEditor(el);

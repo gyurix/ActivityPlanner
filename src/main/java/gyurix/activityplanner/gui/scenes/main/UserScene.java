@@ -62,7 +62,7 @@ public class UserScene extends InfoScene<User> {
         chat.setBackground(bgColorGradient(chatBackground));
         attach(info.getCreatedContents(), () -> info.visitCreatedContents(renderer = new ContentRenderer(this)));
         alertsWrapper = createWrapper(alerts, bgColorGradient(alertBackground),
-                createClickableImage(Icons.ADD, ICON_SIZE, () -> {
+                createClickablePicture(Icons.ADD, ICON_SIZE, () -> {
                     Alert a = new Alert(System.currentTimeMillis(),
                             "Alert Title",
                             "Alert Subtitle",
@@ -72,7 +72,7 @@ public class UserScene extends InfoScene<User> {
                     new ContentViewer(this, a, new Stage()).start();
                 }));
         tableWrapper = createWrapper(tables, bgColorGradient(tableBackground),
-                createClickableImage(Icons.ADD, ICON_SIZE, () -> {
+                createClickablePicture(Icons.ADD, ICON_SIZE, () -> {
                     Table t = new Table("Table Title",
                             "Table Subtitle",
                             colorToHex(getRandomColor()).substring(1));
