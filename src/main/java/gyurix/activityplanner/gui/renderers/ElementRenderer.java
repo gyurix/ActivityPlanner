@@ -35,62 +35,139 @@ import static gyurix.activityplanner.gui.assets.Icons.*;
 import static gyurix.activityplanner.gui.scenes.SceneUtils.*;
 import static java.lang.Double.MAX_VALUE;
 
+/**
+ * Element renderer used for rendering text, link, audio, video and picture elements.
+ */
 public class ElementRenderer extends DataRenderer implements ElementVisitor {
+    /**
+     * Width multiplier of the add new element buttons
+     */
     private static final double ADD_ICON_SIZE_MULTIPLIER = 0.04;
-    private static final double ASPECT_RATIO = 0.75;
+
+    /**
+     * Width multiplier of the edit and remove buttons
+     */
     private static final double ICON_SIZE_MULTIPLIER = 0.04;
+
+    /**
+     * Width multiplier of the UserScene used for the element rendering
+     */
     private static final double USER_WIDTH_MULTIPLIER = 0.35;
+
+    /**
+     * Prefered aspect ratio of the video elements
+     */
+    private static final double VIDEO_ASPECT_RATIO = 0.75;
+
+    /**
+     * Height multiplier of the video boxes relative to the available space for them
+     */
     private static final double VIDEO_BOX_HEIGHT_MULTIPLIER = 0.9;
+
+    /**
+     * Width multiplier of the video boxes relative to the available space for them
+     */
     private static final double VIDEO_BOX_WIDTH_MULTIPLIER = 0.95;
+
+    /**
+     * Width multiplier for audio and video boxes
+     */
     private static final double WIDTH_MULTIPLIER = 0.74;
+
+    /**
+     * The parent user scene
+     */
     private final UserScene userScene;
-    private GridPane box;
+    /**
+     * List of web views used for rendering audio and video elements, which should be
+     * destroyed when his ElementRenderer is destroyed
+     */
     private ArrayList<WebView> destroyableWebViews = new ArrayList<>();
+    /**
+     * Should edit and remove buttons be rendered?
+     */
     private boolean editable;
+    /**
+     * The holder Content of the renderable elements
+     */
     private ElementHolder elementHolder;
+    /**
+     * The holder box of the elements, to which the new elements should be added
+     */
+    private GridPane elementHolderBox;
+    /**
+     * The holder scene of the renderable elements
+     */
     private ElementHolderScene<? extends ElementHolder> holder;
+
+    /**
+     * Row of the next renderable element
+     */
     private int row;
+
+    /**
+     * The screen width used for calculating the renderable elements
+     */
     @Getter
     private Observable<Double> screenWidth;
 
+    /**
+     * Constructs a new ElementRenderer for rendering the elements of the given ElementHolderScene
+     *
+     * @param holderScene - The ElementHolderScene, containing the renderable elements
+     */
     public ElementRenderer(ElementHolderScene<? extends ElementHolder> holderScene) {
         this.userScene = holderScene.getUserScene();
         screenWidth = holderScene.getScreenWidth();
         this.holder = holderScene;
-        this.box = holderScene.getElements();
+        this.elementHolderBox = holderScene.getElements();
         this.elementHolder = holderScene.getInfo();
         editable = userScene.getInfo().isContentEditable(this.elementHolder.getId().getData());
     }
 
+    /**
+     * Constructs a new ElementRenderer for rendering the elements of the chat
+     *
+     * @param userScene - The parent UserScene
+     */
     public ElementRenderer(UserScene userScene) {
         this.userScene = userScene;
         screenWidth = new Observable<>();
         attach(userScene.getScreenWidth(), () -> screenWidth.setData(userScene.getScreenWidth().getData() * USER_WIDTH_MULTIPLIER));
     }
 
-    public void addToBox(TextElement e, Region r) {
-        Pane edit = createClickablePicture(EDIT, ICON_SIZE_MULTIPLIER, () -> openEditor(e));
-        Pane remove = createClickablePicture(REMOVE, ICON_SIZE_MULTIPLIER, () -> elementHolder.getElements().remove(new Observable<>(e)));
-        box.add(makeContentGrid(r, edit, remove), 0, row++);
-        box.add(makeSeparatorGrid(), 0, row++);
+    /**
+     * Adds the given element to the elementHolderBox
+     *
+     * @param element  - The addable element
+     * @param rendered - The addable elements rendered version
+     */
+    public void addToBox(TextElement element, Region rendered) {
+        Pane edit = createClickablePicture(EDIT, ICON_SIZE_MULTIPLIER, () -> openEditor(element));
+        Pane remove = createClickablePicture(REMOVE, ICON_SIZE_MULTIPLIER, () -> elementHolder.getElements().remove(new Observable<>(element)));
+        elementHolderBox.add(makeContentGrid(rendered, edit, remove), 0, row++);
+        elementHolderBox.add(makeSeparatorGrid(), 0, row++);
     }
 
+    /**
+     * Creates the add new element buttons
+     */
     public void createAddButtons() {
+        //If the elements are not editable, then we should not have add element buttons
         if (!editable)
             return;
+
+        //Make the holder grid of the element adding buttons
         GridPane grid = new GridPane();
-        RowConstraints seprow = new RowConstraints();
-        RowConstraints mainrow = new RowConstraints();
-        seprow.setPercentHeight(10);
-        mainrow.setPercentHeight(80);
-        grid.getRowConstraints().addAll(seprow, mainrow, seprow);
+        grid.getRowConstraints().addAll(pctRow(10), pctRow(80), pctRow(10));
         ColumnConstraints col = new ColumnConstraints();
         col.setPercentWidth(14);
         col.setHalignment(HPos.CENTER);
-        ColumnConstraints sep = new ColumnConstraints();
-        sep.setPercentWidth(5);
+        ColumnConstraints sep = pctCol(5);
         makeDynamicBackground(grid, elementHolder.getColor());
         grid.getColumnConstraints().addAll(sep, col, sep, col, sep, col, sep, col, sep, col, sep);
+
+        //Create the add element buttons and add them to the holder grid
         grid.add(createAddElementButton(ELEMENT_TEXT,
                 () -> new TextElement("Simple Text")),
                 1, 1);
@@ -106,9 +183,18 @@ public class ElementRenderer extends DataRenderer implements ElementVisitor {
         grid.add(createAddElementButton(ELEMENT_VIDEO,
                 () -> new VideoElement("Video", "Link to video")),
                 9, 1);
-        box.add(grid, 0, row++);
+
+        //Add the holding grid to the element holder box
+        elementHolderBox.add(grid, 0, row++);
     }
 
+    /**
+     * Creates a clickable picture for creating a new element
+     *
+     * @param icon           - The icon showed as picture
+     * @param elementCreator - The creator of the new element
+     * @return The clickable picture for creating a new element
+     */
     public Pane createAddElementButton(Icons icon, Callable<TextElement> elementCreator) {
         return createClickablePicture(icon, ADD_ICON_SIZE_MULTIPLIER, () -> {
             TextElement el = elementCreator.call();
@@ -117,14 +203,25 @@ public class ElementRenderer extends DataRenderer implements ElementVisitor {
         });
     }
 
+    /**
+     * Creates a WebView container for rendering an audio or a video element
+     *
+     * @param audio - true for audio element, false for video element
+     * @return The created WebView container
+     */
     private WebView createWebView(boolean audio) {
+        //Create the webView with the proper size and disabled context menu
         WebView webView = new WebView();
         webView.setContextMenuEnabled(false);
         int width = (int) (getScreenWidth().getData() * WIDTH_MULTIPLIER);
-        int height = audio ? 58 : (int) (width * ASPECT_RATIO);
+        int height = audio ? 58 : (int) (width * VIDEO_ASPECT_RATIO);
         webView.setMaxSize(width, height);
         webView.setPrefSize(width, height);
+
+        //Fix web views parent are not scrolled when scrolling above web view bug
         webView.setOnScroll((ev) -> holder.getElementScroller().handle(ev));
+
+        //Auto resize web view and it's contents if you resize the parent window
         Observer resize;
         if (audio) {
             resize = () -> {
@@ -146,7 +243,7 @@ public class ElementRenderer extends DataRenderer implements ElementVisitor {
                     Element el = d.getElementById("d");
                     if (el != null) {
                         int maxx = (int) (getScreenWidth().getData() * 0.75);
-                        int maxy = (int) (maxx * ASPECT_RATIO);
+                        int maxy = (int) (maxx * VIDEO_ASPECT_RATIO);
                         webView.setMaxSize(maxx, maxy);
                         webView.setPrefSize(maxx, maxy);
                         el.setAttribute("width", String.valueOf(maxx * VIDEO_BOX_WIDTH_MULTIPLIER));
@@ -156,6 +253,8 @@ public class ElementRenderer extends DataRenderer implements ElementVisitor {
             };
         }
         attach(getScreenWidth(), resize);
+
+        //Make sure that the created webView will be properly destroyed on destroying this ElementRenderer
         destroyableWebViews.add(webView);
         return webView;
     }
@@ -166,19 +265,31 @@ public class ElementRenderer extends DataRenderer implements ElementVisitor {
         destroyableWebViews.forEach((wv) -> wv.getEngine().load(null));
     }
 
+    /**
+     * Gets the background color of the given row.
+     * Row background colors are calculated based on the contents background color.
+     * Even rows are always brighter than odd ones.
+     *
+     * @param row - The row
+     * @return The background color of the given row
+     */
     public Color getBackgroundColor(int row) {
         boolean brighter = row % 2 == 0;
         Color c = Color.web("#" + elementHolder.getColor().getData());
         return brighter ? avgColor(c, Color.WHITE) : avgColor(c, avgColor(c, Color.WHITE));
     }
 
+    /**
+     * Make the final grid for the given rendered content
+     *
+     * @param content - The rendered content
+     * @param edit    - The edit button
+     * @param remove  - The remove button
+     * @return The final grid for the given rendered content
+     */
     public GridPane makeContentGrid(Region content, Pane edit, Pane remove) {
         GridPane grid = new GridPane();
-        ColumnConstraints side = new ColumnConstraints();
-        side.setPercentWidth(5);
-        ColumnConstraints center = new ColumnConstraints();
-        center.setPercentWidth(90);
-        grid.getColumnConstraints().addAll(side, center, side);
+        grid.getColumnConstraints().addAll(pctCol(5), pctCol(90), pctCol(5));
 
         RowConstraints row = new RowConstraints();
         row.setValignment(VPos.CENTER);
@@ -193,11 +304,22 @@ public class ElementRenderer extends DataRenderer implements ElementVisitor {
         return grid;
     }
 
-    public void makeDynamicBackground(Region r, Observable<String> obs) {
+    /**
+     * Make a solid dynamic background color for the given region
+     *
+     * @param region - The region
+     * @param color  - The dynamic color of the region
+     */
+    public void makeDynamicBackground(Region region, Observable<String> color) {
         int row = this.row;
-        attach(obs, () -> r.setBackground(bgColor(getBackgroundColor(row))));
+        attach(color, () -> region.setBackground(bgColor(getBackgroundColor(row))));
     }
 
+    /**
+     * Make a separator grid for separating two elements between each other with a vertical space
+     *
+     * @return The separator grid
+     */
     public GridPane makeSeparatorGrid() {
         GridPane grid = new GridPane();
         ColumnConstraints main = new ColumnConstraints();
@@ -208,13 +330,24 @@ public class ElementRenderer extends DataRenderer implements ElementVisitor {
         return grid;
     }
 
-    public void openEditor(gyurix.activityplanner.core.data.element.TextElement e) {
-        (e instanceof LinkElement ?
-                new UrlEditor(holder, e.getText(), ((LinkElement) e).getUrl())
-                : new TextEditor(holder, e.getText())).start();
+    /**
+     * Open the editor of the given element
+     *
+     * @param element - The editable element
+     */
+    public void openEditor(gyurix.activityplanner.core.data.element.TextElement element) {
+        (element instanceof LinkElement ?
+                new UrlEditor(holder, element.getText(), ((LinkElement) element).getUrl())
+                : new TextEditor(holder, element.getText())).start();
     }
 
-    public Region renderAudio(AudioElement e) {
+    /**
+     * Renders the given audio element
+     *
+     * @param audioElement - The renderable audio element
+     * @return The rendered audio element
+     */
+    public Region renderAudio(AudioElement audioElement) {
         int row = this.row;
         GridPane pane = new GridPane();
         ColumnConstraints main = new ColumnConstraints();
@@ -226,18 +359,24 @@ public class ElementRenderer extends DataRenderer implements ElementVisitor {
             webView.getEngine().loadContent(
                     "<body style=\"background-color:" + colorToHex(getBackgroundColor(row)) + "\">" +
                             "<audio id=\"d\" style=\"width:" + width * VIDEO_BOX_WIDTH_MULTIPLIER + "px\"controls>" +
-                            "<source src=\"" + e.getUrl().getData() + "\"></audio></body>");
+                            "<source src=\"" + audioElement.getUrl().getData() + "\"></audio></body>");
         };
-        attach(e.getUrl(), o);
+        attach(audioElement.getUrl(), o);
         attach(elementHolder.getColor(), o);
         pane.add(webView, 0, 0);
-        pane.add(renderLink(e), 0, 1);
+        pane.add(renderLink(audioElement), 0, 1);
         return pane;
     }
 
-    public Region renderLink(LinkElement link) {
-        Label label = renderText(link);
-        Observable<String> url = link.getUrl();
+    /**
+     * Renders the given link element
+     *
+     * @param linkElement - The renderable link element
+     * @return The rendered link element
+     */
+    public Region renderLink(LinkElement linkElement) {
+        Label label = renderText(linkElement);
+        Observable<String> url = linkElement.getUrl();
         Tooltip tooltip = new Tooltip();
         attach(url, () -> tooltip.setText(url.getData()));
         label.setTooltip(tooltip);
@@ -250,36 +389,55 @@ public class ElementRenderer extends DataRenderer implements ElementVisitor {
         return label;
     }
 
-    public Region renderPicture(PictureElement e) {
+    /**
+     * Renders the given picture element
+     *
+     * @param pictureElement - The renderable picture element
+     * @return The rendered picture element
+     */
+    public Region renderPicture(PictureElement pictureElement) {
         GridPane pane = new GridPane();
         ColumnConstraints main = new ColumnConstraints();
         main.setPercentWidth(100);
         pane.getColumnConstraints().add(main);
         ImageView imgView = new ImageView(Icons.LOADING.getImage());
         imgView.setPreserveRatio(true);
+
         //Image loading is an external I/O operation, so we do it asynchronously
-        attach(e.getUrl(), () -> runAsync(() -> {
-            Image img = new Image(e.getUrl().getData());
+        attach(pictureElement.getUrl(), () -> runAsync(() -> {
+            Image img = new Image(pictureElement.getUrl().getData());
             Platform.runLater(() -> {
                 imgView.setImage(img);
                 imgView.setFitWidth(getScreenWidth().getData() * WIDTH_MULTIPLIER);
             });
         }));
         attach(getScreenWidth(), () -> imgView.setFitWidth(getScreenWidth().getData() * WIDTH_MULTIPLIER));
-        pane.add(renderLink(e), 0, 0);
+        pane.add(renderLink(pictureElement), 0, 0);
         pane.add(imgView, 0, 1);
         return pane;
     }
 
-    public Label renderText(TextElement el) {
-        Observable<String> obs = el.getText();
+    /**
+     * Renders the given text element
+     *
+     * @param textElement - The renderable text element
+     * @return The rendered text element
+     */
+    public Label renderText(TextElement textElement) {
+        Observable<String> obs = textElement.getText();
         Label label = new Label();
         label.setPrefWidth(MAX_VALUE);
         attach(obs, () -> label.setText(obs.getData()));
         return label;
     }
 
-    public Region renderVideo(VideoElement e) {
+    /**
+     * Renders the given video element
+     *
+     * @param videoElement - The renderable video element
+     * @return The rendered video element
+     */
+    public Region renderVideo(VideoElement videoElement) {
         int row = this.row;
         GridPane pane = new GridPane();
         ColumnConstraints main = new ColumnConstraints();
@@ -288,18 +446,18 @@ public class ElementRenderer extends DataRenderer implements ElementVisitor {
         WebView webView = createWebView(false);
         Observer contentChange = () -> {
             int width = (int) (getScreenWidth().getData() * WIDTH_MULTIPLIER);
-            int height = (int) (width * ASPECT_RATIO);
+            int height = (int) (width * VIDEO_ASPECT_RATIO);
             webView.getEngine().loadContent("<body style=\"background-color:" + colorToHex(getBackgroundColor(row)) + "\">" +
                     "<video id=\"d\" width=\"" + width * VIDEO_BOX_WIDTH_MULTIPLIER + "\" " +
                     "height=\"" + height * VIDEO_BOX_HEIGHT_MULTIPLIER + "\" controls>" +
-                    "<source src=\"" + e.getUrl().getData() + "\">" +
+                    "<source src=\"" + videoElement.getUrl().getData() + "\">" +
                     "</video>" +
                     "</body>");
         };
-        attach(e.getUrl(), contentChange);
+        attach(videoElement.getUrl(), contentChange);
         attach(elementHolder.getColor(), contentChange);
         pane.add(webView, 0, 1);
-        pane.add(renderLink(e), 0, 0);
+        pane.add(renderLink(videoElement), 0, 0);
         return pane;
     }
 
