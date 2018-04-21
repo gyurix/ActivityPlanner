@@ -11,7 +11,6 @@ import gyurix.activityplanner.gui.scenes.viewer.ContentViewer;
 import javafx.application.Platform;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseButton;
-import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
@@ -43,7 +42,7 @@ public class ContentRenderer extends DataRenderer implements ContentVisitor {
     /**
      * Constructs a new ContentRenderer with the given UserScene
      *
-     * @param scene
+     * @param scene - The parent UserScene
      */
     public ContentRenderer(UserScene scene) {
         this.scene = scene;
@@ -56,27 +55,37 @@ public class ContentRenderer extends DataRenderer implements ContentVisitor {
         return scene.getScreenWidth();
     }
 
+    /**
+     * Makes the grid for a content
+     *
+     * @param content - The showable content
+     * @return The grid made for showing the given content
+     */
     public GridPane makeContentGrid(Table content) {
         GridPane grid = new GridPane();
         makeDynamicBackground(grid, content.getColor());
         grid.setHgap(10);
         grid.setVgap(10);
-        makeContentGridColumns(grid);
+        grid.getColumnConstraints().addAll(pctCol(5), pctCol(85), pctCol(5), pctCol(5));
         return grid;
     }
 
-    public void makeContentGridColumns(GridPane grid) {
-        ColumnConstraints side = new ColumnConstraints();
-        side.setPercentWidth(5);
-        ColumnConstraints center = new ColumnConstraints();
-        center.setPercentWidth(85);
-        grid.getColumnConstraints().addAll(side, center, side, side);
+    /**
+     * Makes the dynamic background of a grid pane
+     *
+     * @param grid  - The changeable grid
+     * @param color - The grids dynamically changeable color
+     */
+    public void makeDynamicBackground(GridPane grid, Observable<String> color) {
+        attach(color, () -> grid.setBackground(bgColorGradientTop(Color.web("#" + color.getData()))));
     }
 
-    public void makeDynamicBackground(GridPane grid, Observable<String> obs) {
-        attach(obs, () -> grid.setBackground(bgColorGradientTop(Color.web("#" + obs.getData()))));
-    }
-
+    /**
+     * Renders the given alert
+     *
+     * @param a - The renderable alert
+     * @return The rendered alert
+     */
     private GridPane renderAlert(Alert a) {
         GridPane grid = renderTable(a);
         Label date = renderDate(a.getDueDate());
@@ -84,6 +93,12 @@ public class ContentRenderer extends DataRenderer implements ContentVisitor {
         return grid;
     }
 
+    /**
+     * Renders the given table
+     *
+     * @param t - The renderable table
+     * @return The rendered table
+     */
     private GridPane renderTable(Table t) {
         GridPane grid = makeContentGrid(t);
         Label title = renderText(24, t.getTitle());
