@@ -5,8 +5,6 @@ import gyurix.activityplanner.core.observation.Observable;
 import gyurix.activityplanner.gui.scenes.core.ElementHolderScene;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
-import javafx.scene.layout.ColumnConstraints;
-import javafx.scene.layout.RowConstraints;
 import javafx.stage.Stage;
 import lombok.Getter;
 
@@ -16,23 +14,49 @@ import java.time.LocalTime;
 import java.util.Calendar;
 import java.util.Date;
 
+/**
+ * DateEditor used for changing the time and date of an Alert
+ */
 @Getter
 public class DateEditor extends Editor {
+    /**
+     * The changeable date
+     */
     private Observable<Long> date;
+
+    /**
+     * The date label
+     */
     private Label dateLabel = new Label("Date");
+
+    /**
+     * The date time picker box
+     */
     private DateTimePicker datePicker = new DateTimePicker();
+
+    /**
+     * Edit lock, used for locking date changes, if it's getting edited by this editor
+     */
     private boolean editLock;
 
+    /**
+     * Constructs a new DateEditor
+     *
+     * @param holder - The ElementHolderScene
+     * @param date   - The editable date
+     */
     public DateEditor(ElementHolderScene<? extends ElementHolder> holder, Observable<Long> date) {
         super(holder, new Stage());
         this.date = date;
     }
 
+    @Override
     public void addNodesToGrid() {
         grid.add(dateLabel, 1, 1);
         grid.add(datePicker, 1, 2);
     }
 
+    @Override
     public void createNodes() {
         datePicker.setPrefWidth(Double.MAX_VALUE);
         dateLabel.setAlignment(Pos.CENTER);
@@ -60,29 +84,5 @@ public class DateEditor extends Editor {
     @Override
     public void createScene() {
         createResizableScene(0.17, "Date Editor");
-    }
-
-    public void makeGrid() {
-        grid.setVgap(5);
-        makeGridColumns();
-        makeGridRows();
-    }
-
-    public void makeGridColumns() {
-        ColumnConstraints side = new ColumnConstraints();
-        side.setPercentWidth(5);
-        ColumnConstraints center = new ColumnConstraints();
-        center.setPercentWidth(90);
-        grid.getColumnConstraints().addAll(side, center, side);
-    }
-
-    public void makeGridRows() {
-        RowConstraints side = new RowConstraints();
-        side.setPercentHeight(5);
-        RowConstraints label = new RowConstraints();
-        label.setPercentHeight(5);
-        RowConstraints editor = new RowConstraints();
-        editor.setPercentHeight(85);
-        grid.getRowConstraints().addAll(side, label, editor, side);
     }
 }

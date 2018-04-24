@@ -7,31 +7,56 @@ import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
-import javafx.scene.layout.ColumnConstraints;
-import javafx.scene.layout.RowConstraints;
 import javafx.stage.Stage;
 import lombok.Getter;
 
+/**
+ * Text editor used for editing TextElements, and other String properties
+ * like titles or subtitles of Contents.
+ */
 @Getter
 public class TextEditor extends Editor {
-    private Observable<String> text;
-    private TextArea textArea = new TextArea();
-    private Label textLabel = new Label("Text");
-    private boolean editLock;
 
+    /**
+     * The text area used for editing the text
+     */
+    private final TextArea textArea = new TextArea();
+    /**
+     * The text label
+     */
+    private final Label textLabel = new Label("Text");
+    /**
+     * Edit lock, used for locking text changes, when it's getting edited by this editor
+     */
+    private boolean editLock;
+    /**
+     * The editable text
+     */
+    private Observable<String> text;
+
+    /**
+     * Constructs a new TextEditor
+     *
+     * @param holder - The holder of the editable element
+     * @param text   - The editable text
+     */
     public TextEditor(ElementHolderScene<? extends ElementHolder> holder, Observable<String> text) {
         super(holder, new Stage());
         this.text = text;
     }
 
+    @Override
     public void addNodesToGrid() {
         grid.add(textLabel, 1, 1);
         grid.add(textArea, 1, 2);
     }
 
+    @Override
     public void createNodes() {
         textLabel.setAlignment(Pos.CENTER);
         textLabel.setPrefWidth(Double.MAX_VALUE);
+
+        //Make text dynamically changeable
         attach(text, () -> {
             if (!editLock) textArea.setText(text.getData());
         });
@@ -45,29 +70,5 @@ public class TextEditor extends Editor {
     @Override
     public void createScene() {
         createResizableScene(0.3, "Text Editor");
-    }
-
-    public void makeGrid() {
-        grid.setVgap(5);
-        makeGridColumns();
-        makeGridRows();
-    }
-
-    public void makeGridColumns() {
-        ColumnConstraints side = new ColumnConstraints();
-        side.setPercentWidth(5);
-        ColumnConstraints center = new ColumnConstraints();
-        center.setPercentWidth(90);
-        grid.getColumnConstraints().addAll(side, center, side);
-    }
-
-    public void makeGridRows() {
-        RowConstraints side = new RowConstraints();
-        side.setPercentHeight(5);
-        RowConstraints label = new RowConstraints();
-        label.setPercentHeight(5);
-        RowConstraints editor = new RowConstraints();
-        editor.setPercentHeight(85);
-        grid.getRowConstraints().addAll(side, label, editor, side);
     }
 }

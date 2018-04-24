@@ -11,7 +11,7 @@ ActivityPlanner is an universal software for helping in teaching students in a m
 - sharing study materials
 - organizing various events
 - setting up deadlines
-- consulting with lectures
+- consulting with lectors
 - chatting with schoolmates
 
 # Setup & Usage

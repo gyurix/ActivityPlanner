@@ -11,7 +11,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
-import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.RowConstraints;
 import javafx.stage.FileChooser;
@@ -19,21 +18,51 @@ import lombok.Getter;
 
 import java.io.File;
 
+/**
+ * UrlEditor is an extension of TextEditor used for editing
+ * LinkElements and their extensions.
+ */
 @Getter
 public class UrlEditor extends TextEditor {
-    private ImageView browseIcon = new ImageView(Icons.BROWSE.getImage());
-    private Observable<String> url;
-    private boolean urlEditLock;
-    private GridPane urlEditor = new GridPane();
-    private TextField urlField = new TextField();
-    private Label urlLabel = new Label("Link");
 
+    /**
+     * Browse icon used for opening system file browser
+     */
+    private final ImageView browseIcon = new ImageView(Icons.BROWSE.getImage());
+    /**
+     * The url editors grid, containing the url field and the browse icon
+     */
+    private final GridPane urlEditor = new GridPane();
+    /**
+     * The url field used for manually editing URL
+     */
+    private final TextField urlField = new TextField();
+    /**
+     * The url label
+     */
+    private final Label urlLabel = new Label("Link");
+    /**
+     * The editable URL
+     */
+    private Observable<String> url;
+    /**
+     * Url edit lock, used for locking url changes, when it's getting edited by this editor
+     */
+    private boolean urlEditLock;
+
+    /**
+     * Constructs a new UrlEditor
+     *
+     * @param holder - The holder of the editable element
+     * @param text   - The editable text
+     * @param url    - The editable url
+     */
     public UrlEditor(ElementHolderScene<? extends ElementHolder> holder, Observable<String> text, Observable<String> url) {
         super(holder, text);
         this.url = url;
     }
 
-
+    @Override
     public void addNodesToGrid() {
         urlEditor.add(urlField, 0, 0);
         urlEditor.add(browseIcon, 1, 0);
@@ -43,6 +72,7 @@ public class UrlEditor extends TextEditor {
         grid.add(urlLabel, 1, 3);
     }
 
+    @Override
     public void createNodes() {
         super.createNodes();
         createUrlLabel();
@@ -55,28 +85,9 @@ public class UrlEditor extends TextEditor {
         createResizableScene(0.3, "Url Editor");
     }
 
-    @Override
-    public void makeGridColumns() {
-        super.makeGridColumns();
-
-        ColumnConstraints main = new ColumnConstraints();
-        main.setPercentWidth(90);
-        ColumnConstraints icon = new ColumnConstraints();
-        icon.setPercentWidth(10);
-
-        urlEditor.setHgap(5);
-        urlEditor.getColumnConstraints().addAll(main, icon);
-    }
-
-    public void makeGridRows() {
-        RowConstraints side = new RowConstraints();
-        side.setPercentHeight(5);
-        RowConstraints free = new RowConstraints();
-        RowConstraints editor = new RowConstraints();
-        editor.setPercentHeight(60);
-        grid.getRowConstraints().addAll(side, side, editor, free, side, side);
-    }
-
+    /**
+     * Creates the dynamically changing url editor field
+     */
     public void createUrlField() {
         attach(url, () -> {
             if (!urlEditLock)
@@ -89,6 +100,9 @@ public class UrlEditor extends TextEditor {
         }));
     }
 
+    /**
+     * Creates the dynamically resizable browse icon
+     */
     public void createUrlIcon() {
         browseIcon.setPreserveRatio(true);
         attach(screenWidth, () -> {
@@ -106,8 +120,24 @@ public class UrlEditor extends TextEditor {
         });
     }
 
+    /**
+     * Creates the url label
+     */
     public void createUrlLabel() {
         urlLabel.setAlignment(Pos.CENTER);
         urlLabel.setPrefWidth(Double.MAX_VALUE);
+    }
+
+    @Override
+    public void makeGridColumns() {
+        super.makeGridColumns();
+        urlEditor.setHgap(5);
+        urlEditor.getColumnConstraints().addAll(pctCol(90), pctCol(10));
+    }
+
+    @Override
+    public void makeGridRows() {
+        RowConstraints side = pctRow(5);
+        grid.getRowConstraints().addAll(side, side, pctRow(60), new RowConstraints(), side, side);
     }
 }
