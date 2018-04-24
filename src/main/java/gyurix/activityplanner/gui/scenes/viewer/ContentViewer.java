@@ -17,10 +17,31 @@ import lombok.Getter;
 import static gyurix.activityplanner.gui.scenes.SceneUtils.formatTime;
 import static java.lang.Double.MAX_VALUE;
 
+/**
+ * ContentViewer used for rendering contents like Alerts and Tables
+ */
 @Getter
 public class ContentViewer extends ElementHolderScene<Table> {
-    private Label title, subtitle, date;
+    /**
+     * The dynamically changing date label
+     */
+    private Label date;
+    /**
+     * The dynamically changing subtitle label
+     */
+    private Label subtitle;
+    /**
+     * The dynamically changing title label
+     */
+    private Label title;
 
+    /**
+     * Creates a new ContentViewer
+     *
+     * @param userScene - The parent UserScene
+     * @param info      - The renderable Content
+     * @param stage     - The windows stage
+     */
     public ContentViewer(UserScene userScene, Table info, Stage stage) {
         super(userScene, info, stage);
     }
