@@ -18,19 +18,51 @@ import javafx.stage.Stage;
 
 import static gyurix.activityplanner.gui.scenes.SceneUtils.makeAlert;
 
+/**
+ * The renderer of the login window
+ */
 public class LoginScene extends AbstractScene {
-    private Background background = SceneUtils.bgColorGradient(Color.web("#b08045"));
-    private Button loginButton = new Button("Login");
-    private PasswordField passwordField = new PasswordField();
-    private Label passwordLabel = new Label("Password");
-    private TextField usernameField = new TextField("l1");
-    private Label usernameLabel = new Label("Username");
+    /**
+     * The gradient background of the scene
+     */
+    private final Background background = SceneUtils.bgColorGradient(Color.web("#b08045"));
 
+    /**
+     * The login button
+     */
+    private final Button loginButton = new Button("Login");
+
+    /**
+     * The password field
+     */
+    private final PasswordField passwordField = new PasswordField();
+
+    /**
+     * The password label
+     */
+    private final Label passwordLabel = new Label("Password");
+
+    /**
+     * The username field
+     */
+    private final TextField usernameField = new TextField("l1");
+
+    /**
+     * The username label
+     */
+    private final Label usernameLabel = new Label("Username");
+
+    /**
+     * Constructs a new LoginScene
+     *
+     * @param stage - The main application windows stage
+     */
     public LoginScene(Stage stage) {
         super(stage);
     }
 
-    public void addNodesToGrid() {
+    @Override
+    protected void addNodesToGrid() {
         grid.add(usernameLabel, 0, 1);
         grid.add(passwordLabel, 0, 2);
         grid.add(usernameField, 1, 1);
@@ -38,18 +70,20 @@ public class LoginScene extends AbstractScene {
         grid.add(loginButton, 1, 3);
     }
 
-    public void createNodes() {
+    @Override
+    protected void createNodes() {
         loginButton.setOnAction(this::login);
         usernameField.setOnAction(this::login);
         passwordField.setOnAction(this::login);
     }
 
     @Override
-    public void createScene() {
+    protected void createScene() {
         createResizableScene(0.3, "Login");
     }
 
-    public void makeGrid() {
+    @Override
+    protected void makeGrid() {
         grid.setBackground(background);
         grid.setHgap(10);
         grid.setVgap(10);
@@ -57,7 +91,8 @@ public class LoginScene extends AbstractScene {
         makeGridRows();
     }
 
-    public void makeGridColumns() {
+    @Override
+    protected void makeGridColumns() {
         ColumnConstraints title = new ColumnConstraints();
         title.setPercentWidth(30);
         title.setHalignment(HPos.RIGHT);
@@ -68,12 +103,10 @@ public class LoginScene extends AbstractScene {
         grid.getColumnConstraints().addAll(title, editor);
     }
 
-    public void makeGridRows() {
-        RowConstraints sep = new RowConstraints();
-        sep.setPercentHeight(11);
-
+    @Override
+    protected void makeGridRows() {
+        RowConstraints sep = pctRow(11);
         RowConstraints main = new RowConstraints();
-
         grid.getRowConstraints().addAll(sep, main, sep, main);
     }
 
@@ -83,10 +116,18 @@ public class LoginScene extends AbstractScene {
         SceneUtils.getIoThread().shutdown();
     }
 
+    /**
+     * Disables the login scene, used at logging in
+     */
     public void disable() {
         super.destroy();
     }
 
+    /**
+     * Performs pre login checks and logs in
+     *
+     * @param e - The action event triggering login
+     */
     private void login(ActionEvent e) {
         DataStorage.getInstance().getUser(usernameField.getText(), (user) -> Platform.runLater(() -> {
             if (user == null) {
@@ -97,6 +138,7 @@ public class LoginScene extends AbstractScene {
                 makeAlert("Incorrect Password", "The entered password is incorrect").showAndWait();
                 return;
             }
+            disable();
             new UserScene(user, stage).start();
         }));
     }

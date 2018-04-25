@@ -23,19 +23,19 @@ public abstract class Editor extends AbstractScene {
     }
 
     @Override
-    public void makeGrid() {
+    protected void makeGrid() {
         grid.setVgap(5);
         makeGridColumns();
         makeGridRows();
     }
 
     @Override
-    public void makeGridColumns() {
+    protected void makeGridColumns() {
         grid.getColumnConstraints().addAll(pctCol(5), pctCol(90), pctCol(5));
     }
 
     @Override
-    public void makeGridRows() {
+    protected void makeGridRows() {
         grid.getRowConstraints().addAll(pctRow(5), pctRow(5), pctRow(85), pctRow(5));
     }
 }

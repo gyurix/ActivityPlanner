@@ -46,13 +46,13 @@ public class TextEditor extends Editor {
     }
 
     @Override
-    public void addNodesToGrid() {
+    protected void addNodesToGrid() {
         grid.add(textLabel, 1, 1);
         grid.add(textArea, 1, 2);
     }
 
     @Override
-    public void createNodes() {
+    protected void createNodes() {
         textLabel.setAlignment(Pos.CENTER);
         textLabel.setPrefWidth(Double.MAX_VALUE);
 
@@ -68,7 +68,7 @@ public class TextEditor extends Editor {
     }
 
     @Override
-    public void createScene() {
+    protected void createScene() {
         createResizableScene(0.3, "Text Editor");
     }
 }

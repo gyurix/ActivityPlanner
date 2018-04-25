@@ -23,35 +23,100 @@ import lombok.Getter;
 
 import static gyurix.activityplanner.gui.scenes.SceneUtils.*;
 
+/**
+ * UserScene is used for rendering the whole user dashboard
+ */
 @Getter
 public class UserScene extends InfoScene<User> {
+    /**
+     * Icon width multiplier for create table and create alert buttons
+     */
     private static final double ICON_SIZE = 0.025;
+
+    /**
+     * Background of the alerts part of the screen
+     */
     private static final Color alertBackground = Color.web("#ff7070");
+
+    /**
+     * Background of the chat part of the screen
+     */
     private static final Color chatBackground = Color.web("#a0a0ff");
+
+    /**
+     * Main background of the screen
+     */
     private static final Color mainBackground = Color.SILVER;
+
+    /**
+     * Background of the table part of the screen
+     */
     private static final Color tableBackground = Color.web("#a07000");
 
-    private GridPane alerts = new GridPane(), alertsWrapper;
-    private GridPane chat = new GridPane();
-    private ChatRenderer chatRenderer;
-    private Button logoutButton = new Button("Logout");
-    private ContentRenderer renderer;
-    private GridPane tables = new GridPane(), tableWrapper;
-    private Label usernameLabel = new Label();
+    /**
+     * Holder for rendered alerts
+     */
+    private final GridPane alerts = new GridPane();
 
+    /**
+     * Holder for chat
+     */
+    private final GridPane chat = new GridPane();
+
+    /**
+     * Logout button
+     */
+    private final Button logoutButton = new Button("Logout");
+
+    /**
+     * Holder for rendered tables
+     */
+    private final GridPane tables = new GridPane();
+
+    /**
+     * Wrapper for making alerts background colorable
+     */
+    private GridPane alertsWrapper;
+
+    /**
+     * Renderer of the chat part of the screen
+     */
+    private ChatRenderer chatRenderer;
+
+    /**
+     * Renderer of the contents parts of the screen (Alerts + Tables)
+     */
+    private ContentRenderer renderer;
+
+    /**
+     * Wrapper for making tables background colorable
+     */
+    private GridPane tableWrapper;
+
+    /**
+     * Informative username label
+     */
+    private Label usernameLabel;
+
+    /**
+     * Constructs a new UserScene
+     *
+     * @param info  - The User
+     * @param stage - The Stage of the main window
+     */
     public UserScene(User info, Stage stage) {
         super(info, stage);
     }
 
 
     @Override
-    public void addNodesToGrid() {
+    protected void addNodesToGrid() {
         chatRenderer.render();
         addNodesToMainGrid();
     }
 
     @Override
-    public void createNodes() {
+    protected void createNodes() {
         chatRenderer = new ChatRenderer(this);
         Observable<String> un = info.getUsername();
         usernameLabel = new Label();
@@ -60,6 +125,7 @@ public class UserScene extends InfoScene<User> {
             new LoginScene(stage).start();
         });
         chat.setBackground(bgColorGradient(chatBackground));
+
         attach(info.getCreatedContents(), () -> info.visitCreatedContents(renderer = new ContentRenderer(this)));
         alertsWrapper = createWrapper(alerts, bgColorGradient(alertBackground),
                 createClickablePicture(Icons.ADD, ICON_SIZE, () -> {
@@ -84,16 +150,16 @@ public class UserScene extends InfoScene<User> {
     }
 
     @Override
-    public void createScene() {
+    protected void createScene() {
         createResizableScene(0.8, "User Dashboard");
     }
 
     @Override
-    public void makeGrid() {
-        prepareGrid(grid, 10);
-        prepareGrid(chat, 10);
-        prepareGrid(tables, 10);
-        prepareGrid(alerts, 10);
+    protected void makeGrid() {
+        setGap(grid, 10);
+        setGap(chat, 10);
+        setGap(tables, 10);
+        setGap(alerts, 10);
 
         grid.setBackground(bgColorGradient(mainBackground));
 
@@ -101,14 +167,15 @@ public class UserScene extends InfoScene<User> {
         makeGridRows();
     }
 
-    public void makeGridColumns() {
+    @Override
+    protected void makeGridColumns() {
         makeChatGridColumns();
         makeContentGridColumns();
         makeMainGridColumns();
     }
 
     @Override
-    public void makeGridRows() {
+    protected void makeGridRows() {
         RowConstraints row0 = new RowConstraints();
         RowConstraints row1 = new RowConstraints();
         row0.setPercentHeight(10);
@@ -116,6 +183,9 @@ public class UserScene extends InfoScene<User> {
         grid.getRowConstraints().addAll(row0, row1);
     }
 
+    /**
+     * Adds nodes to the main grid
+     */
     private void addNodesToMainGrid() {
         grid.add(usernameLabel, 1, 0);
         grid.add(logoutButton, 2, 0);
@@ -124,25 +194,27 @@ public class UserScene extends InfoScene<User> {
         grid.add(doubleWrap(chat), 2, 1);
     }
 
-    private GridPane createWrapper(GridPane pane, Background bg, Pane addButton) {
+    /**
+     * Creates a colored, scrollable wrapper for tables or alerts
+     *
+     * @param pane       - The wrappable pane
+     * @param background - The background of the wrapped contents
+     * @param addButton  - The add button used for adding new content
+     * @return The created wrapper
+     */
+    private GridPane createWrapper(GridPane pane, Background background, Pane addButton) {
         GridPane grid = new GridPane();
-        ColumnConstraints mainCol = new ColumnConstraints();
-        mainCol.setPercentWidth(90);
-        ColumnConstraints rightCol = new ColumnConstraints();
-        rightCol.setPercentWidth(10);
-        grid.getColumnConstraints().addAll(mainCol, rightCol);
+        grid.getColumnConstraints().addAll(pctCol(90), pctCol(10));
 
         RowConstraints topRow = new RowConstraints();
         topRow.setPrefHeight(48);
         RowConstraints bottomRow = new RowConstraints();
         bottomRow.setPrefHeight(24);
-        RowConstraints mainRow = new RowConstraints();
-        mainRow.setPercentHeight(85);
 
-        grid.getRowConstraints().addAll(topRow, mainRow, bottomRow);
+        grid.getRowConstraints().addAll(topRow, pctRow(85), bottomRow);
         grid.add(addButton, 1, 0);
         grid.add(pane, 0, 1, 2, 1);
-        grid.setBackground(bg);
+        grid.setBackground(background);
         return grid;
     }
 
@@ -152,59 +224,80 @@ public class UserScene extends InfoScene<User> {
         SceneUtils.getIoThread().shutdown();
     }
 
-    public void disable() {
+    /**
+     * Disables the UserScene, used on logging out
+     */
+    private void disable() {
         super.destroy();
         ConfigUtils.getInstance().saveConfig();
         renderer.destroy();
     }
 
+    /**
+     * Double wraps a GridPane, for keeping it's color and making it scrollable
+     *
+     * @param content - The double wrappable contents wrapper grid
+     * @return The wrapper ScrollPane
+     */
     private ScrollPane doubleWrap(GridPane content) {
         GridPane grid = new GridPane();
 
-        RowConstraints fullRow = new RowConstraints();
-        fullRow.setPercentHeight(100);
-        grid.getRowConstraints().addAll(fullRow);
-
-        ColumnConstraints fullCol = new ColumnConstraints();
-        fullCol.setPercentWidth(100);
-        grid.getColumnConstraints().add(fullCol);
-
+        grid.getRowConstraints().add(pctRow(100));
+        grid.getColumnConstraints().add(pctCol(100));
         grid.add(content, 0, 0);
+
         ScrollPane scroll = new ScrollPane(grid);
         scroll.setFitToWidth(true);
         scroll.setFitToHeight(true);
         return scroll;
     }
 
-    public ColumnConstraints makeAlignedColumn(HPos alignment) {
+    /**
+     * Makes an aligned 33% wide column
+     *
+     * @param alignment - The alignment of the column
+     * @return The aligned column
+     */
+    private ColumnConstraints makeAlignedColumn(HPos alignment) {
         ColumnConstraints col = new ColumnConstraints();
         col.setPercentWidth(33);
         col.setHalignment(alignment);
         return col;
     }
 
+    /**
+     * Make the columns of the chat grid
+     */
     private void makeChatGridColumns() {
-        ColumnConstraints side = new ColumnConstraints();
-        side.setPercentWidth(6);
-        ColumnConstraints body = new ColumnConstraints();
-        body.setPercentWidth(22);
+        ColumnConstraints side = pctCol(6);
+        ColumnConstraints body = pctCol(22);
         chat.getColumnConstraints().addAll(side, body, body, body, body, side);
     }
 
+    /**
+     * Makes the columns of the alerts and tables grid
+     */
     private void makeContentGridColumns() {
-        ColumnConstraints side = new ColumnConstraints();
-        side.setPercentWidth(5);
-        ColumnConstraints main = new ColumnConstraints();
-        main.setPercentWidth(90);
+        ColumnConstraints side = pctCol(5);
+        ColumnConstraints main = pctCol(90);
         tables.getColumnConstraints().addAll(side, main, side);
         alerts.getColumnConstraints().addAll(side, main, side);
     }
 
-    public void makeMainGridColumns() {
+    /**
+     * Makes the columns of the main grid
+     */
+    private void makeMainGridColumns() {
         grid.getColumnConstraints().addAll(makeAlignedColumn(HPos.LEFT), makeAlignedColumn(HPos.CENTER), makeAlignedColumn(HPos.RIGHT));
     }
 
-    public void prepareGrid(GridPane grid, double gap) {
+    /**
+     * Sets the gap of the given grid
+     *
+     * @param grid - The changeable grid
+     * @param gap  - The requested gap of the grid
+     */
+    private void setGap(GridPane grid, double gap) {
         grid.setHgap(gap);
         grid.setVgap(gap);
     }
