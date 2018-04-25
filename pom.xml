@@ -6,7 +6,7 @@
 
     <groupId>gyurix</groupId>
     <artifactId>ActivityPlanner</artifactId>
-    <version>1.1</version>
+    <version>1.1.1</version>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
@@ -15,49 +15,63 @@
     <build>
         <sourceDirectory>${project.build.directory}/generated-sources/delombok</sourceDirectory>
         <plugins>
+            <!--Create JavaDOC-->
             <plugin>
-                <artifactId>maven-clean-plugin</artifactId>
-                <version>3.1.0</version>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>3.0.0</version>
+                <configuration>
+                    <show>private</show>
+                </configuration>
                 <executions>
                     <execution>
-                        <id>pre-clean</id>
-                        <phase>initialize</phase>
+                        <id>javadoc</id>
+                        <phase>generate-sources</phase>
                         <goals>
-                            <goal>clean</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>post-clean</id>
-                        <phase>install</phase>
-                        <goals>
-                            <goal>clean</goal>
+                            <goal>javadoc</goal>
                         </goals>
                     </execution>
                 </executions>
             </plugin>
+            <!--Pack app jar and javadoc-->
             <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
                 <executions>
                     <execution>
+                        <id>jar</id>
                         <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                        <configuration>
+                            <appendAssemblyId>false</appendAssemblyId>
+                            <descriptorRefs>
+                                <descriptorRef>jar-with-dependencies</descriptorRef>
+                            </descriptorRefs>
+                            <outputDirectory>${project.build.directory}/../artifacts</outputDirectory>
+                            <archive>
+                                <manifest>
+                                    <mainClass>gyurix.activityplanner.gui.ActivityPlannerLauncher</mainClass>
+                                </manifest>
+                            </archive>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>javadoc</id>
+                        <phase>package</phase>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/../doc</outputDirectory>
+                            <descriptors>
+                                <descriptor>src/main/assembly/doc.xml</descriptor>
+                            </descriptors>
+                        </configuration>
                         <goals>
                             <goal>single</goal>
                         </goals>
                     </execution>
                 </executions>
-                <configuration>
-                    <appendAssemblyId>false</appendAssemblyId>
-                    <descriptorRefs>
-                        <descriptorRef>jar-with-dependencies</descriptorRef>
-                    </descriptorRefs>
-                    <outputDirectory>${project.build.directory}/../artifacts</outputDirectory>
-                    <archive>
-                        <manifest>
-                            <mainClass>gyurix.activityplanner.gui.ActivityPlannerLauncher</mainClass>
-                        </manifest>
-                    </archive>
-                </configuration>
             </plugin>
+            <!--Apply Lombok-->
             <plugin>
                 <groupId>org.projectlombok</groupId>
                 <artifactId>lombok-maven-plugin</artifactId>
@@ -76,6 +90,7 @@
                     <sourceDirectory>src/main/java</sourceDirectory>
                 </configuration>
             </plugin>
+            <!--Apply AspectJ-->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>aspectj-maven-plugin</artifactId>
@@ -96,13 +111,35 @@
                     </execution>
                 </executions>
             </plugin>
+            <!--Cleanup-->
+            <plugin>
+                <artifactId>maven-clean-plugin</artifactId>
+                <version>3.1.0</version>
+                <executions>
+                    <execution>
+                        <id>pre-clean</id>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>clean</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>post-clean</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>clean</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <!--Auto run-->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
                 <version>1.2.1</version>
                 <executions>
                     <execution>
-                        <phase>install</phase>
+                        <phase>package</phase>
                         <goals>
                             <goal>exec</goal>
                         </goals>

@@ -279,7 +279,7 @@ public class ChatRenderer extends DataRenderer {
     }
 
     /**
-     * Fixes the comparation result, of 2 objects by forcing values being in interval \<-1;1\>
+     * Fixes the comparation result, of 2 objects by forcing values being in interval -1;1
      * Negative numbers will be converted to -1.
      * 0 will remain 0.
      * Positive numbers will be converted to +1.
