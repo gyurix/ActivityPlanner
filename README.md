@@ -62,6 +62,9 @@ aspect for automatically saving the configuration on every data change
 ### 1.1.1
 - Added JavaDOC zip generation to build process
 
+### 1.1.2
+- Improved generated UML
+- Added project realization document
 
 # Logical parts
 ActivityPlanner consists of two logical parts: the core and the GUI part.

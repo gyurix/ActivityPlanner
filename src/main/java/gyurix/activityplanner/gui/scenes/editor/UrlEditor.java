@@ -73,7 +73,7 @@ public class UrlEditor extends TextEditor {
     }
 
     @Override
-    protected void createNodes() {
+    public void createNodes() {
         super.createNodes();
         createUrlLabel();
         createUrlField();
@@ -81,7 +81,7 @@ public class UrlEditor extends TextEditor {
     }
 
     @Override
-    protected void createScene() {
+    public void createScene() {
         createResizableScene(0.3, "Url Editor");
     }
 
@@ -129,14 +129,14 @@ public class UrlEditor extends TextEditor {
     }
 
     @Override
-    protected void makeGridColumns() {
+    public void makeGridColumns() {
         super.makeGridColumns();
         urlEditor.setHgap(5);
         urlEditor.getColumnConstraints().addAll(pctCol(90), pctCol(10));
     }
 
     @Override
-    protected void makeGridRows() {
+    public void makeGridRows() {
         RowConstraints side = pctRow(5);
         grid.getRowConstraints().addAll(side, side, pctRow(60), new RowConstraints(), side, side);
     }

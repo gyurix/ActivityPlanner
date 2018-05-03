@@ -52,7 +52,7 @@ public class TextEditor extends Editor {
     }
 
     @Override
-    protected void createNodes() {
+    public void createNodes() {
         textLabel.setAlignment(Pos.CENTER);
         textLabel.setPrefWidth(Double.MAX_VALUE);
 
@@ -68,7 +68,7 @@ public class TextEditor extends Editor {
     }
 
     @Override
-    protected void createScene() {
+    public void createScene() {
         createResizableScene(0.3, "Text Editor");
     }
 }

@@ -56,7 +56,7 @@ public class ContentViewer extends ElementHolderScene<Table> {
     }
 
     @Override
-    protected void createNodes() {
+    public void createNodes() {
         title = renderText(24, info.getTitle());
         title.setAlignment(Pos.BOTTOM_CENTER);
         title.setOnMouseReleased(e -> {
@@ -79,12 +79,12 @@ public class ContentViewer extends ElementHolderScene<Table> {
     }
 
     @Override
-    protected void createScene() {
+    public void createScene() {
         createResizableScene(0.5, (info instanceof Alert ? "Alert" : "Table") + " Viewer");
     }
 
     @Override
-    protected void makeGridRows() {
+    public void makeGridRows() {
         RowConstraints top = new RowConstraints();
         RowConstraints title = new RowConstraints();
         RowConstraints subtitle = new RowConstraints();

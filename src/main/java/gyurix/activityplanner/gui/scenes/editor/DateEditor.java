@@ -51,7 +51,7 @@ public class DateEditor extends Editor {
     }
 
     @Override
-    public void addNodesToGrid() {
+    protected void addNodesToGrid() {
         grid.add(dateLabel, 1, 1);
         grid.add(datePicker, 1, 2);
     }

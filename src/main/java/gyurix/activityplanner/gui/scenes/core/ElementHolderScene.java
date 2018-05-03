@@ -90,7 +90,7 @@ public abstract class ElementHolderScene<T extends ElementHolder> extends InfoSc
     }
 
     @Override
-    protected void makeGrid() {
+    public void makeGrid() {
         grid.setVgap(5);
         grid.setHgap(5);
         makeInvGradientBackground(grid, info.getColor());
@@ -112,7 +112,7 @@ public abstract class ElementHolderScene<T extends ElementHolder> extends InfoSc
     }
 
     @Override
-    protected void makeGridColumns() {
+    public void makeGridColumns() {
         ColumnConstraints side = new ColumnConstraints();
         ColumnConstraints center = new ColumnConstraints();
         side.setPercentWidth(4);

@@ -62,7 +62,7 @@ public class LoginScene extends AbstractScene {
     }
 
     @Override
-    protected void addNodesToGrid() {
+    public void addNodesToGrid() {
         grid.add(usernameLabel, 0, 1);
         grid.add(passwordLabel, 0, 2);
         grid.add(usernameField, 1, 1);
@@ -71,19 +71,19 @@ public class LoginScene extends AbstractScene {
     }
 
     @Override
-    protected void createNodes() {
+    public void createNodes() {
         loginButton.setOnAction(this::login);
         usernameField.setOnAction(this::login);
         passwordField.setOnAction(this::login);
     }
 
     @Override
-    protected void createScene() {
+    public void createScene() {
         createResizableScene(0.3, "Login");
     }
 
     @Override
-    protected void makeGrid() {
+    public void makeGrid() {
         grid.setBackground(background);
         grid.setHgap(10);
         grid.setVgap(10);
@@ -92,7 +92,7 @@ public class LoginScene extends AbstractScene {
     }
 
     @Override
-    protected void makeGridColumns() {
+    public void makeGridColumns() {
         ColumnConstraints title = new ColumnConstraints();
         title.setPercentWidth(30);
         title.setHalignment(HPos.RIGHT);
@@ -104,7 +104,7 @@ public class LoginScene extends AbstractScene {
     }
 
     @Override
-    protected void makeGridRows() {
+    public void makeGridRows() {
         RowConstraints sep = pctRow(11);
         RowConstraints main = new RowConstraints();
         grid.getRowConstraints().addAll(sep, main, sep, main);

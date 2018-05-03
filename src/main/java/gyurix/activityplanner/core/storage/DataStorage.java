@@ -181,6 +181,7 @@ public class DataStorage extends StorableData {
             fw.write(gson.toJson(this));
             fw.close();
         } catch (IOException e) {
+            e.printStackTrace();
             throw new RuntimeException(e);
         }
     }
