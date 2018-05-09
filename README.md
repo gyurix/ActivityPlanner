@@ -78,7 +78,7 @@ The exact class hierarchy of the core part can be found in the **doc/uml.uxf** f
 The graphical user interface part consists of the following screens:
 * **Login**
 
-![Login](https://gyurix.pro/oop/screenshots/login.jpg)
+![Login](https://s6.postimg.cc/wxl7dqrqp/login.jpg)
 
 When you start ActivityPlanner you will see this screen.
 After entering the **username** and the **password** of a valid user
@@ -86,8 +86,8 @@ you can press the **ENTER** or click to the **Login** button for logging in
 
 * **User Dashboard**
 
-  ![User Dashboard](https://gyurix.pro/oop/screenshots/user.jpg)
-  
+![User Dashboard](https://s6.postimg.cc/l8h7psnxd/user.jpg)
+
 You can see this screen after logging in. It consists of the following elements:
 
 1. **Your username:** Just an informative text, for checking who is logged in
@@ -166,7 +166,7 @@ You can check this table for the exact extension [Element](https://github.com/OO
 
 * **[Content](https://github.com/OOP-FIIT/oop-projekt-stv-09-a-povazanova-gyurix/blob/master/src/main/java/gyurix/activityplanner/core/data/content/Content.java) Viewer**
 
-![Content Viewer](https://gyurix.pro/oop/screenshots/contentviewer.jpg)
+![Content Viewer](https://s6.postimg.cc/ut0ucokz5/contentviewer.jpg)
 
 You can see this new window popping up when you open an **Alert** or a **Table** by clicking to them.
 It consists of the following elements:
@@ -197,7 +197,7 @@ The types of the supported elements are as follows:
 
 * **Text Editor**
 
-![Text Editor](https://gyurix.pro/oop/screenshots/texteditor.jpg)
+![Text Editor](https://s6.postimg.cc/3v6xaxd6p/texteditor.jpg)
 
 When you are editing [TextElements](https://github.com/OOP-FIIT/oop-projekt-stv-09-a-povazanova-gyurix/blob/master/src/main/java/gyurix/activityplanner/core/data/element/TextElement.java)
 or the title/subtitle of a
@@ -206,7 +206,7 @@ then you are doing it with this editor. Every change you make will be instantly 
 
 * **Date Editor**
 
-![Date Editor](https://gyurix.pro/oop/screenshots/dateeditor.jpg)
+![Date Editor](https://s6.postimg.cc/kvptjml35/dateeditor.jpg)
 
 You are using this editor for changing the date of an
 [Alert](https://github.com/OOP-FIIT/oop-projekt-stv-09-a-povazanova-gyurix/blob/master/src/main/java/gyurix/activityplanner/core/data/content/Alert.java)
@@ -214,7 +214,7 @@ You can click to the calendar icon for showing up that popup calendar for easier
 
 * **Url Editor**
 
-![Url Editor](https://gyurix.pro/oop/screenshots/urleditor.jpg)
+![Url Editor](https://s6.postimg.cc/os35flixd/urleditor.jpg)
 
 You are using this editor for changing a
 [LinkElement](https://github.com/OOP-FIIT/oop-projekt-stv-09-a-povazanova-gyurix/blob/master/src/main/java/gyurix/activityplanner/core/data/element/LinkElement.java)

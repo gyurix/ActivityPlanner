@@ -65,12 +65,12 @@ public class ConfigUtils {
         }
         a1.getElements().add(new Observable<>(new TextElement(longText.toString())));
         a1.getElements().add(new Observable<>(new LinkElement("Click here", "http://google.com")));
-        a1.getElements().add(new Observable<>(new PictureElement("Some nice cat picture",
-                "https://gyurix.pro/oop/cat.jpg")));
+        a1.getElements().add(new Observable<>(new PictureElement("Let's see some cubes",
+                "https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/PNG_transparency_demonstration_1.png/220px-PNG_transparency_demonstration_1.png")));
         a1.getElements().add(new Observable<>(new AudioElement("With some song :D",
-                "https://gyurix.pro/oop/alone.mp3")));
+                "http://other.web.ri01.sycdn.kuwo.cn/resource/n1/95/69/1605089080.mp3")));
         a1.getElements().add(new Observable<>(new VideoElement("And even video",
-                "https://gyurix.pro/oop/attackontitan.mp4")));
+                "https://downloadmp.org/@download/22-5af36875df3c5-mp4-19718405/videos/6DQfKoxJY8w/%25E9%2580%25B2%25E6%2592%2583%25E3%2581%25AE%25E5%25B7%25A8%25E4%25BA%25BA%2BShingeki%2Bno%2BKyojin%2BVoice%2BActors%2BSinging%2BOpening%2BTheme.mp4")));
 
         Alert a2 = new Alert(currentTimeMillis(), "Alert2 title", "Alert2 subtitle", "ff4000");
         l1.getCreatedContents().add(ds.addContent(t1));
